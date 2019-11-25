@@ -1,0 +1,6 @@
+{
+  "gateway" : "API-TEST",
+  "customer_data": "CustomerData.json",
+  "creditcard_data": "CreditCardData.json",
+  "paypal_data": "PayPalData.json"
+}

@@ -1,0 +1,8 @@
+{
+  "PayPal": {
+    "email": "email",
+    "password": "password",
+    "login": "btnLogin",
+    "nextStep": "//*[contains(@class, 'continueButton')]"
+  }
+}

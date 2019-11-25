@@ -1,0 +1,15 @@
+{
+    "name": "tatjana.starcenko/ui-test-concept",
+    "authors": [
+        {
+            "name": "Tatjana Starcenko",
+            "email": "tatjana.starcenko@wirecard.com"
+        }
+    ],
+    "require": {
+      "ext-json": "*"
+    },
+    "require-dev": {
+        "codeception/codeception": "^3.1"
+    }
+}

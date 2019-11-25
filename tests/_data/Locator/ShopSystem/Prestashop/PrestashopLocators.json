@@ -1,0 +1,11 @@
+{
+"product" : {
+  "quantity" : "",
+  "add_to_cart": "",
+  "cart": ""
+},
+  "checkout": {
+    "name": "",
+    "last_name": ""
+  }
+}

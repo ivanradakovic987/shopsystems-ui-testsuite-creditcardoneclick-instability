@@ -1,0 +1,33 @@
+{
+  "page": {
+    "product": "/product/polo/",
+    "checkout": "/checkout",
+    "order_received": "order-received"
+  },
+  "product": {
+    "price": "20",
+    "quantity": "",
+    "add_to_cart": "//*[@name='add-to-cart']",
+    "cart": ""
+  },
+  "checkout": {
+    "first_name": "//*[@id='billing_first_name']",
+    "last_name": "//*[@id='billing_last_name']",
+    "country": "//*[@id='select2-billing_country-container']",
+    "country_entry": "//*[@class='select2-search__field']",
+    "country_entry_selected": "//*[@class='select2-results']",
+    "street_address": "//*[@id='billing_address_1']",
+    "town": "//*[@id='billing_city']",
+    "post_code": "//*[@id='billing_postcode']",
+    "phone": "//*[@id='billing_phone']",
+    "email_address": "//*[@id='billing_email']",
+    "place_order": "//*[@id='place_order']",
+    "credit_card_form" : "//*[@id='wc_payment_method_wirecard_new_credit_card']"
+  },
+  "order_pay": {
+    "pay": "//*[@id='seamless-submit']"
+  },
+  "order_received": {
+    "order_confirmed_message": "Order received"
+  }
+}

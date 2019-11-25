@@ -1,0 +1,10 @@
+{
+  "frame": "wirecard-integrated-payment-page-frame",
+  "first_ame": "//*[@id='pp-cc-first-name']",
+  "last_name": "//*[@id='pp-cc-last-name']",
+  "card_number": "//*[@id='pp-cc-account-number']",
+  "cvv": "//*[@id='pp-cc-cvv']",
+  "expiry_date": "//*[@id='pp-cc-expiration-date']",
+  "password": "//*[@id='password']",
+  "continue_button": "//*[@name='authenticate']"
+}
