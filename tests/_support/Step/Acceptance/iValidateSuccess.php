@@ -14,7 +14,9 @@ interface iValidateSuccess
     public function validateSuccessPage();
 
     /**
+     * @param $paymentMethod
+     * @param $paymentAction
      * @return mixed
      */
-    public function validateTransactionInDatabase();
+    public function validateTransactionInDatabase($paymentMethod, $paymentAction);
 }

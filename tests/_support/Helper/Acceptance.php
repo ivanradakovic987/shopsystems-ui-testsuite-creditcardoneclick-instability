@@ -11,7 +11,7 @@ class Acceptance extends \Codeception\Module
     /**
      * Method getDataFromDataFile
      * @param string $fileName
-     * @return string
+     * @return object
      */
     public static function getDataFromDataFile($fileName)
     {
@@ -25,36 +25,33 @@ class Acceptance extends \Codeception\Module
         }
     }
 
+    /**
+     * @param $configType
+     * @return mixed
+     */
     public static  function getConfigFileFromConfig($configType)
     {
         return self::getDataFromDataFile('CONFIG_FILE')[$configType];
     }
 
     /**
-     * @param string $paymentMethod
-     * @param string $paymentAction
-     * @return string
-     * @since 2.0.3
+     * @param $array
+     * @param $keyWord
+     * @param $newValue
+     * @return array
      */
-    public function buildConfig( $paymentAction, $paymentMethod )
+    public function substituteArrayKey($array, $keyWord, $newValue): array
     {
-        if ( !defined( 'GATEWAY_CONFIG' ) ) define( 'GATEWAY_CONFIG', '/tests/_data/gateway_configs' );
-        $gatewayConfiguration = getcwd() .  GATEWAY_CONFIG . DIRECTORY_SEPARATOR . $paymentMethod . '.json';
-
-        $gateway = getenv( 'GATEWAY' );
-        $gatewayConfigurationRow = $this->mappedPaymentActions[$paymentMethod]['config']['row'];
-
-        if ( file_exists( $gatewayConfiguration ) ) {
-            $jsonData = json_decode( file_get_contents( $gatewayConfiguration ) );
-            if ( ! empty( $jsonData ) && ! empty( $jsonData->$gateway ) ) {
-                $array = get_object_vars( $jsonData->$gateway );
-                foreach ( array_keys( $array ) as $key ) {
-                    if ($key === $gatewayConfigurationRow) {
-                        $array[$key] = $paymentAction;
-                    }
-                }
+        foreach (array_keys($array) as $key) {
+            if ($key === $keyWord) {
+                $array[$key] = $newValue;
             }
         }
-        return serialize($array);
+        return $array;
+    }
+
+    public function paymentMethodGatewayConfigExists($fileData, $gateway): bool
+    {
+        return !empty($fileData) && !empty($fileData->$gateway);
     }
 }

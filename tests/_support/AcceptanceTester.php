@@ -244,11 +244,11 @@ class AcceptanceTester extends \Codeception\Actor
     }
 
     /**
-     * @Then I see :arg1 transaction type :arg2 in transaction table
+     * @Then I see :paymentMethod transaction type :paymentAction in transaction table
      */
-    public function iSeeTransactionTypeInTransactionTable($arg1, $arg2)
+    public function iSeeTransactionTypeInTransactionTable($paymentMethod, $paymentAction)
     {
-        throw new \PHPUnit\Framework\IncompleteTestError("Step `I see :arg1 transaction type :arg2 in transaction table` is not defined");
+        $this->getShopInstance()->validateTransactionInDatabase($paymentMethod, $paymentAction);
     }
 
 

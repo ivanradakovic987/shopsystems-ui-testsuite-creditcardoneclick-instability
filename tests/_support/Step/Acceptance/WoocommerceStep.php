@@ -17,6 +17,12 @@ use Exception;
  */
 class WoocommerceStep extends GenericStep implements iConfigurePaymentMethod, iPrepareCheckout, iValidateSuccess
 {
+    public const SETTINGS_TABLE_NAME = 'wp_options';
+    public const OPTION_NAME = 'option_name';
+    public const OPTION_VALUE = 'option_value';
+    public const TRANSACTION_TABLE_NAME = 'wp_wirecard_payment_gateway_tx';
+    public const WIRECARD_OPTION_NAME = 'woocommerce_wirecard_ee_';
+
     /**
      * @var array
      */
@@ -61,15 +67,6 @@ class WoocommerceStep extends GenericStep implements iConfigurePaymentMethod, iP
     }
 
     /**
-     * @param array $mappedPaymentActions
-     */
-    public function setMappedPaymentActions($mappedPaymentActions)
-    {
-        $this->mappedPaymentActions = $mappedPaymentActions;
-    }
-
-
-    /**
      * @param $paymentMethod
      * @param $paymentAction
      * @return string
@@ -77,21 +74,17 @@ class WoocommerceStep extends GenericStep implements iConfigurePaymentMethod, iP
     private function buildPaymentMethodConfig($paymentMethod, $paymentAction): string
     {
         $array = [];
-        $gatewayConfiguration = PAYMENT_METHOD_CONFIG_FOLDER_PATH . $paymentMethod . 'Config.json';
+        $gatewayConfigurationFile = PAYMENT_METHOD_CONFIG_FOLDER_PATH . $paymentMethod . 'Config.json';
 
-        $gatewayConfigurationRow = $this->getMappedPaymentActions()[$paymentMethod]['config']['row'];
-
-        if (file_exists($gatewayConfiguration)) {
-            $jsonData = $this->getDataFromDataFile($gatewayConfiguration);
-            $gateway = $this->getGateway();
-            if (!empty($jsonData) && !empty($jsonData->$gateway)) {
-                $array = get_object_vars($jsonData->$gateway);
-                foreach (array_keys($array) as $key) {
-                    if ($key === $gatewayConfigurationRow) {
-                        $array[$key] = $paymentAction;
-                    }
-                }
-            }
+        $paymentActionConfigurationRow = $this->getMappedPaymentActions()[$paymentMethod]['config']['row'];
+        $gateway = $this->getGateway();
+        //process data in payment configuration file
+        $jsonData = $this->getDataFromDataFile($gatewayConfigurationFile);
+        if ($this->paymentMethodGatewayConfigExists($jsonData, $gateway)) {
+            //convert json object to array
+            $array = get_object_vars($jsonData->$gateway);
+            //go through array and substitute payment action
+            $array = $this->substituteArrayKey($array, $paymentActionConfigurationRow, $paymentAction);
         }
         return serialize($array);
     }
@@ -100,18 +93,21 @@ class WoocommerceStep extends GenericStep implements iConfigurePaymentMethod, iP
      * @param $paymentMethod
      * @param $paymentAction
      * @return mixed|void
+     * @throws Exception
      */
     public function configurePaymentMethodCredentials($paymentMethod, $paymentAction)
     {
-        try {
-            $this->haveInDatabase('wp_options',
-                ['option_value' => $this->buildPaymentMethodConfig($paymentMethod, $paymentAction)],
-                ['option_name' => 'woocommerce_wirecard_ee_' . strtolower($paymentMethod) . '_settings']);
-        } catch (Exception $e) {
-            $this->updateInDatabase(
-                'wp_options',
-                ['option_value' => $this->buildPaymentMethodConfig($paymentMethod, $paymentAction)],
-                ['option_name' => 'woocommerce_wirecard_ee_' . strtolower($paymentMethod) . '_settings']
+
+        $optionName = self::WIRECARD_OPTION_NAME . strtolower($paymentMethod) . '_settings';
+        $optionValue = $this->buildPaymentMethodConfig($paymentMethod, $paymentAction);
+
+        if (!$this->grabFromDatabase(self::SETTINGS_TABLE_NAME, self::OPTION_NAME, [self::OPTION_NAME => $optionName])) {
+            $this->haveInDatabase(self::SETTINGS_TABLE_NAME, [self::OPTION_NAME => $optionName,
+                self::OPTION_VALUE => $optionValue]);
+        } else {
+            $this->updateInDatabase(self::SETTINGS_TABLE_NAME,
+                [self::OPTION_VALUE => $this->buildPaymentMethodConfig($paymentMethod, $paymentAction)],
+                [self::OPTION_NAME => $optionName]
             );
         }
     }
@@ -127,11 +123,19 @@ class WoocommerceStep extends GenericStep implements iConfigurePaymentMethod, iP
     }
 
     /**
-     *
+     * @param $paymentMethod
+     * @param $paymentAction
      */
-    public function validateTransactionInDatabase()
+    public function validateTransactionInDatabase($paymentMethod, $paymentAction)
     {
-        // TODO: Implement validateTransactionInDatabase() method.
+        $this->seeInDatabase(
+            self::TRANSACTION_TABLE_NAME,
+            ['transaction_type' => $this->mappedPaymentActions[$paymentMethod]['tx_table'][$paymentAction]]
+        );
+        //check that last transaction in the table is the one under test
+        $transactionTypes = $this->getColumnFromDatabaseNoCriteria(self::TRANSACTION_TABLE_NAME, 'transaction_type');
+        $this->assertEquals(end($transactionTypes), $this->mappedPaymentActions[$paymentMethod]['tx_table'][$paymentAction]);
+
     }
 
     //add needed items to the basket
