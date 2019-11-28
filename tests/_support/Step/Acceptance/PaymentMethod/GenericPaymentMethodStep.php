@@ -1,12 +1,13 @@
 <?php
 
 
-namespace Step\Acceptance;
+namespace Step\Acceptance\PaymentMethod;
 
 
 use Codeception\Scenario;
 use Helper\Config\PaymentMethod\CreditCardConfig;
 use Helper\Config\PaymentMethod\PayPalConfig;
+use Step\Acceptance\GenericStep;
 
 class GenericPaymentMethodStep extends GenericStep
 {
@@ -19,7 +20,6 @@ class GenericPaymentMethodStep extends GenericStep
     /**
      * GenericStep constructor.
      * @param Scenario $scenario
-     * @param string $type
      */
     public function __construct(Scenario $scenario)
     {

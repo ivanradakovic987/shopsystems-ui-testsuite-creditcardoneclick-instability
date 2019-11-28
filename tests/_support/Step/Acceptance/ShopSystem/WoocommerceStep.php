@@ -6,7 +6,7 @@ namespace Step\Acceptance\ShopSystem;
  * Class WoocommerceActor
  * @package Helper\Actor
  */
-use Step\Acceptance\GenericShopSystemStep;
+
 use Step\Acceptance\iConfigurePaymentMethod;
 use Step\Acceptance\iPrepareCheckout;
 use Step\Acceptance\iValidateSuccess;
@@ -18,13 +18,37 @@ use Exception;
  */
 class WoocommerceStep extends GenericShopSystemStep implements iConfigurePaymentMethod, iPrepareCheckout, iValidateSuccess
 {
+    /**
+     *
+     */
     public const STEP_NAME = 'woocommerce';
+    /**
+     *
+     */
     public const SETTINGS_TABLE_NAME = 'wp_options';
+    /**
+     *
+     */
     public const NAME_COLUMN_NAME = 'option_name';
+    /**
+     *
+     */
     public const VALUE_COLUMN_NAME = 'option_value';
+    /**
+     *
+     */
     public const TRANSACTION_TABLE_NAME = 'wp_wirecard_payment_gateway_tx';
+    /**
+     *
+     */
     public const WIRECARD_OPTION_NAME = 'woocommerce_wirecard_ee_';
+    /**
+     *
+     */
     public const CURRENCY_OPTION_NAME = 'woocommerce_currency';
+    /**
+     *
+     */
     public const DEFAULT_COUNTRY_OPTION_NAME = 'woocommerce_default_country';
 
     /**

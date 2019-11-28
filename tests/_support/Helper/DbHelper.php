@@ -1,20 +1,13 @@
 <?php
-/**
- * Shop System Extensions:
- * - Terms of Use can be found at:
- * https://github.com/wirecard/prestashop-ee/blob/master/_TERMS_OF_USE
- * - License can be found under:
- * https://github.com/wirecard/prestashop-ee/blob/master/LICENSE
- */
 
 namespace Helper;
 
 //namespace Codeception\Module;
+use Codeception\Exception\ModuleException;
 
 /**
  * Additional methods for DB module
  */
-
 class DbHelper extends \Codeception\Module
 {
 
@@ -24,9 +17,10 @@ class DbHelper extends \Codeception\Module
      * @param string $column
      * @return array
      *
+     * @throws ModuleException
      * @since 2.0.1
      */
-    public function getColumnFromDatabaseNoCriteria($table, $column)
+    public function getColumnFromDatabaseNoCriteria($table, $column): array
     {
         $dbh = $this->getModule('Db')->dbh;
         $query = "select %s from %s";

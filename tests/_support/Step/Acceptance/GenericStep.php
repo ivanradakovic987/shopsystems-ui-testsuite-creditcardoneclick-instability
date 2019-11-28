@@ -18,10 +18,25 @@ use Helper\Config\PaymentMethod\PayPalConfig;
  */
 class GenericStep extends \AcceptanceTester
 {
+    /**
+     *
+     */
     public const SETTINGS_TABLE_NAME = '';
+    /**
+     *
+     */
     public const NAME_COLUMN_NAME = '';
+    /**
+     *
+     */
     public const VALUE_COLUMN_NAME = '';
+    /**
+     *
+     */
     public const TRANSACTION_TABLE_NAME = '';
+    /**
+     *
+     */
     public const WIRECARD_OPTION_NAME = '';
 
     /**

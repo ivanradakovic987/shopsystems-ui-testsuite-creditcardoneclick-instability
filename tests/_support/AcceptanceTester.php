@@ -1,7 +1,11 @@
 <?php
 
 
+use Codeception\Actor;
 use Codeception\Scenario;
+use Step\Acceptance\PaymentMethod\CreditCardStep;
+use Step\Acceptance\ShopSystem\PrestashopStep;
+use Step\Acceptance\ShopSystem\WoocommerceStep;
 
 /**
  * Inherited Methods
@@ -67,12 +71,12 @@ define('PAY_PAL', 'payPal');
 /**
  * Class AcceptanceTester
  */
-class AcceptanceTester extends \Codeception\Actor
+class AcceptanceTester extends Actor
 {
     use _generated\AcceptanceTesterActions;
 
     /**
-     * @var \Codeception\Actor|\Step\Acceptance\PrestashopStep|\Step\Acceptance\WoocommerceStep
+     * @var Actor|PrestashopStep|WoocommerceStep
      */
     private $shopInstance;
 
@@ -82,7 +86,7 @@ class AcceptanceTester extends \Codeception\Actor
     private $gateway;
 
     /**
-     * @var \Codeception\Actor|\Step\Acceptance\CreditCardStep|
+     * @var Actor|CreditCardStep|
      */
     private $paymentMethod;
 
@@ -117,7 +121,7 @@ class AcceptanceTester extends \Codeception\Actor
 
 
     /**
-     * @return \Codeception\Actor|\Helper\Actor\WoocommerceActor|PrestashopActor
+     * @return Actor|PrestashopStep|WoocommerceStep
      */
     private function getShopInstance()
     {
@@ -125,7 +129,7 @@ class AcceptanceTester extends \Codeception\Actor
     }
 
     /**
-     * @return \Codeception\Actor|\Helper\
+     * @return Actor|CreditCardStep|
      */
     public function getPaymentMethod()
     {
@@ -182,6 +186,7 @@ class AcceptanceTester extends \Codeception\Actor
      * @Given I activate :paymentMethod payment action :paymentAction in configuration
      * @param $paymentMethod
      * @param $paymentAction
+     * @throws Exception
      */
     public function iActivatePaymentActionInConfiguration($paymentMethod, $paymentAction): void
     {
@@ -210,6 +215,7 @@ class AcceptanceTester extends \Codeception\Actor
     /**
      * @Then I start :paymentMethod payment
      * @param $paymentMethod
+     * @throws Exception
      */
     public function iStartPayment($paymentMethod): void
     {
@@ -220,14 +226,12 @@ class AcceptanceTester extends \Codeception\Actor
     /**
      * @Given I perform :paymentMethod payment in the shop
      * @param $paymentMethod
+     * @throws Exception
      */
     public function iPerformPaymentInTheShop($paymentMethod): void
     {
         $this->selectPaymentMethod($paymentMethod);
         $this->getPaymentMethod()->performPaymentActionsInTheShop();
-        //in different shops defferent actions are required
-        //sometimes it's just submitting a form
-        //sometimes you need to check "Agree with Terms and conditions"
         $this->getShopInstance()->proceedWithPayment();
     }
 
@@ -249,13 +253,13 @@ class AcceptanceTester extends \Codeception\Actor
 
     /**
      * @Then I see :paymentMethod transaction type :paymentAction in transaction table
+     * @param $paymentMethod
+     * @param $paymentAction
      */
     public function iSeeTransactionTypeInTransactionTable($paymentMethod, $paymentAction): void
     {
         $this->getShopInstance()->validateTransactionInDatabase($paymentMethod, $paymentAction);
     }
-
-
 
 
 }

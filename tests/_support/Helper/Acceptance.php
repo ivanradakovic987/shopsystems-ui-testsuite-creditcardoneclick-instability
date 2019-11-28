@@ -1,11 +1,12 @@
 <?php
+
 namespace Helper;
 
 // here you can define custom actions
 // all public methods declared in helper class will be available in $I
 use phpDocumentor\Reflection\Types\Array_;
 
-define( 'CONFIG_FILE', 'config.json' );
+define('CONFIG_FILE', 'config.json');
 
 class Acceptance extends \Codeception\Module
 {
@@ -19,9 +20,9 @@ class Acceptance extends \Codeception\Module
     {
         // decode the JSON feed
         $json_data = json_decode(file_get_contents($fileName));
-        if (! $json_data) {
+        if (!$json_data) {
             $error = error_get_last();
-            echo 'Failed to get data from '. $fileName .'. Error was: ' . $error['message'];
+            echo 'Failed to get data from ' . $fileName . '. Error was: ' . $error['message'];
         } else {
             return $json_data;
         }

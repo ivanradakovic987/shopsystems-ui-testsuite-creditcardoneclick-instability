@@ -46,6 +46,7 @@ class CustomerConfig
 
     /**
      * CustomerConfig constructor.
+     * @param $customerData
      */
     public function __construct($customerData)
     {

@@ -2,26 +2,50 @@
 
 namespace Step\Acceptance\ShopSystem;
 
-use Step\Acceptance\GenericShopSystemStep;
 use Step\Acceptance\iConfigurePaymentMethod;
 use Step\Acceptance\iPrepareCheckout;
 use Step\Acceptance\iValidateSuccess;
 
 use Exception;
+
 /**
  * Class PrestashopActor
  * @package Helper\Actor
  */
 class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentMethod, iPrepareCheckout, iValidateSuccess
 {
+    /**
+     *
+     */
     public const STEP_NAME = 'prestashop';
+    /**
+     *
+     */
     public const SETTINGS_TABLE_NAME = 'ps_configuration';
+    /**
+     *
+     */
     public const NAME_COLUMN_NAME = 'name';
+    /**
+     *
+     */
     public const VALUE_COLUMN_NAME = 'value';
+    /**
+     *
+     */
     public const PAYMENT_METHOD_PREFIX = 'WIRECARD_PAYMENT_GATEWAY_';
+    /**
+     *
+     */
     public const TRANSACTION_TABLE_NAME = 'wp_wirecard_payment_gateway_tx';
+    /**
+     *
+     */
     public const WIRECARD_OPTION_NAME = 'woocommerce_wirecard_ee_';
 
+    /**
+     * @var array
+     */
     private $mappedPaymentActions = [
         'CreditCard' => [
             'config' => [
@@ -67,10 +91,14 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
 //        }
     }
 
+    /**
+     * @param $currency
+     * @param $country
+     */
     public function configureShopSystemCurrencyAndCountry($currency, $country): void
-{
- //TODO: remove this or redefine
-}
+    {
+        //TODO: remove this or redefine
+    }
 
     /**
      *
@@ -123,6 +151,9 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
         $this->fillBillingDetails();
     }
 
+    /**
+     *
+     */
     public function fillBillingDetails()
     {
         //if the first field is there, means the others too, so no need to prepare (it's faster)

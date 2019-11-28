@@ -1,11 +1,12 @@
 <?php
 
 
-namespace Step\Acceptance;
+namespace Step\Acceptance\ShopSystem;
 
 
 use Codeception\Scenario;
 use Helper\Config\Customer\CustomerConfig;
+use Step\Acceptance\GenericStep;
 
 /**
  * Class GenericShopSystemStep
@@ -50,7 +51,6 @@ class GenericShopSystemStep extends GenericStep
     /**
      * GenericStep constructor.
      * @param Scenario $scenario
-     * @param string $type
      */
     public function __construct(Scenario $scenario)
     {

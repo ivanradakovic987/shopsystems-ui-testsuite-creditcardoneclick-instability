@@ -2,14 +2,23 @@
 
 namespace Step\Acceptance\PaymentMethod;
 
-use Step\Acceptance\GenericPaymentMethodStep;
 use Step\Acceptance\iPerformPayment;
 use Exception;
 
+/**
+ * Class CreditCardStep
+ * @package Step\Acceptance\PaymentMethod
+ */
 class CreditCardStep extends GenericPaymentMethodStep implements iPerformPayment
 {
+    /**
+     *
+     */
     public const STEP_NAME = 'CreditCard';
 
+    /**
+     * @var string
+     */
     private $wirecardFrameSelector = '#wirecard-integrated-payment-page-frame';
 
     /**
