@@ -1,6 +1,11 @@
 <?php
 
-namespace Step\Acceptance;
+namespace Step\Acceptance\ShopSystem;
+
+use Step\Acceptance\GenericShopSystemStep;
+use Step\Acceptance\iConfigurePaymentMethod;
+use Step\Acceptance\iPrepareCheckout;
+use Step\Acceptance\iValidateSuccess;
 
 use Exception;
 /**
@@ -54,12 +59,18 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
      */
     public function configurePaymentMethodCredentials($paymentMethod, $paymentAction)
     {
-//        $db_config = $this->buildPaymentMethodConfig($paymentMethod, $paymentAction, $this->getMappedPaymentActions(), $this->getGateway());
+//TODO: implement correct database
+        //        $db_config = $this->buildPaymentMethodConfig($paymentMethod, $paymentAction, $this->getMappedPaymentActions(), $this->getGateway());
 //        foreach ($db_config as $name => $value) {
 //            $fullName = self::PAYMENT_METHOD_PREFIX . strtoupper($name);
 //            $this->putValueInDatabase($fullName, $value);
 //        }
     }
+
+    public function configureShopSystemCurrencyAndCountry($currency, $country): void
+{
+ //TODO: remove this or redefine
+}
 
     /**
      *
@@ -70,7 +81,8 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
     }
 
     /**
-     *
+     * @param $paymentMethod
+     * @param $paymentAction
      */
     public function validateTransactionInDatabase($paymentMethod, $paymentAction)
     {
@@ -97,18 +109,41 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
 
     /**
      * @return mixed
+     * @throws Exception
      */
     public function fillCustomerDetails()
     {
-        // TODO: Implement fillCustomerDetails() method.
+        $this->selectOption($this->getLocator()->checkout->social_title, '1');
+        $this->preparedFillField($this->getLocator()->checkout->first_name, $this->getCustomer()->getFirstName());
+        //if the first field is there, means the others too, so no need to prepare (it's faster)
+        $this->fillField($this->getLocator()->checkout->last_name, $this->getCustomer()->getLastName());
+        $this->fillField($this->getLocator()->checkout->email_address, $this->getCustomer()->getEmailAddress());
+        $this->checkOption($this->getLocator()->checkout->agree_to_terms_and_conditions_and_privacy_policy);
+        $this->click($this->getLocator()->checkout->continue);
+        $this->fillBillingDetails();
+    }
+
+    public function fillBillingDetails()
+    {
+        //if the first field is there, means the others too, so no need to prepare (it's faster)
+        $this->fillField($this->getLocator()->checkout->street_address, $this->getCustomer()->getStreetAddress());
+        $this->fillField($this->getLocator()->checkout->town, $this->getCustomer()->getTown());
+        $this->fillField($this->getLocator()->checkout->post_code, $this->getCustomer()->getPostCode());
+        $this->fillField($this->getLocator()->checkout->phone, $this->getCustomer()->getPhone());
+        $this->click($this->getLocator()->checkout->continue2);
+        $this->click($this->getLocator()->checkout->continue3);
     }
 
     /**
+     * @param $paymentMethod
      * @return mixed
      */
-    public function startPayment()
+    public function startPayment($paymentMethod)
+
     {
-        // TODO: Implement startPayment() method.
+        $paymentMethodName = strtolower($paymentMethod) . '_name';
+        $paymentMethodForm = strtolower($paymentMethod) . '_form';
+        $this->selectOption($this->getLocator()->checkout->$paymentMethodForm, $this->getLocator()->checkout->$paymentMethodName);
     }
 
     /**
@@ -116,6 +151,7 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
      */
     public function proceedWithPayment()
     {
-        // TODO: Implement proceedWithPayment() method.
+        $this->checkOption($this->getLocator()->checkout->agree_with_terms_of_service);
+        $this->click($this->getLocator()->checkout->order_with_obligation_to_pay);
     }
 }

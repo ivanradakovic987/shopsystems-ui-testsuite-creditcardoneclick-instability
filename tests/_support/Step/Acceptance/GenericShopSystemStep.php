@@ -6,24 +6,46 @@ namespace Step\Acceptance;
 
 use Codeception\Scenario;
 use Helper\Config\Customer\CustomerConfig;
-use Helper\Config\PaymentMethod\CreditCardConfig;
-use Helper\Config\PaymentMethod\PayPalConfig;
 
+/**
+ * Class GenericShopSystemStep
+ * @package Step\Acceptance
+ */
 class GenericShopSystemStep extends GenericStep
 {
+    /**
+     *
+     */
     public const SETTINGS_TABLE_NAME = '';
+    /**
+     *
+     */
     public const NAME_COLUMN_NAME = '';
+    /**
+     *
+     */
     public const VALUE_COLUMN_NAME = '';
+    /**
+     *
+     */
     public const TRANSACTION_TABLE_NAME = '';
+    /**
+     *
+     */
     public const WIRECARD_OPTION_NAME = '';
+    /**
+     *
+     */
     public const CURRENCY_OPTION_NAME = '';
+    /**
+     *
+     */
     public const DEFAULT_COUNTRY_OPTION_NAME = '';
 
     /**
      * @var CustomerConfig;
      */
     private $customer;
-
 
     /**
      * GenericStep constructor.
@@ -34,6 +56,15 @@ class GenericShopSystemStep extends GenericStep
     {
         parent::__construct($scenario);
         $this->setLocator($this->getDataFromDataFile(SHOP_SYSTEM_LOCATOR_FOLDER_PATH . static::STEP_NAME . DIRECTORY_SEPARATOR . static::STEP_NAME . 'Locators.json'));
+    }
+
+    /**
+     * @param $name
+     * @return mixed
+     */
+    public function existsInDatabase($name)
+    {
+        return $this->grabFromDatabase(static::SETTINGS_TABLE_NAME, static::NAME_COLUMN_NAME, [static::NAME_COLUMN_NAME => $name]);
     }
 
     /**
@@ -64,7 +95,7 @@ class GenericShopSystemStep extends GenericStep
      */
     public function putValueInDatabase($name, $value): void
     {
-        if (!$this->grabFromDatabase(static::SETTINGS_TABLE_NAME, static::NAME_COLUMN_NAME, [static::NAME_COLUMN_NAME => $name])) {
+        if (!$this->existsInDatabase($name)) {
             $this->haveInDatabase(static::SETTINGS_TABLE_NAME, [static::NAME_COLUMN_NAME => $name,
                 static::VALUE_COLUMN_NAME => $value]);
         } else {
@@ -82,7 +113,7 @@ class GenericShopSystemStep extends GenericStep
     {
         $this->amOnPage($this->getLocator()->page->product);
 
-        $amount = intdiv((int)$purchaseSum, (int)$this->getLocator()->product->price);
+        $amount = intdiv((int)$purchaseSum, (int)$this->getLocator()->product->price) + 1;
         //add to basket goods to fulfill desired purchase amount
         $this->fillField($this->getLocator()->product->quantity, $amount);
         $this->click($this->getLocator()->product->add_to_cart);

@@ -11,7 +11,7 @@ Feature: CreditCard3DSAuthorizationHappyPath
     And I prepare checkout with purchase sum "100" in shopsystem
     Then I see "Wirecard Credit Card"
 # in some shop systems there is a need to press the button
-    And I start the payment
+    And I start "CreditCard" payment
 
   @patch @minor @major
   Scenario: authorize

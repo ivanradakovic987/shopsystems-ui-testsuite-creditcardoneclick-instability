@@ -5,7 +5,6 @@ namespace Step\Acceptance;
 
 
 use Codeception\Scenario;
-use Helper\Config\Customer\CustomerConfig;
 use Helper\Config\PaymentMethod\CreditCardConfig;
 use Helper\Config\PaymentMethod\PayPalConfig;
 

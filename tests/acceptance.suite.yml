@@ -15,8 +15,8 @@ modules:
         - \Helper\Acceptance
         - \Helper\DbHelper
         - Asserts
-        - Db:
-            dsn: 'mysql:host=%DB_HOST%:%DB_PORT%;dbname=%DB_NAME%'
-            user: '%DB_USER%'
-            password: '%DB_PASSWORD%'
-            waitlock: 10
+#        - Db:
+#            dsn: 'mysql:host=%DB_HOST%:%DB_PORT%;dbname=%DB_NAME%'
+#            user: '%DB_USER%'
+#            password: '%DB_PASSWORD%'
+#            waitlock: 10

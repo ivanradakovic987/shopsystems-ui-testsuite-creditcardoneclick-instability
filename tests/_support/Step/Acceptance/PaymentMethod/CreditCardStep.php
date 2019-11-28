@@ -1,8 +1,9 @@
 <?php
 
-namespace Step\Acceptance;
+namespace Step\Acceptance\PaymentMethod;
 
-use Codeception\Scenario;
+use Step\Acceptance\GenericPaymentMethodStep;
+use Step\Acceptance\iPerformPayment;
 use Exception;
 
 class CreditCardStep extends GenericPaymentMethodStep implements iPerformPayment
@@ -44,7 +45,7 @@ class CreditCardStep extends GenericPaymentMethodStep implements iPerformPayment
         // Switch to Credit Card UI frame
 
         //wait for Javascript to load iframe and it's contents
-        $this->wait(2);
+        $this->wait(5);
         //get wirecard seemless frame name
         $wirecardFrameName = $this->executeJS('return document.querySelector("#' . $this->getLocator()->frame . '").getAttribute("name")');
         $this->switchToIFrame($wirecardFrameName);

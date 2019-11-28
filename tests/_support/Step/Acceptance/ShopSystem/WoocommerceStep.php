@@ -1,14 +1,15 @@
 <?php
 
-namespace Step\Acceptance;
+namespace Step\Acceptance\ShopSystem;
 
 /**
  * Class WoocommerceActor
  * @package Helper\Actor
  */
-
-use Codeception\Module\Db as Db;
-use Codeception\Scenario;
+use Step\Acceptance\GenericShopSystemStep;
+use Step\Acceptance\iConfigurePaymentMethod;
+use Step\Acceptance\iPrepareCheckout;
+use Step\Acceptance\iValidateSuccess;
 use Exception;
 
 /**
@@ -124,6 +125,7 @@ class WoocommerceStep extends GenericShopSystemStep implements iConfigurePayment
      */
     public function fillCustomerDetails()
     {
+        //woocommerce is dynamically loading possible payment methods while filling form, so we need to make sure all elements are fillable or clickable
         $this->preparedFillField($this->getLocator()->checkout->first_name, $this->getCustomer()->getFirstName());
         $this->preparedFillField($this->getLocator()->checkout->last_name, $this->getCustomer()->getLastName());
         $this->preparedClick($this->getLocator()->checkout->country);
@@ -138,15 +140,17 @@ class WoocommerceStep extends GenericShopSystemStep implements iConfigurePayment
 
 
     /**
+     * @param string $paymentMethod
      * @return mixed
      * @throws Exception
      */
-    public function startPayment()
+    public function startPayment($paymentMethod)
     {
         $this->wait(2);
         $this->preparedClick($this->getLocator()->checkout->place_order);
-        $this->waitForElementVisible($this->getLocator()->checkout->credit_card_form);
-        $this->scrollTo($this->getLocator()->checkout->credit_card_form);
+        $paymentMethodForm = strtolower($paymentMethod) . '_form';
+        $this->waitForElementVisible($this->getLocator()->checkout->$paymentMethodForm);
+        $this->scrollTo($this->getLocator()->$paymentMethodForm);
     }
 
     /**

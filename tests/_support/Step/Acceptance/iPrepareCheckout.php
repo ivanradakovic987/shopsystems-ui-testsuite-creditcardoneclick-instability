@@ -29,9 +29,10 @@ interface iPrepareCheckout
     //in some shopsystems there is a need to press "pay" button to start payment
 
     /**
+     * @param string $paymentMethod
      * @return mixed
      */
-    public function startPayment();
+    public function startPayment($paymentMethod);
 
     /**
      * @return mixed

@@ -22,7 +22,8 @@
     "phone": "//*[@id='billing_phone']",
     "email_address": "//*[@id='billing_email']",
     "place_order": "//*[@id='place_order']",
-    "credit_card_form" : "//*[@id='wc_payment_method_wirecard_new_credit_card']"
+    "creditcard_name" : "Wirecard Credit Card",
+    "creditcard_form" : "//*[@id='wc_payment_method_wirecard_new_credit_card']"
   },
   "order_pay": {
     "pay": "//*[@id='seamless-submit']"

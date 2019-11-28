@@ -154,8 +154,8 @@ class AcceptanceTester extends \Codeception\Actor
     private function selectShopInstance(): void
     {
         $shopInstanceMap = [
-            'prestashop' => Step\Acceptance\PrestashopStep::class,
-            'woocommerce' => Step\Acceptance\WoocommerceStep::class
+            'prestashop' => Step\Acceptance\ShopSystem\PrestashopStep::class,
+            'woocommerce' => Step\Acceptance\ShopSystem\WoocommerceStep::class
         ];
         $usedShopEnvVariable = getenv('SHOP_SYSTEM');
         if ($usedShopEnvVariable) {
@@ -169,7 +169,7 @@ class AcceptanceTester extends \Codeception\Actor
     private function selectPaymentMethod($paymentMethod): void
     {
         $paymentMethodInstanceMap = [
-            'CreditCard' => Step\Acceptance\CreditCardStep::class
+            'CreditCard' => Step\Acceptance\PaymentMethod\CreditCardStep::class
             //'PayPal' => Step\Acceptance\PayPalStep::class
         ];
         $this->paymentMethod = new $paymentMethodInstanceMap[$paymentMethod]($this->getScenario());
@@ -208,12 +208,14 @@ class AcceptanceTester extends \Codeception\Actor
     }
 
     /**
-     * @Then I start the payment
+     * @Then I start :paymentMethod payment
+     * @param $paymentMethod
      */
-    public function iStartThePayment(): void
+    public function iStartPayment($paymentMethod): void
     {
-        $this->getShopInstance()->startPayment();
+        $this->getShopInstance()->startPayment($paymentMethod);
     }
+
 
     /**
      * @Given I perform :paymentMethod payment in the shop
