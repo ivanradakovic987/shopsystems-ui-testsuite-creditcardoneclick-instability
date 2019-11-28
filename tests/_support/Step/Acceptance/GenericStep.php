@@ -4,6 +4,7 @@
 namespace Step\Acceptance;
 
 
+use Codeception\Scenario;
 use Exception;
 
 use Helper\Config\Customer\CustomerConfig;
@@ -17,10 +18,11 @@ use Helper\Config\PaymentMethod\PayPalConfig;
  */
 class GenericStep extends \AcceptanceTester
 {
-    /**
-     * @var string
-     */
-    private $stepName = '';
+    public const SETTINGS_TABLE_NAME = '';
+    public const NAME_COLUMN_NAME = '';
+    public const VALUE_COLUMN_NAME = '';
+    public const TRANSACTION_TABLE_NAME = '';
+    public const WIRECARD_OPTION_NAME = '';
 
     /**
      * @var
@@ -38,42 +40,11 @@ class GenericStep extends \AcceptanceTester
     private $customer;
 
     /**
-     * @var CreditCardConfig;
-     */
-    private $creditCard;
-
-
-    /**
-     * @return CreditCardConfig
-     */
-    public function getCreditCard(): CreditCardConfig
-    {
-        return $this->creditCard;
-    }
-
-
-    /**
      * @param mixed $locator
      */
     public function setLocator($locator): void
     {
         $this->locator = $locator;
-    }
-
-    /**
-     * @return string
-     */
-    public function getStepName(): string
-    {
-        return $this->stepName;
-    }
-
-    /**
-     * @param string $stepName
-     */
-    public function setStepName(string $stepName): void
-    {
-        $this->stepName = $stepName;
     }
 
     /**
@@ -91,15 +62,6 @@ class GenericStep extends \AcceptanceTester
     {
         $this->gateway = $gateway;
     }
-
-    /**
-     * @return mixed
-     */
-    public function getCustomer()
-    {
-        return $this->customer;
-    }
-
 
     /**
      * @param $type

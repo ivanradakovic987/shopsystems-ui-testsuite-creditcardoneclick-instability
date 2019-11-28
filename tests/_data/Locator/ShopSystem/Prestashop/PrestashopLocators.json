@@ -1,9 +1,15 @@
 {
-"product" : {
-  "quantity" : "",
-  "add_to_cart": "",
-  "cart": ""
-},
+  "page": {
+    "product": "index.php?id_product=1&id_product_attribute=1&rewrite=hummingbird-printed-t-shirt&controller=product#/1-size-s/8-color-white",
+    "checkout": "/checkout",
+    "order_received": "order-received"
+  },
+  "product": {
+    "price": "22.94",
+    "quantity": "//*[@id='quantity_wanted']",
+    "add_to_cart": "//*[@class='btn btn-primary add-to-cart']",
+    "cart": "//*[@class='material-icons shopping-cart']"
+  },
   "checkout": {
     "name": "",
     "last_name": ""

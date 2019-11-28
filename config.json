@@ -1,6 +1,8 @@
 {
   "gateway" : "API-TEST",
   "customer_data": "CustomerData.json",
+  "currency": "EUR",
+  "default_country": "AT",
   "creditcard_data": "CreditCardData.json",
   "paypal_data": "PayPalData.json"
 }

@@ -5,16 +5,11 @@ namespace Step\Acceptance;
 use Codeception\Scenario;
 use Exception;
 
-class CreditCardStep extends GenericStep implements iPerformPayment
+class CreditCardStep extends GenericPaymentMethodStep implements iPerformPayment
 {
-    private $wirecardFrameSelector = '#wirecard-integrated-payment-page-frame';
+    public const STEP_NAME = 'CreditCard';
 
-    public function __construct(Scenario $scenario)
-    {
-        parent::__construct($scenario);
-        $this->setStepName('CreditCard');
-        $this->setLocator($this->getDataFromDataFile(PAYMENT_METHOD_LOCATOR_FOLDER_PATH . $this->getStepName() . DIRECTORY_SEPARATOR . $this->getStepName() . 'Locators.json'));
-    }
+    private $wirecardFrameSelector = '#wirecard-integrated-payment-page-frame';
 
     /**
      * @return mixed

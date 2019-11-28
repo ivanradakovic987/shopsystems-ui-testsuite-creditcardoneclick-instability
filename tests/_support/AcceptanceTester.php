@@ -145,6 +145,7 @@ class AcceptanceTester extends \Codeception\Actor
         $this->getShopInstance()->setGateway($this->getGateway());
         //tell which customer data to use and initialize customer config
         $this->getShopInstance()->setConfigObject(CUSTOMER, $this->configData->customer_data);
+        $this->getShopInstance()->configureShopSystemCurrencyAndCountry($this->configData->currency, $this->configData->default_country);
     }
 
     /**
@@ -216,8 +217,9 @@ class AcceptanceTester extends \Codeception\Actor
 
     /**
      * @Given I perform :paymentMethod payment in the shop
+     * @param $paymentMethod
      */
-    public function iPerformPaymentInTheShop($paymentMethod)
+    public function iPerformPaymentInTheShop($paymentMethod): void
     {
         $this->selectPaymentMethod($paymentMethod);
         $this->getPaymentMethod()->performPaymentActionsInTheShop();
@@ -230,7 +232,7 @@ class AcceptanceTester extends \Codeception\Actor
     /**
      * @When I go through external flow
      */
-    public function iGoThroughExternalFlow()
+    public function iGoThroughExternalFlow(): void
     {
         $this->getPaymentMethod()->goThroughExternalFlow();
     }
@@ -238,7 +240,7 @@ class AcceptanceTester extends \Codeception\Actor
     /**
      * @Then I see successful payment
      */
-    public function iSeeSuccessfulPayment()
+    public function iSeeSuccessfulPayment(): void
     {
         $this->getShopInstance()->validateSuccessPage();
     }
@@ -246,7 +248,7 @@ class AcceptanceTester extends \Codeception\Actor
     /**
      * @Then I see :paymentMethod transaction type :paymentAction in transaction table
      */
-    public function iSeeTransactionTypeInTransactionTable($paymentMethod, $paymentAction)
+    public function iSeeTransactionTypeInTransactionTable($paymentMethod, $paymentAction): void
     {
         $this->getShopInstance()->validateTransactionInDatabase($paymentMethod, $paymentAction);
     }

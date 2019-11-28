@@ -6,7 +6,7 @@
   },
   "product": {
     "price": "20",
-    "quantity": "",
+    "quantity": "//*[@class='input-text qty text']",
     "add_to_cart": "//*[@name='add-to-cart']",
     "cart": ""
   },
