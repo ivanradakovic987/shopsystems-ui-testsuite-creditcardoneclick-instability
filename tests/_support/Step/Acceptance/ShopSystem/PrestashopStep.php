@@ -86,45 +86,6 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
         'cc_vault_enabled' => 'ccvault_enabled'
     ];
 
-    /**
-     * @var array
-     */
-    private $mappedCurrencyValues = [
-        'EUR' => '1'
-    ];
-
-//    /**
-//     * @return Actor|PrestashopStep|WoocommerceStep
-//     */
-//    public function getShopInstance()
-//    {
-//        return $this->shopInstance;
-//    }
-
-    /**
-     * @return array
-     */
-    public function getMappedCurrencyValues(): array
-    {
-        return $this->mappedCurrencyValues;
-    }
-
-    /**
-     * @return array
-     */
-    public function getMappedDefaultCountryValues(): array
-    {
-        return $this->mappedDefaultCountryValues;
-    }
-
-    /**
-     * @var array
-     */
-    private $mappedDefaultCountryValues = [
-        'AT' => '2',
-        'DE' => '1',
-        'FR' => '8'
-    ];
 
     /**
      * @return array
@@ -198,7 +159,7 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
         $this->fillField($this->getLocator()->checkout->town, $this->getCustomer()->getTown());
         $this->fillField($this->getLocator()->checkout->post_code, $this->getCustomer()->getPostCode());
         $this->fillField($this->getLocator()->checkout->phone, $this->getCustomer()->getPhone());
-        $this->pause();
+        $this->selectOption($this->getLocator()->checkout->country, $this->getCustomer()->getCountry());
         $this->click($this->getLocator()->checkout->continue2);
         $this->click($this->getLocator()->checkout->continue3);
     }
@@ -227,13 +188,17 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
     /**
      * @param $currency
      * @param $defaultCountry
+     * @throws Exception
      */
     public function configureShopSystemCurrencyAndCountry($currency, $defaultCountry): void
     {
         //in prestashop countries are taken from ps_currency table by numbers
         //in prestashop countries are taken from ps_country table by numbers
-        parent::configureShopSystemCurrencyAndCountry($this->getMappedCurrencyValues()[$currency],
-            $this->getMappedDefaultCountryValues()[$defaultCountry]);
+        $countryID = $this->grabFromDatabase('ps_country', 'id_country', ['iso_code' => $defaultCountry]);
+        $currencyID = $this->grabFromDatabase('ps_currency', 'id_currency', ['iso_code' => $currency]);
+        $this->updateInDatabase('ps_country', ['active' => '1'], ['iso_code' => $defaultCountry]);
+
+        parent::configureShopSystemCurrencyAndCountry($currencyID, $countryID);
     }
 
     /**
@@ -242,6 +207,7 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
      */
     public function validateTransactionInDatabase($paymentMethod, $paymentAction): void
     {
+        //TODO: implement db polling instead of waiting
         $this->wait(10);
         parent::validateTransactionInDatabase($paymentMethod, $paymentAction);
     }

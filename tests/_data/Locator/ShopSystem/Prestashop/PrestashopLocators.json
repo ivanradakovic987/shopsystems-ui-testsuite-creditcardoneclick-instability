@@ -14,7 +14,7 @@
     "social_title": "//*[@name='id_gender']",
     "first_name": "//*[@name='firstname']",
     "last_name": "//*[@name='lastname']",
-    "country": "//*[@id='select2-billing_country-container']",
+    "country": "//*[@name='id_country']",
     "country_entry": "//*[@class='select2-search__field']",
     "country_entry_selected": "//*[@class='select2-results']",
     "street_address": "//*[@name='address1']",
