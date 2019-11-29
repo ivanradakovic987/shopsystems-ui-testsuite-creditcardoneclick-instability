@@ -49,6 +49,18 @@ class GenericShopSystemStep extends GenericStep
     private $customer;
 
     /**
+     * @var array
+     */
+    private $mappedPaymentActions = [];
+
+    /**
+     * @return array
+     */
+    public function getMappedPaymentActions(): array
+    {
+        return $this->mappedPaymentActions;
+    }
+    /**
      * GenericStep constructor.
      * @param Scenario $scenario
      */
@@ -135,5 +147,31 @@ class GenericShopSystemStep extends GenericStep
     {
         $this->putValueInDatabase(static::CURRENCY_OPTION_NAME, $currency);
         $this->putValueInDatabase(static::DEFAULT_COUNTRY_OPTION_NAME, $defaultCountry);
+    }
+
+    /**
+     *
+     */
+    public function validateSuccessPage():void
+    {
+        $this->waitUntilPageLoaded($this->getLocator()->page->order_received);
+        $this->see($this->getLocator()->order_received->order_confirmed_message);
+    }
+
+
+    /**
+     * @param $paymentMethod
+     * @param $paymentAction
+     */
+    public function validateTransactionInDatabase($paymentMethod, $paymentAction): void
+    {
+        $this->seeInDatabase(
+            static::TRANSACTION_TABLE_NAME,
+            ['transaction_type' => $this->getMappedPaymentActions()[$paymentMethod]['tx_table'][$paymentAction]]
+        );
+        //check that last transaction in the table is the one under test
+        $transactionTypes = $this->getColumnFromDatabaseNoCriteria(static::TRANSACTION_TABLE_NAME, 'transaction_type');
+        $this->assertEquals(end($transactionTypes), $this->getMappedPaymentActions()[$paymentMethod]['tx_table'][$paymentAction]);
+
     }
 }

@@ -98,51 +98,6 @@ class WoocommerceStep extends GenericShopSystemStep implements iConfigurePayment
         $this->putValueInDatabase($optionName, $optionValue);
     }
 
-
-    /**
-     *
-     */
-    public function validateSuccessPage()
-    {
-        $this->waitUntilPageLoaded($this->getLocator()->page->order_received);
-        $this->see($this->getLocator()->order_received->order_confirmed_message);
-    }
-
-    /**
-     * @param $paymentMethod
-     * @param $paymentAction
-     */
-    public function validateTransactionInDatabase($paymentMethod, $paymentAction)
-    {
-        $this->seeInDatabase(
-            self::TRANSACTION_TABLE_NAME,
-            ['transaction_type' => $this->mappedPaymentActions[$paymentMethod]['tx_table'][$paymentAction]]
-        );
-        //check that last transaction in the table is the one under test
-        $transactionTypes = $this->getColumnFromDatabaseNoCriteria(self::TRANSACTION_TABLE_NAME, 'transaction_type');
-        $this->assertEquals(end($transactionTypes), $this->mappedPaymentActions[$paymentMethod]['tx_table'][$paymentAction]);
-
-    }
-
-    //add needed items to the basket
-
-    /**
-     * @param $purchaseSum
-     */
-    public function fillBasket($purchaseSum): void
-    {
-        parent::fillBasket($purchaseSum);
-    }
-
-
-    /**
-     * @return mixed
-     */
-    public function goToCheckout()
-    {
-        parent::goToCheckout();
-    }
-
     /**
      * @return mixed
      * @throws Exception
@@ -174,7 +129,7 @@ class WoocommerceStep extends GenericShopSystemStep implements iConfigurePayment
         $this->preparedClick($this->getLocator()->checkout->place_order);
         $paymentMethodForm = strtolower($paymentMethod) . '_form';
         $this->waitForElementVisible($this->getLocator()->checkout->$paymentMethodForm);
-        $this->scrollTo($this->getLocator()->$paymentMethodForm);
+        $this->scrollTo($this->getLocator()->checkout->$paymentMethodForm);
     }
 
     /**

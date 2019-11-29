@@ -36,6 +36,6 @@
     "pay": "//*[@id='seamless-submit']"
   },
   "order_received": {
-    "order_confirmed_message": "Order received"
+    "order_confirmed_message": "YOUR ORDER IS CONFIRMED"
   }
 }

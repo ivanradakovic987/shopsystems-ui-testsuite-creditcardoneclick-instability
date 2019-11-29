@@ -2,6 +2,7 @@
 
 namespace Step\Acceptance\ShopSystem;
 
+use Codeception\Actor;
 use Step\Acceptance\iConfigurePaymentMethod;
 use Step\Acceptance\iPrepareCheckout;
 use Step\Acceptance\iValidateSuccess;
@@ -37,11 +38,21 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
     /**
      *
      */
-    public const TRANSACTION_TABLE_NAME = 'wp_wirecard_payment_gateway_tx';
+    public const TRANSACTION_TABLE_NAME = 'ps_wirecard_payment_gateway_tx';
     /**
      *
      */
     public const WIRECARD_OPTION_NAME = 'woocommerce_wirecard_ee_';
+
+    /**
+     *
+     */
+    public const DEFAULT_COUNTRY_OPTION_NAME = 'PS_COUNTRY_DEFAULT';
+
+    /**
+     *
+     */
+    public const CURRENCY_OPTION_NAME = 'PS_CURRENCY_DEFAULT';
 
     /**
      * @var array
@@ -68,6 +79,62 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
     ];
 
     /**
+     * @var array
+     */
+    private $paymentMethodConfigurationNameExceptions =
+    [
+        'cc_vault_enabled' => 'ccvault_enabled'
+    ];
+
+    /**
+     * @var array
+     */
+    private $mappedCurrencyValues = [
+        'EUR' => '1'
+    ];
+
+//    /**
+//     * @return Actor|PrestashopStep|WoocommerceStep
+//     */
+//    public function getShopInstance()
+//    {
+//        return $this->shopInstance;
+//    }
+
+    /**
+     * @return array
+     */
+    public function getMappedCurrencyValues(): array
+    {
+        return $this->mappedCurrencyValues;
+    }
+
+    /**
+     * @return array
+     */
+    public function getMappedDefaultCountryValues(): array
+    {
+        return $this->mappedDefaultCountryValues;
+    }
+
+    /**
+     * @var array
+     */
+    private $mappedDefaultCountryValues = [
+        'AT' => '2',
+        'DE' => '1',
+        'FR' => '8'
+    ];
+
+    /**
+     * @return array
+     */
+    public function getPaymentMethodConfigurationNameExceptions(): array
+    {
+        return $this->paymentMethodConfigurationNameExceptions;
+    }
+
+    /**
      * @return array
      */
     public function getMappedPaymentActions(): array
@@ -83,38 +150,16 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
      */
     public function configurePaymentMethodCredentials($paymentMethod, $paymentAction)
     {
-//TODO: implement correct database
-        //        $db_config = $this->buildPaymentMethodConfig($paymentMethod, $paymentAction, $this->getMappedPaymentActions(), $this->getGateway());
-//        foreach ($db_config as $name => $value) {
-//            $fullName = self::PAYMENT_METHOD_PREFIX . strtoupper($name);
-//            $this->putValueInDatabase($fullName, $value);
-//        }
-    }
-
-    /**
-     * @param $currency
-     * @param $country
-     */
-    public function configureShopSystemCurrencyAndCountry($currency, $country): void
-    {
-        //TODO: remove this or redefine
-    }
-
-    /**
-     *
-     */
-    public function validateSuccessPage()
-    {
-        // TODO: Implement validateSuccessPage() method.
-    }
-
-    /**
-     * @param $paymentMethod
-     * @param $paymentAction
-     */
-    public function validateTransactionInDatabase($paymentMethod, $paymentAction)
-    {
-        // TODO: Implement validateTransactionInDatabase() method.
+        $db_config = $this->buildPaymentMethodConfig($paymentMethod, $paymentAction, $this->getMappedPaymentActions(), $this->getGateway());
+        foreach ($db_config as $name => $value) {
+            //some configuration options are different if different shops, this is handling the differences
+            if (array_key_exists($name, $this->getPaymentMethodConfigurationNameExceptions()))
+            {
+                $name = $this->getPaymentMethodConfigurationNameExceptions()[$name];
+            }
+            $fullName = self::PAYMENT_METHOD_PREFIX . strtoupper($paymentMethod) . '_' .  strtoupper($name);
+            $this->putValueInDatabase($fullName, $value);
+        }
     }
 
     /**
@@ -125,14 +170,6 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
     {
         parent::fillBasket($purchaseSum);
         $this->waitForText('Product successfully added to your shopping cart');
-    }
-
-    /**
-     * @return mixed
-     */
-    public function goToCheckout()
-    {
-        parent::goToCheckout();
     }
 
     /**
@@ -161,6 +198,7 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
         $this->fillField($this->getLocator()->checkout->town, $this->getCustomer()->getTown());
         $this->fillField($this->getLocator()->checkout->post_code, $this->getCustomer()->getPostCode());
         $this->fillField($this->getLocator()->checkout->phone, $this->getCustomer()->getPhone());
+        $this->pause();
         $this->click($this->getLocator()->checkout->continue2);
         $this->click($this->getLocator()->checkout->continue3);
     }
@@ -184,5 +222,27 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
     {
         $this->checkOption($this->getLocator()->checkout->agree_with_terms_of_service);
         $this->click($this->getLocator()->checkout->order_with_obligation_to_pay);
+    }
+
+    /**
+     * @param $currency
+     * @param $defaultCountry
+     */
+    public function configureShopSystemCurrencyAndCountry($currency, $defaultCountry): void
+    {
+        //in prestashop countries are taken from ps_currency table by numbers
+        //in prestashop countries are taken from ps_country table by numbers
+        parent::configureShopSystemCurrencyAndCountry($this->getMappedCurrencyValues()[$currency],
+            $this->getMappedDefaultCountryValues()[$defaultCountry]);
+    }
+
+    /**
+     * @param $paymentMethod
+     * @param $paymentAction
+     */
+    public function validateTransactionInDatabase($paymentMethod, $paymentAction): void
+    {
+        $this->wait(10);
+        parent::validateTransactionInDatabase($paymentMethod, $paymentAction);
     }
 }
