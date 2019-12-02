@@ -192,12 +192,14 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
      */
     public function configureShopSystemCurrencyAndCountry($currency, $defaultCountry): void
     {
-        //in prestashop countries are taken from ps_currency table by numbers
-        //in prestashop countries are taken from ps_country table by numbers
+        $moduleID =  $this->grabFromDatabase('ps_module', 'id_module', ['name' => 'wirecardpaymentgateway']);
+        //countries are taken from ps_country table by numbers
         $countryID = $this->grabFromDatabase('ps_country', 'id_country', ['iso_code' => $defaultCountry]);
+        //currencies are taken from ps_currency table by numbers
         $currencyID = $this->grabFromDatabase('ps_currency', 'id_currency', ['iso_code' => $currency]);
         $this->updateInDatabase('ps_country', ['active' => '1'], ['iso_code' => $defaultCountry]);
-
+        //payment modules needs to be activated for specific country
+        $this->updateInDatabase('ps_module_country', ['id_country' => $countryID], ['id_module' => $moduleID]);
         parent::configureShopSystemCurrencyAndCountry($currencyID, $countryID);
     }
 
