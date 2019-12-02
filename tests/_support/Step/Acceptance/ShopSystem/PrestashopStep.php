@@ -151,6 +151,7 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
 
     /**
      *
+     * @throws Exception
      */
     public function fillBillingDetails()
     {
@@ -161,7 +162,8 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
         $this->fillField($this->getLocator()->checkout->phone, $this->getCustomer()->getPhone());
         $this->selectOption($this->getLocator()->checkout->country, $this->getCustomer()->getCountry());
         $this->click($this->getLocator()->checkout->continue2);
-        $this->click($this->getLocator()->checkout->continue3);
+        //this button should apprear on the next page, so wait till we see it
+        $this->preparedClick($this->getLocator()->checkout->continue3);
     }
 
     /**
@@ -203,14 +205,4 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
         parent::configureShopSystemCurrencyAndCountry($currencyID, $countryID);
     }
 
-    /**
-     * @param $paymentMethod
-     * @param $paymentAction
-     */
-    public function validateTransactionInDatabase($paymentMethod, $paymentAction): void
-    {
-        //TODO: implement db polling instead of waiting
-        $this->wait(10);
-        parent::validateTransactionInDatabase($paymentMethod, $paymentAction);
-    }
 }

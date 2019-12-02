@@ -60,6 +60,7 @@ class GenericShopSystemStep extends GenericStep
     {
         return $this->mappedPaymentActions;
     }
+
     /**
      * GenericStep constructor.
      * @param Scenario $scenario
@@ -152,9 +153,9 @@ class GenericShopSystemStep extends GenericStep
     /**
      *
      */
-    public function validateSuccessPage():void
+    public function validateSuccessPage(): void
     {
-        $this->waitUntilPageLoaded($this->getLocator()->page->order_received);
+        $this->waitUntil(60, [$this, 'waitUntilPageLoaded'], [$this->getLocator()->page->order_received]);
         $this->see($this->getLocator()->order_received->order_confirmed_message);
     }
 
@@ -165,13 +166,18 @@ class GenericShopSystemStep extends GenericStep
      */
     public function validateTransactionInDatabase($paymentMethod, $paymentAction): void
     {
-        $this->seeInDatabase(
-            static::TRANSACTION_TABLE_NAME,
-            ['transaction_type' => $this->getMappedPaymentActions()[$paymentMethod]['tx_table'][$paymentAction]]
-        );
-        //check that last transaction in the table is the one under test
-        $transactionTypes = $this->getColumnFromDatabaseNoCriteria(static::TRANSACTION_TABLE_NAME, 'transaction_type');
-        $this->assertEquals(end($transactionTypes), $this->getMappedPaymentActions()[$paymentMethod]['tx_table'][$paymentAction]);
+        $this->waitUntil(80, [$this, 'checkPaymentActionInTransactionTable'], [$paymentMethod, $paymentAction]);
+        $this->assertEquals($this->checkPaymentActionInTransactionTable([$paymentMethod, $paymentAction]), true);
+    }
 
+    /**
+     * @param $paymentArgs
+     * @return bool
+     */
+    protected function checkPaymentActionInTransactionTable($paymentArgs): bool
+    {
+        $transactionTypes = $this->getColumnFromDatabaseNoCriteria(static::TRANSACTION_TABLE_NAME, 'transaction_type');
+        $tempTxType = $this->getMappedPaymentActions()[$paymentArgs[0]]['tx_table'][$paymentArgs[1]];
+        return end($transactionTypes) === $tempTxType;
     }
 }

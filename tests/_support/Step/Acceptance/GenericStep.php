@@ -134,19 +134,38 @@ class GenericStep extends \AcceptanceTester
     }
 
     /**
-     * @param $pageKeyWord
      * @param int $maxTimeout
+     * @param array|null $function
+     * @param array|null $functionArgs
      */
-    public function waitUntilPageLoaded($pageKeyWord, $maxTimeout = 60): void
+    public function waitUntil($maxTimeout = 80, array $function = null, array $functionArgs = null): void
     {
         $counter = 0;
         while ($counter <= $maxTimeout) {
             $this->wait(1);
             $counter++;
-            $currentUrl = $this->grabFromCurrentUrl();
-            if ($currentUrl !== '' && $pageKeyWord !== '' && strpos($currentUrl, $pageKeyWord) !== false) {
-                break;
+            if ($function !== null) {
+                if (call_user_func($function, $functionArgs)) {
+                    break;
+                }
             }
         }
+    }
+
+    /**
+     * @param $pageKeyWord
+     * @return bool
+     */
+    public function waitUntilPageLoaded($pageKeyWord): bool
+    {
+        $currentUrl = $this->grabFromCurrentUrl();
+        if ($currentUrl === '' && $pageKeyWord[0] === null) {
+            return false;
+        }
+        if (strpos($currentUrl, $pageKeyWord[0]) !== false) {
+            $this->wait(3);
+            return true;
+        }
+        return false;
     }
 }
