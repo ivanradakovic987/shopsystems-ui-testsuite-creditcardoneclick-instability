@@ -54,6 +54,19 @@ class GenericShopSystemStep extends GenericStep
     private $mappedPaymentActions = [];
 
     /**
+     * @var array
+     */
+    private $redirectPaymentMethods = ['PayPal'];
+
+    /**
+     * @return array
+     */
+    public function getRedirectPaymentMethods(): array
+    {
+        return $this->redirectPaymentMethods;
+    }
+
+    /**
      * @return array
      */
     public function getMappedPaymentActions(): array
@@ -78,6 +91,15 @@ class GenericShopSystemStep extends GenericStep
     public function existsInDatabase($name)
     {
         return $this->grabFromDatabase(static::SETTINGS_TABLE_NAME, static::NAME_COLUMN_NAME, [static::NAME_COLUMN_NAME => $name]);
+    }
+
+    /**
+     * @param $paymentMethod
+     * @return bool
+     */
+    public function isRedirectPaymentMethod($paymentMethod): bool
+    {
+        return in_array($paymentMethod, $this->getRedirectPaymentMethods(), false);
     }
 
     /**

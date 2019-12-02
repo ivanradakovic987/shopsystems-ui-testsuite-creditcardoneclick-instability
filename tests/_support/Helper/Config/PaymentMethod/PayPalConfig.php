@@ -1,12 +1,46 @@
 <?php
 
 namespace Helper\Config\PaymentMethod;
-// use Helper\Config\GenericConfig;
+
 /**
  * Class PayPalConfig
  */
 class PayPalConfig
 {
 
+    /**
+     * @var
+     */
+    private $userName;
 
+    /**
+     * @var
+     */
+    private $password;
+
+    /**
+     * PayPalCpnfig constructor.
+     * @param $payPalData
+     */
+    public function __construct($payPalData)
+    {
+        $this->userName = $payPalData->user_name;
+        $this->password = $payPalData->password;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getUserName()
+    {
+        return $this->userName;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPassword()
+    {
+        return $this->password;
+    }
 }

@@ -28,10 +28,10 @@ class CreditCardStep extends GenericPaymentMethodStep implements iPerformPayment
     public function performPaymentActionsInTheShop()
     {
         $this->switchFrame();
-        $this->preparedFillField($this->getLocator()->last_name, $this->getCreditCard()->getLastName());
-        $this->fillField($this->getLocator()->card_number, $this->getCreditCard()->getCardNumber());
-        $this->fillField($this->getLocator()->cvv, $this->getCreditCard()->getCvv());
-        $this->fillField($this->getLocator()->expiry_date, $this->getCreditCard()->getValidUntil());
+        $this->preparedFillField($this->getLocator()->last_name, $this->getPaymentMethod()->getLastName(), 60);
+        $this->fillField($this->getLocator()->card_number, $this->getPaymentMethod()->getCardNumber());
+        $this->fillField($this->getLocator()->cvv, $this->getPaymentMethod()->getCvv());
+        $this->fillField($this->getLocator()->expiry_date, $this->getPaymentMethod()->getValidUntil());
         $this->switchToIFrame();
     }
 
@@ -41,7 +41,7 @@ class CreditCardStep extends GenericPaymentMethodStep implements iPerformPayment
      */
     public function goThroughExternalFlow()
     {
-        $this->preparedFillField($this->getLocator()->password, $this->getCreditCard()->getPassword());
+        $this->preparedFillField($this->getLocator()->password, $this->getPaymentMethod()->getPassword());
         $this->click($this->getLocator()->continue_button);
     }
 

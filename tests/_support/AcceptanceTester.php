@@ -2,7 +2,6 @@
 
 
 use Codeception\Actor;
-use Codeception\Scenario;
 use Step\Acceptance\PaymentMethod\CreditCardStep;
 use Step\Acceptance\ShopSystem\PrestashopStep;
 use Step\Acceptance\ShopSystem\WoocommerceStep;
@@ -137,7 +136,17 @@ class AcceptanceTester extends Actor
     }
 
     /**
+     * @param $paymentMethod
+     * @return bool
+     */
+    public function isPaymentMethodSelected($paymentMethod): bool
+    {
+        return $this->paymentMethod === null;
+    }
+
+    /**
      * @Given I initialize shopsystem
+     * @throws Exception
      */
 
     public function iInitializeShopsystem(): void
@@ -173,11 +182,11 @@ class AcceptanceTester extends Actor
     private function selectPaymentMethod($paymentMethod): void
     {
         $paymentMethodInstanceMap = [
-            'CreditCard' => Step\Acceptance\PaymentMethod\CreditCardStep::class
-            //'PayPal' => Step\Acceptance\PayPalStep::class
+            'CreditCard' => Step\Acceptance\PaymentMethod\CreditCardStep::class,
+            'PayPal' => Step\Acceptance\PaymentMethod\PayPalStep::class
         ];
         $this->paymentMethod = new $paymentMethodInstanceMap[$paymentMethod]($this->getScenario());
-        //tell which creditcard data to use and initialize customer config
+        //tell which payment method data to use and initialize customer config
         $paymentMethodDataName = strtolower($paymentMethod . '_data');
         $this->getPaymentMethod()->setConfigObject(lcfirst($paymentMethod), $this->configData->$paymentMethodDataName);
     }
@@ -224,19 +233,20 @@ class AcceptanceTester extends Actor
 
 
     /**
-     * @Given I perform :paymentMethod payment in the shop
+     * @Given I perform :paymentMethod payment actions in the shop
      * @param $paymentMethod
      * @throws Exception
      */
-    public function iPerformPaymentInTheShop($paymentMethod): void
+    public function iPerformPaymentActionsInTheShop($paymentMethod): void
     {
         $this->selectPaymentMethod($paymentMethod);
         $this->getPaymentMethod()->performPaymentActionsInTheShop();
-        $this->getShopInstance()->proceedWithPayment();
+        $this->getShopInstance()->proceedWithPayment($paymentMethod);
     }
 
     /**
      * @When I go through external flow
+     * @throws Exception
      */
     public function iGoThroughExternalFlow(): void
     {

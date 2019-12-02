@@ -5,6 +5,7 @@ namespace Step\Acceptance\PaymentMethod;
 
 
 use Codeception\Scenario;
+use Helper\Config\GenericConfig;
 use Helper\Config\PaymentMethod\CreditCardConfig;
 use Helper\Config\PaymentMethod\PayPalConfig;
 use Step\Acceptance\GenericStep;
@@ -12,10 +13,9 @@ use Step\Acceptance\GenericStep;
 class GenericPaymentMethodStep extends GenericStep
 {
     /**
-     * @var CreditCardConfig;
+     * @var CreditCardConfig|PayPalConfig;
      */
-    private $creditCard;
-
+    private $paymentMethod;
 
     /**
      * GenericStep constructor.
@@ -42,14 +42,15 @@ class GenericPaymentMethodStep extends GenericStep
         if (pathinfo($dataFileName)['dirname'] === '.') {
             $dataFolderPath = PAYMENT_METHOD_DATA_FOLDER_PATH;
         }
-        $this->$type = new $configObjectMap[$type]($this->getDataFromDataFile($dataFolderPath . $dataFileName));
+        $this->paymentMethod = new $configObjectMap[$type]($this->getDataFromDataFile($dataFolderPath . $dataFileName));
     }
 
+
     /**
-     * @return CreditCardConfig
+     * @return GenericConfig| CreditCardConfig| PayPalConfig
      */
-    public function getCreditCard(): CreditCardConfig
+    public function getPaymentMethod()
     {
-        return $this->creditCard;
+        return $this->paymentMethod;
     }
 }

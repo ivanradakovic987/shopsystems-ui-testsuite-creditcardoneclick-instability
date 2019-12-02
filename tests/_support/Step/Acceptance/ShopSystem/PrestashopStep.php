@@ -82,9 +82,9 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
      * @var array
      */
     private $paymentMethodConfigurationNameExceptions =
-    [
-        'cc_vault_enabled' => 'ccvault_enabled'
-    ];
+        [
+            'cc_vault_enabled' => 'ccvault_enabled'
+        ];
 
 
     /**
@@ -114,11 +114,10 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
         $db_config = $this->buildPaymentMethodConfig($paymentMethod, $paymentAction, $this->getMappedPaymentActions(), $this->getGateway());
         foreach ($db_config as $name => $value) {
             //some configuration options are different if different shops, this is handling the differences
-            if (array_key_exists($name, $this->getPaymentMethodConfigurationNameExceptions()))
-            {
+            if (array_key_exists($name, $this->getPaymentMethodConfigurationNameExceptions())) {
                 $name = $this->getPaymentMethodConfigurationNameExceptions()[$name];
             }
-            $fullName = self::PAYMENT_METHOD_PREFIX . strtoupper($paymentMethod) . '_' .  strtoupper($name);
+            $fullName = self::PAYMENT_METHOD_PREFIX . strtoupper($paymentMethod) . '_' . strtoupper($name);
             $this->putValueInDatabase($fullName, $value);
         }
     }
@@ -163,7 +162,7 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
         $this->selectOption($this->getLocator()->checkout->country, $this->getCustomer()->getCountry());
         $this->click($this->getLocator()->checkout->continue2);
         //this button should apprear on the next page, so wait till we see it
-        $this->preparedClick($this->getLocator()->checkout->continue3);
+        $this->preparedClick($this->getLocator()->checkout->continue3, 60);
     }
 
     /**
@@ -179,9 +178,10 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
     }
 
     /**
+     * @param $paymentMethod
      * @return mixed
      */
-    public function proceedWithPayment()
+    public function proceedWithPayment($paymentMethod)
     {
         $this->checkOption($this->getLocator()->checkout->agree_with_terms_of_service);
         $this->click($this->getLocator()->checkout->order_with_obligation_to_pay);
@@ -194,7 +194,7 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
      */
     public function configureShopSystemCurrencyAndCountry($currency, $defaultCountry): void
     {
-        $moduleID =  $this->grabFromDatabase('ps_module', 'id_module', ['name' => 'wirecardpaymentgateway']);
+        $moduleID = $this->grabFromDatabase('ps_module', 'id_module', ['name' => 'wirecardpaymentgateway']);
         //countries are taken from ps_country table by numbers
         $countryID = $this->grabFromDatabase('ps_country', 'id_country', ['iso_code' => $defaultCountry]);
         //currencies are taken from ps_currency table by numbers

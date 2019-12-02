@@ -1,8 +1,8 @@
 {
-  "PayPal": {
-    "email": "email",
-    "password": "password",
-    "login": "btnLogin",
-    "next_step": "//*[contains(@class, 'continueButton')]"
-  }
+    "email": "//*[@id='email']",
+    "password": "//*[@id='password']",
+    "login": "//*[@id='btnLogin']",
+    "next" : "//*[@id='btnNext']",
+    "pay_now": "//*[@id='confirmButtonTop']",
+    "continue": "//*[@class='btn full confirmButton continueButton']"
 }

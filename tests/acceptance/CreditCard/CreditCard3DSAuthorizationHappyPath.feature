@@ -12,7 +12,7 @@ Feature: CreditCard3DSAuthorizationHappyPath
 
   @patch @minor @major
   Scenario: authorize
-    Given I perform "CreditCard" payment in the shop
+    Given I perform "CreditCard" payment actions in the shop
     And I go through external flow
     Then I see successful payment
     And I see "CreditCard" transaction type "authorization" in transaction table

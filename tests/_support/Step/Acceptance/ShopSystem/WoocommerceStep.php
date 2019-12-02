@@ -127,17 +127,32 @@ class WoocommerceStep extends GenericShopSystemStep implements iConfigurePayment
     {
         $this->wait(2);
         $this->preparedClick($this->getLocator()->checkout->place_order);
+        if (!$this->isRedirectPaymentMethod($paymentMethod)) {
+            $this->startCreditCardPayment($paymentMethod);
+        }
+    }
+
+    /**
+     * @param $paymentMethod
+     * @return mixed
+     * @throws Exception
+     */
+    public function proceedWithPayment($paymentMethod)
+    {
+        if (!$this->isRedirectPaymentMethod($paymentMethod)) {
+            $this->preparedClick($this->getLocator()->order_pay->pay);
+        }
+    }
+
+    /**
+     * @param $paymentMethod
+     * @throws Exception
+     */
+    public function startCreditCardPayment($paymentMethod)
+    {
         $paymentMethodForm = strtolower($paymentMethod) . '_form';
         $this->waitForElementVisible($this->getLocator()->checkout->$paymentMethodForm);
         $this->scrollTo($this->getLocator()->checkout->$paymentMethodForm);
     }
 
-    /**
-     * @return mixed
-     * @throws Exception
-     */
-    public function proceedWithPayment()
-    {
-        $this->preparedClick($this->getLocator()->order_pay->pay);
-    }
 }
