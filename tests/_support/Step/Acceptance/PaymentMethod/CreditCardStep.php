@@ -18,11 +18,6 @@ class CreditCardStep extends GenericPaymentMethodStep implements iPerformPayment
     public const STEP_NAME = 'CreditCard';
 
     /**
-     * @var string
-     */
-    private $wirecardFrameSelector = '#wirecard-integrated-payment-page-frame';
-
-    /**
      * @return mixed
      * @throws Exception
      */
