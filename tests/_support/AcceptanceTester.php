@@ -33,11 +33,6 @@ class AcceptanceTester extends Actor
     /**
      *
      */
-    public const CUSTOMER = 'customer';
-
-    /**
-     *
-     */
     public const CREDIT_CARD = 'creditCard';
 
     /**
@@ -121,6 +116,15 @@ class AcceptanceTester extends Actor
     }
 
     /**
+     * @param $shopSystemName
+     * @return bool
+     */
+    public function isShopSystemSupported($shopSystemName): bool
+    {
+        return array_key_exists($shopSystemName, $this->shopInstanceMap);
+    }
+
+    /**
      * @Given I initialize shop system
      * @throws Exception
      */
@@ -129,15 +133,13 @@ class AcceptanceTester extends Actor
         $this->configData = $this->getDataFromDataFile($this->getFullPath(Filesystem::CONFIG_FILE));
         $this->gateway = $this->configData->gateway;
         $usedShopEnvVariable = getenv('SHOP_SYSTEM');
-        if ($usedShopEnvVariable)
-        {
+        if ($usedShopEnvVariable || !$this->isShopSystemSupported($usedShopEnvVariable)) {
             $this->shopInstance = new $this->shopInstanceMap[$usedShopEnvVariable]($this->getScenario(), $this->gateway);
             //tell which customer data to use and initialize customer config
-            $this->getShopInstance()->setConfigObject(self::CUSTOMER, $this->configData->customer_data);
+            $this->getShopInstance()->setConfigObject($this->configData->customer_data);
             $this->getShopInstance()->configureShopSystemCurrencyAndCountry($this->configData->currency, $this->configData->default_country);
-        }
-        else {
-            throw new \RuntimeException('Environment variable SHOP_SYSTEM is not set');
+        } else {
+            throw new \RuntimeException('Environment variable SHOP_SYSTEM is not set or requested shop system is not supported');
         }
     }
 
