@@ -22,7 +22,7 @@ use Step\Acceptance\ShopSystem\WoocommerceStep;
  * @SuppressWarnings(PHPMD)
  */
 
-// @TODO: Can we extract defines to external file to create more readability in this file?
+// @TODO: Can we extract file defines to external file and make them to const to create more readability in this file? -> e.g.: FileSystem::CONFIG_FILE
 define('CONFIG_FILE', getcwd() . DIRECTORY_SEPARATOR . 'config.json');
 /**
  *
