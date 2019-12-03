@@ -22,6 +22,7 @@ use Step\Acceptance\ShopSystem\WoocommerceStep;
  * @SuppressWarnings(PHPMD)
  */
 
+// @TODO: Can we extract defines to external file to create more readability in this file?
 define('CONFIG_FILE', getcwd() . DIRECTORY_SEPARATOR . 'config.json');
 /**
  *
@@ -113,6 +114,7 @@ class AcceptanceTester extends Actor
     /**
      * @param mixed $gateway
      */
+    // @TODO: We do not need setter if we only set gateway in the init context
     public function setGateway($gateway): void
     {
         $this->gateway = $gateway;
@@ -149,10 +151,15 @@ class AcceptanceTester extends Actor
      * @throws Exception
      */
 
+    // @TODO: InitializeShopsystem is basically our Construct for the AcceptanceTester therefor we try to avoid using getter and setter and instead make usage of the members directly
     public function iInitializeShopsystem(): void
     {
         $this->configData = $this->getDataFromDataFile(CONFIG_FILE);
+        // @TODO: We don't need the setter for Gateway
         $this->setGateway($this->configData->gateway);
+        // @TODO: This is probably a creation of a new ShopInstance - Instead of select call createShopInstance
+        // @TODO: ShopInstance creation can already include the setter for gateway and configuration - context based/ Single Responsibility
+        // @TODO: $this->shopInstance = $this->createShopInstance(...);
         $this->selectShopInstance();
         //tell shop instance what gateway we are using
         $this->getShopInstance()->setGateway($this->getGateway());
@@ -164,14 +171,18 @@ class AcceptanceTester extends Actor
     /**
      *
      */
+    // @TODO: Extract the ShopInstanceMap - this is a collection of our shops and should be separated from logic
+    // @TODO: (handle them like const values and make them visible for easy adaption when we want to add new shopsystems)
     private function selectShopInstance(): void
     {
         $shopInstanceMap = [
             'prestashop' => Step\Acceptance\ShopSystem\PrestashopStep::class,
             'woocommerce' => Step\Acceptance\ShopSystem\WoocommerceStep::class
         ];
+        // @TODO: Load emv for shopsystem can be handled within init method
         $usedShopEnvVariable = getenv('SHOP_SYSTEM');
         if ($usedShopEnvVariable) {
+            // @TODO: You could use create method for new shopinstance including all necessary setters (e.g gateway) - as mentioned above
             $this->shopInstance = new $shopInstanceMap[$usedShopEnvVariable]($this->getScenario());
         }
     }
@@ -179,6 +190,7 @@ class AcceptanceTester extends Actor
     /**
      * @param $paymentMethod
      */
+    // @TODO: same as with ShopInstance for the map
     private function selectPaymentMethod($paymentMethod): void
     {
         $paymentMethodInstanceMap = [
@@ -187,6 +199,7 @@ class AcceptanceTester extends Actor
         ];
         $this->paymentMethod = new $paymentMethodInstanceMap[$paymentMethod]($this->getScenario());
         //tell which payment method data to use and initialize customer config
+        // @TODO: is there a way to make the paymentmethod name consistent over the whole project to avoid that strtolower and lcfirst is needed?
         $paymentMethodDataName = strtolower($paymentMethod . '_data');
         $this->getPaymentMethod()->setConfigObject(lcfirst($paymentMethod), $this->configData->$paymentMethodDataName);
     }
@@ -207,6 +220,7 @@ class AcceptanceTester extends Actor
      */
     public function iPrepareCheckoutWithPurchaseSumInShopsystem($purchaseSum): void
     {
+        // @TODO: does the fillBasket method fill the with exactly the sum which is given or is it a limit?
         $this->getShopInstance()->fillBasket($purchaseSum);
         $this->getShopInstance()->goToCheckout();
         $this->getShopInstance()->fillCustomerDetails();
@@ -248,6 +262,7 @@ class AcceptanceTester extends Actor
      * @When I go through external flow
      * @throws Exception
      */
+    // @TODO: maybe we can find a better naming for this method - this is e.g ACS page or PayPal Sandbox I guess?
     public function iGoThroughExternalFlow(): void
     {
         $this->getPaymentMethod()->goThroughExternalFlow();
