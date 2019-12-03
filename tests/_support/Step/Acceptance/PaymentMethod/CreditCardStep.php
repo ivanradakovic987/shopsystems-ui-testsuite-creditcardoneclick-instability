@@ -2,6 +2,7 @@
 
 namespace Step\Acceptance\PaymentMethod;
 
+use Facebook\WebDriver\Exception\TimeOutException;
 use Step\Acceptance\iPerformPayment;
 use Exception;
 
@@ -28,7 +29,15 @@ class CreditCardStep extends GenericPaymentMethodStep implements iPerformPayment
     public function performPaymentActionsInTheShop()
     {
         $this->switchFrame();
-        $this->preparedFillField($this->getLocator()->last_name, $this->getPaymentMethod()->getLastName(), 60);
+        try
+        {
+            $this->preparedFillField($this->getLocator()->last_name, $this->getPaymentMethod()->getLastName(), 60);
+        } catch (TimeOutException $e) {
+            $this->switchToIFrame();
+            $this->wait(5);
+            $this->switchFrame();
+            $this->preparedFillField($this->getLocator()->last_name, $this->getPaymentMethod()->getLastName(), 60);
+        }
         $this->fillField($this->getLocator()->card_number, $this->getPaymentMethod()->getCardNumber());
         $this->fillField($this->getLocator()->cvv, $this->getPaymentMethod()->getCvv());
         $this->fillField($this->getLocator()->expiry_date, $this->getPaymentMethod()->getValidUntil());

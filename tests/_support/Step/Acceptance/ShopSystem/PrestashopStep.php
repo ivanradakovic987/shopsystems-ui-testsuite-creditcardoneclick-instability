@@ -57,30 +57,6 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
     /**
      * @var array
      */
-    private $mappedPaymentActions = [
-        'CreditCard' => [
-            'config' => [
-                'row' => 'payment_action'
-            ],
-            'tx_table' => [
-                'authorization' => 'authorization',
-                'purchase' => 'purchase'
-            ]
-        ],
-        'PayPal' => [
-            'config' => [
-                'row' => 'payment_action'
-            ],
-            'tx_table' => [
-                'authorization' => 'authorization',
-                'purchase' => 'debit'
-            ]
-        ]
-    ];
-
-    /**
-     * @var array
-     */
     private $paymentMethodConfigurationNameExceptions =
         [
             'cc_vault_enabled' => 'ccvault_enabled'
@@ -93,14 +69,6 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
     public function getPaymentMethodConfigurationNameExceptions(): array
     {
         return $this->paymentMethodConfigurationNameExceptions;
-    }
-
-    /**
-     * @return array
-     */
-    public function getMappedPaymentActions(): array
-    {
-        return $this->mappedPaymentActions;
     }
 
     /**
@@ -140,11 +108,10 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
     {
         $this->selectOption($this->getLocator()->checkout->social_title, '1');
         $this->preparedFillField($this->getLocator()->checkout->first_name, $this->getCustomer()->getFirstName());
-        //if the first field is there, means the others too, so no need to prepare (it's faster)
-        $this->fillField($this->getLocator()->checkout->last_name, $this->getCustomer()->getLastName());
-        $this->fillField($this->getLocator()->checkout->email_address, $this->getCustomer()->getEmailAddress());
+        $this->preparedFillField($this->getLocator()->checkout->last_name, $this->getCustomer()->getLastName());
+        $this->preparedFillField($this->getLocator()->checkout->email_address, $this->getCustomer()->getEmailAddress());
         $this->checkOption($this->getLocator()->checkout->agree_to_terms_and_conditions_and_privacy_policy);
-        $this->click($this->getLocator()->checkout->continue);
+        $this->preparedClick($this->getLocator()->checkout->continue);
         $this->fillBillingDetails();
     }
 
@@ -155,13 +122,13 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
     public function fillBillingDetails()
     {
         //if the first field is there, means the others too, so no need to prepare (it's faster)
-        $this->fillField($this->getLocator()->checkout->street_address, $this->getCustomer()->getStreetAddress());
-        $this->fillField($this->getLocator()->checkout->town, $this->getCustomer()->getTown());
-        $this->fillField($this->getLocator()->checkout->post_code, $this->getCustomer()->getPostCode());
-        $this->fillField($this->getLocator()->checkout->phone, $this->getCustomer()->getPhone());
+        $this->preparedFillField($this->getLocator()->checkout->street_address, $this->getCustomer()->getStreetAddress());
+        $this->preparedFillField($this->getLocator()->checkout->town, $this->getCustomer()->getTown());
+        $this->preparedFillField($this->getLocator()->checkout->post_code, $this->getCustomer()->getPostCode());
+        $this->preparedFillField($this->getLocator()->checkout->phone, $this->getCustomer()->getPhone());
         $this->selectOption($this->getLocator()->checkout->country, $this->getCustomer()->getCountry());
-        $this->click($this->getLocator()->checkout->continue2);
-        //this button should apprear on the next page, so wait till we see it
+        $this->preparedClick($this->getLocator()->checkout->continue2);
+        //this button should appear on the next page, so wait till we see it
         $this->preparedClick($this->getLocator()->checkout->continue3, 60);
     }
 

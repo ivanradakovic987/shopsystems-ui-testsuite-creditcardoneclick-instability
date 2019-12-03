@@ -51,7 +51,34 @@ class GenericShopSystemStep extends GenericStep
     /**
      * @var array
      */
-    private $mappedPaymentActions = [];
+    private $mappedPaymentActions = [
+        'CreditCard' => [
+            'config' => [
+                'row' => 'payment_action'
+            ],
+            'tx_table' => [
+                'authorization' => 'authorization',
+                'purchase' => 'purchase'
+            ]
+        ],
+        'PayPal' => [
+            'config' => [
+                'row' => 'payment_action'
+            ],
+            'tx_table' => [
+                'authorization' => 'authorization',
+                'purchase' => 'debit'
+            ]
+        ]
+    ];
+
+    /**
+     * @return array
+     */
+    public function getMappedPaymentActions(): array
+    {
+        return $this->mappedPaymentActions;
+    }
 
     /**
      * @var array
@@ -64,14 +91,6 @@ class GenericShopSystemStep extends GenericStep
     public function getRedirectPaymentMethods(): array
     {
         return $this->redirectPaymentMethods;
-    }
-
-    /**
-     * @return array
-     */
-    public function getMappedPaymentActions(): array
-    {
-        return $this->mappedPaymentActions;
     }
 
     /**
@@ -131,7 +150,8 @@ class GenericShopSystemStep extends GenericStep
     public function putValueInDatabase($name, $value): void
     {
         if (!$this->existsInDatabase($name)) {
-            $this->haveInDatabase(static::SETTINGS_TABLE_NAME, [static::NAME_COLUMN_NAME => $name,
+            $this->haveInDatabase(static::SETTINGS_TABLE_NAME,
+                [static::NAME_COLUMN_NAME => $name,
                 static::VALUE_COLUMN_NAME => $value]);
         } else {
             $this->updateInDatabase(static::SETTINGS_TABLE_NAME,

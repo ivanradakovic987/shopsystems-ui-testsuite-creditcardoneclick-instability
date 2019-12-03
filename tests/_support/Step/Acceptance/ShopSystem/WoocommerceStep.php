@@ -52,38 +52,6 @@ class WoocommerceStep extends GenericShopSystemStep implements iConfigurePayment
     public const DEFAULT_COUNTRY_OPTION_NAME = 'woocommerce_default_country';
 
     /**
-     * @var array
-     */
-    private $mappedPaymentActions = [
-        'CreditCard' => [
-            'config' => [
-                'row' => 'payment_action'
-            ],
-            'tx_table' => [
-                'authorization' => 'authorization',
-                'purchase' => 'purchase'
-            ]
-        ],
-        'PayPal' => [
-            'config' => [
-                'row' => 'payment_action'
-            ],
-            'tx_table' => [
-                'authorization' => 'authorization',
-                'purchase' => 'debit'
-            ]
-        ]
-    ];
-
-    /**
-     * @return array
-     */
-    public function getMappedPaymentActions(): array
-    {
-        return $this->mappedPaymentActions;
-    }
-
-    /**
      * @param $paymentMethod
      * @param $paymentAction
      * @return mixed|void
