@@ -124,10 +124,9 @@ class GenericShopSystemStep extends GenericStep
     }
 
     /**
-     * @param $type
      * @param $dataFileName
      */
-    public function setConfigObject($type, $dataFileName): void
+    public function setConfigObject($dataFileName): void
     {
         $dataFolderPath = $this->getFullPath(Filesystem::CUSTOMER_DATA_FOLDER_PATH);
         $this->customer = new CustomerConfig($this->getDataFromDataFile($dataFolderPath . $dataFileName));

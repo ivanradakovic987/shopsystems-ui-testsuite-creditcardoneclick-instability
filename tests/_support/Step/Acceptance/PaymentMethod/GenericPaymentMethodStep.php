@@ -11,6 +11,10 @@ use Helper\Config\PaymentMethod\PayPalConfig;
 use Step\Acceptance\GenericStep;
 use Helper\Config\Filesystem;
 
+/**
+ * Class GenericPaymentMethodStep
+ * @package Step\Acceptance\PaymentMethod
+ */
 class GenericPaymentMethodStep extends GenericStep
 {
     /**
