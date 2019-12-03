@@ -9,6 +9,7 @@ use Helper\Config\GenericConfig;
 use Helper\Config\PaymentMethod\CreditCardConfig;
 use Helper\Config\PaymentMethod\PayPalConfig;
 use Step\Acceptance\GenericStep;
+use Helper\Config\Filesystem;
 
 class GenericPaymentMethodStep extends GenericStep
 {
@@ -18,13 +19,23 @@ class GenericPaymentMethodStep extends GenericStep
     private $paymentMethod;
 
     /**
+     * @var array
+     */
+    private $configObjectMap = [
+        self::CREDIT_CARD => CreditCardConfig::class,
+        self::PAY_PAL => PayPalConfig::class
+    ];
+
+    /**
      * GenericStep constructor.
      * @param Scenario $scenario
+     * @param $gateway
      */
-    public function __construct(Scenario $scenario)
+    public function __construct(Scenario $scenario, $gateway)
     {
-        parent::__construct($scenario);
-        $this->setLocator($this->getDataFromDataFile(PAYMENT_METHOD_LOCATOR_FOLDER_PATH . static::STEP_NAME . DIRECTORY_SEPARATOR . static::STEP_NAME . 'Locators.json'));
+        parent::__construct($scenario, $gateway);
+        $this->setLocator($this->getDataFromDataFile($this->getFullPath(FileSystem::PAYMENT_METHOD_LOCATOR_FOLDER_PATH)
+            . static::STEP_NAME . DIRECTORY_SEPARATOR . static::STEP_NAME . 'Locators.json'));
     }
 
     /**
@@ -33,16 +44,8 @@ class GenericPaymentMethodStep extends GenericStep
      */
     public function setConfigObject($type, $dataFileName): void
     {
-        $configObjectMap = [
-            CREDIT_CARD => CreditCardConfig::class,
-            PAY_PAL => PayPalConfig::class
-        ];
-        //check if full path provided in config file
-        $dataFolderPath = '';
-        if (pathinfo($dataFileName)['dirname'] === '.') {
-            $dataFolderPath = PAYMENT_METHOD_DATA_FOLDER_PATH;
-        }
-        $this->paymentMethod = new $configObjectMap[$type]($this->getDataFromDataFile($dataFolderPath . $dataFileName));
+        $dataFolderPath = $this->getFullPath(FileSystem::PAYMENT_METHOD_DATA_FOLDER_PATH);
+        $this->paymentMethod = new $this->configObjectMap[$type]($this->getDataFromDataFile($dataFolderPath . $dataFileName));
     }
 
 

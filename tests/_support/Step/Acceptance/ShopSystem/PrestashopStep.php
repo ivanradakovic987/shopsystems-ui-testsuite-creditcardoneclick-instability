@@ -91,12 +91,12 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
     }
 
     /**
-     * @param $purchaseSum
+     * @param $minPurchaseSum
      * @throws Exception
      */
-    public function fillBasket($purchaseSum): void
+    public function fillBasket($minPurchaseSum): void
     {
-        parent::fillBasket($purchaseSum);
+        parent::fillBasket($minPurchaseSum);
         $this->waitForText('Product successfully added to your shopping cart');
     }
 

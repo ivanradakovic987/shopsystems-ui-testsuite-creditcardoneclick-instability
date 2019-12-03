@@ -4,15 +4,15 @@ Feature: CreditCard3DSAuthorizationHappyPath
   And to see that authorization was successful
 
   Background:
-    Given I initialize shopsystem
+    Given I initialize shop system
     And I activate "CreditCard" payment action "reserve" in configuration
-    And I prepare checkout with purchase sum "100" in shopsystem
+    And I prepare checkout with purchase sum "100" in shop system
     Then I see "Wirecard Credit Card"
     And I start "CreditCard" payment
 
   @patch @minor @major
   Scenario: authorize
     Given I perform "CreditCard" payment actions in the shop
-    And I go through external flow
+    And I perform payment method actions  outside the shop
     Then I see successful payment
     And I see "CreditCard" transaction type "authorization" in transaction table

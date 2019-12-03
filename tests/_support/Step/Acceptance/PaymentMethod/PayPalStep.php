@@ -25,7 +25,7 @@ class PayPalStep extends GenericPaymentMethodStep implements iPerformPayment
      * @return mixed
      * @throws Exception
      */
-    public function goThroughExternalFlow()
+    public function performPaymentMethodActionsOutsideShop()
     {
         $this->performPaypalLogin();
         $this->preparedClick($this->getLocator()->continue, 60);

@@ -43,7 +43,7 @@ class CreditCardStep extends GenericPaymentMethodStep implements iPerformPayment
      * @return mixed
      * @throws Exception
      */
-    public function goThroughExternalFlow()
+    public function performPaymentMethodActionsOutsideShop()
     {
         $this->preparedFillField($this->getLocator()->password, $this->getPaymentMethod()->getPassword());
         $this->click($this->getLocator()->continue_button);

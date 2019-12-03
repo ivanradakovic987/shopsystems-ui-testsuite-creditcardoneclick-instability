@@ -5,6 +5,7 @@ namespace Helper;
 // here you can define custom actions
 // all public methods declared in helper class will be available in $I
 use phpDocumentor\Reflection\Types\Array_;
+use Helper\Config\Filesystem;
 
 define('CONFIG_FILE', 'config.json');
 
@@ -26,15 +27,6 @@ class Acceptance extends \Codeception\Module
         } else {
             return $json_data;
         }
-    }
-
-    /**
-     * @param $configType
-     * @return mixed
-     */
-    public static function getConfigFileFromConfig($configType)
-    {
-        return self::getDataFromDataFile('CONFIG_FILE')[$configType];
     }
 
     /**
@@ -68,7 +60,7 @@ class Acceptance extends \Codeception\Module
     public static function buildPaymentMethodConfig($paymentMethod, $paymentAction, $mappedPaymentActions, $gateway): array
     {
         $array = [];
-        $gatewayConfigurationFile = PAYMENT_METHOD_CONFIG_FOLDER_PATH . $paymentMethod . 'Config.json';
+        $gatewayConfigurationFile = self::getFullPath(Filesystem::PAYMENT_METHOD_CONFIG_FOLDER_PATH . $paymentMethod . 'Config.json');
         $paymentActionConfigurationRow = $mappedPaymentActions[$paymentMethod]['config']['row'];
         //process data in payment configuration file
         $jsonData = self::getDataFromDataFile($gatewayConfigurationFile);
@@ -79,5 +71,18 @@ class Acceptance extends \Codeception\Module
             $array = self::substituteArrayKey($array, $paymentActionConfigurationRow, $paymentAction);
         }
         return $array;
+    }
+
+    /**
+     * @param $path
+     * @return string
+     */
+    public static function getFullPath($path): string
+    {
+        //check if path is full
+        if (! realpath($path)) {
+            return getcwd() . $path;
+        }
+        return $path;
     }
 }

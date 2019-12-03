@@ -2,6 +2,7 @@
 
 
 use Codeception\Actor;
+use Helper\Config\Filesystem;
 use Step\Acceptance\PaymentMethod\CreditCardStep;
 use Step\Acceptance\ShopSystem\PrestashopStep;
 use Step\Acceptance\ShopSystem\WoocommerceStep;
@@ -22,58 +23,40 @@ use Step\Acceptance\ShopSystem\WoocommerceStep;
  * @SuppressWarnings(PHPMD)
  */
 
-// @TODO: Can we extract file defines to external file and make them to const to create more readability in this file? -> e.g.: FileSystem::CONFIG_FILE
-define('CONFIG_FILE', getcwd() . DIRECTORY_SEPARATOR . 'config.json');
-/**
- *
- */
-define('DATA_FOLDER_PATH', getcwd() . DIRECTORY_SEPARATOR . 'tests' . DIRECTORY_SEPARATOR . '_data' . DIRECTORY_SEPARATOR);
-/**
- *
- */
-define('CUSTOMER_DATA_FOLDER_PATH', DATA_FOLDER_PATH . 'Customer' . DIRECTORY_SEPARATOR);
-/**
- *
- */
-define('LOCATOR_FOLDER_PATH', DATA_FOLDER_PATH . 'Locator' . DIRECTORY_SEPARATOR);
-
-/**
- *
- */
-define('SHOP_SYSTEM_LOCATOR_FOLDER_PATH', LOCATOR_FOLDER_PATH . 'ShopSystem' . DIRECTORY_SEPARATOR);
-
-/**
- *
- */
-define('PAYMENT_METHOD_LOCATOR_FOLDER_PATH', LOCATOR_FOLDER_PATH . 'PaymentMethod' . DIRECTORY_SEPARATOR);
-
-/**
- *
- */
-define('PAYMENT_METHOD_DATA_FOLDER_PATH', DATA_FOLDER_PATH . 'PaymentMethodData' . DIRECTORY_SEPARATOR);
-/**
- *
- */
-define('PAYMENT_METHOD_CONFIG_FOLDER_PATH', DATA_FOLDER_PATH . 'PaymentMethodConfig' . DIRECTORY_SEPARATOR);
-/**
- *
- */
-define('CUSTOMER', 'customer');
-/**
- *
- */
-define('CREDIT_CARD', 'creditCard');
-/**
- *
- */
-define('PAY_PAL', 'payPal');
-
 /**
  * Class AcceptanceTester
  */
 class AcceptanceTester extends Actor
 {
     use _generated\AcceptanceTesterActions;
+
+    /**
+     *
+     */
+    public const CUSTOMER = 'customer';
+
+    /**
+     *
+     */
+    public const CREDIT_CARD = 'creditCard';
+
+    /**
+     *
+     */
+    public const PAY_PAL = 'payPal';
+
+    /**
+     *
+     */
+    private $shopInstanceMap = [
+        'prestashop' => Step\Acceptance\ShopSystem\PrestashopStep::class,
+        'woocommerce' => Step\Acceptance\ShopSystem\WoocommerceStep::class
+    ];
+
+    private $paymentMethodInstanceMap = [
+        'CreditCard' => Step\Acceptance\PaymentMethod\CreditCardStep::class,
+        'PayPal' => Step\Acceptance\PaymentMethod\PayPalStep::class
+    ];
 
     /**
      * @var Actor|PrestashopStep|WoocommerceStep
@@ -111,15 +94,6 @@ class AcceptanceTester extends Actor
         return $this->gateway;
     }
 
-    /**
-     * @param mixed $gateway
-     */
-    // @TODO: We do not need setter if we only set gateway in the init context
-    public function setGateway($gateway): void
-    {
-        $this->gateway = $gateway;
-    }
-
 
     /**
      * @return Actor|PrestashopStep|WoocommerceStep
@@ -147,60 +121,38 @@ class AcceptanceTester extends Actor
     }
 
     /**
-     * @Given I initialize shopsystem
+     * @Given I initialize shop system
      * @throws Exception
      */
-
-    // @TODO: InitializeShopsystem is basically our Construct for the AcceptanceTester therefor we try to avoid using getter and setter and instead make usage of the members directly
-    public function iInitializeShopsystem(): void
+    public function iInitializeShopSystem(): void
     {
-        $this->configData = $this->getDataFromDataFile(CONFIG_FILE);
-        // @TODO: We don't need the setter for Gateway
-        $this->setGateway($this->configData->gateway);
-        // @TODO: This is probably a creation of a new ShopInstance - Instead of select call createShopInstance
-        // @TODO: ShopInstance creation can already include the setter for gateway and configuration - context based/ Single Responsibility
-        // @TODO: $this->shopInstance = $this->createShopInstance(...);
-        $this->selectShopInstance();
-        //tell shop instance what gateway we are using
-        $this->getShopInstance()->setGateway($this->getGateway());
-        //tell which customer data to use and initialize customer config
-        $this->getShopInstance()->setConfigObject(CUSTOMER, $this->configData->customer_data);
-        $this->getShopInstance()->configureShopSystemCurrencyAndCountry($this->configData->currency, $this->configData->default_country);
-    }
-
-    /**
-     *
-     */
-    // @TODO: Extract the ShopInstanceMap - this is a collection of our shops and should be separated from logic
-    // @TODO: (handle them like const values and make them visible for easy adaption when we want to add new shopsystems)
-    private function selectShopInstance(): void
-    {
-        $shopInstanceMap = [
-            'prestashop' => Step\Acceptance\ShopSystem\PrestashopStep::class,
-            'woocommerce' => Step\Acceptance\ShopSystem\WoocommerceStep::class
-        ];
-        // @TODO: Load emv for shopsystem can be handled within init method
+        $this->configData = $this->getDataFromDataFile($this->getFullPath(Filesystem::CONFIG_FILE));
+        $this->gateway = $this->configData->gateway;
         $usedShopEnvVariable = getenv('SHOP_SYSTEM');
-        if ($usedShopEnvVariable) {
-            // @TODO: You could use create method for new shopinstance including all necessary setters (e.g gateway) - as mentioned above
-            $this->shopInstance = new $shopInstanceMap[$usedShopEnvVariable]($this->getScenario());
+        if ($usedShopEnvVariable)
+        {
+            $this->shopInstance = new $this->shopInstanceMap[$usedShopEnvVariable]($this->getScenario(), $this->gateway);
+            //tell which customer data to use and initialize customer config
+            $this->getShopInstance()->setConfigObject(self::CUSTOMER, $this->configData->customer_data);
+            $this->getShopInstance()->configureShopSystemCurrencyAndCountry($this->configData->currency, $this->configData->default_country);
+        }
+        else {
+            throw new \RuntimeException('Environment variable SHOP_SYSTEM is not set');
         }
     }
 
     /**
      * @param $paymentMethod
      */
-    // @TODO: same as with ShopInstance for the map
     private function selectPaymentMethod($paymentMethod): void
     {
-        $paymentMethodInstanceMap = [
-            'CreditCard' => Step\Acceptance\PaymentMethod\CreditCardStep::class,
-            'PayPal' => Step\Acceptance\PaymentMethod\PayPalStep::class
-        ];
-        $this->paymentMethod = new $paymentMethodInstanceMap[$paymentMethod]($this->getScenario());
+        $this->paymentMethod = new $this->paymentMethodInstanceMap[$paymentMethod]($this->getScenario(), $this->getGateway());
+
         //tell which payment method data to use and initialize customer config
-        // @TODO: is there a way to make the paymentmethod name consistent over the whole project to avoid that strtolower and lcfirst is needed?
+        //@TODO: is there a way to make the paymentmethod name consistent over the whole project to avoid that strtolower and lcfirst is needed?
+        // in locators.json we use payment method names as prefix, like creditcard_data
         $paymentMethodDataName = strtolower($paymentMethod . '_data');
+        //all php variables are camel case
         $this->getPaymentMethod()->setConfigObject(lcfirst($paymentMethod), $this->configData->$paymentMethodDataName);
     }
 
@@ -216,12 +168,13 @@ class AcceptanceTester extends Actor
     }
 
     /**
-     * @Given I prepare checkout with purchase sum :purchaseSum in shopsystem
+     * @Given I prepare checkout with purchase sum :minPurchaseSum in shop system
+     * @param $minPurchaseSum
+     * @throws Exception
      */
-    public function iPrepareCheckoutWithPurchaseSumInShopsystem($purchaseSum): void
+    public function iPrepareCheckoutWithPurchaseSumInShopSystem($minPurchaseSum): void
     {
-        // @TODO: does the fillBasket method fill the with exactly the sum which is given or is it a limit?
-        $this->getShopInstance()->fillBasket($purchaseSum);
+        $this->getShopInstance()->fillBasket($minPurchaseSum);
         $this->getShopInstance()->goToCheckout();
         $this->getShopInstance()->fillCustomerDetails();
     }
@@ -259,13 +212,12 @@ class AcceptanceTester extends Actor
     }
 
     /**
-     * @When I go through external flow
+     * @When I perform payment method actions  outside the shop
      * @throws Exception
      */
-    // @TODO: maybe we can find a better naming for this method - this is e.g ACS page or PayPal Sandbox I guess?
-    public function iGoThroughExternalFlow(): void
+    public function iPerformPaymentMethodActionsOutsideTheShop(): void
     {
-        $this->getPaymentMethod()->goThroughExternalFlow();
+        $this->getPaymentMethod()->performPaymentMethodActionsOutsideShop();
     }
 
     /**

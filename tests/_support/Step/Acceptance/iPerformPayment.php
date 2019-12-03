@@ -14,5 +14,5 @@ interface iPerformPayment {
     /**
      * @return mixed
      */
-    public function goThroughExternalFlow();
+    public function performPaymentMethodActionsOutsideShop();
 }

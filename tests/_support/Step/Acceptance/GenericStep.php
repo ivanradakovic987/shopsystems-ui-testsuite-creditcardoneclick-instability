@@ -6,7 +6,7 @@ namespace Step\Acceptance;
 
 use Codeception\Scenario;
 use Exception;
-
+use Helper\Config\Filesystem;
 use Helper\Config\Customer\CustomerConfig;
 use Helper\Config\PaymentMethod\CreditCardConfig;
 use Helper\Config\PaymentMethod\PayPalConfig;
@@ -39,6 +39,15 @@ class GenericStep extends \AcceptanceTester
      */
     public const WIRECARD_OPTION_NAME = '';
 
+//    /**
+//     * @var array
+//     */
+//    private $configObjectMap = [
+//        self::CUSTOMER => CustomerConfig::class,
+//        self::CREDIT_CARD => CreditCardConfig::class,
+//        self::PAY_PAL => PayPalConfig::class
+//    ];
+
     /**
      * @var
      */
@@ -49,10 +58,10 @@ class GenericStep extends \AcceptanceTester
      */
     private $locator;
 
-    /**
-     * @var CustomerConfig;
-     */
-    private $customer;
+//    /**
+//     * @var CustomerConfig;
+//     */
+//    private $customer;
 
     /**
      * @param mixed $locator
@@ -63,6 +72,17 @@ class GenericStep extends \AcceptanceTester
     }
 
     /**
+     * GenericStep constructor.
+     * @param Scenario $scenario
+     * @param $gateway
+     */
+    public function __construct(Scenario $scenario, $gateway)
+    {
+        parent::__construct($scenario);
+        $this->gateway = $gateway;
+    }
+
+    /**
      * @return mixed
      */
     public function getGateway()
@@ -70,37 +90,21 @@ class GenericStep extends \AcceptanceTester
         return $this->gateway;
     }
 
-    /**
-     * @param mixed $gateway
-     */
-    public function setGateway($gateway): void
-    {
-        $this->gateway = $gateway;
-    }
-
-    /**
-     * @param $type
-     * @param $dataFileName
-     */
-    public function setConfigObject($type, $dataFileName): void
-    {
-        $configObjectMap = [
-            CUSTOMER => CustomerConfig::class,
-            CREDIT_CARD => CreditCardConfig::class,
-            PAY_PAL => PayPalConfig::class
-        ];
-        //check if full path provided in config file
-        $dataFolderPath = '';
-        if (pathinfo($dataFileName)['dirname'] === '.') {
-            $dataFolderPath = PAYMENT_METHOD_DATA_FOLDER_PATH;
-            if ($type === CUSTOMER) {
-                $dataFolderPath = CUSTOMER_DATA_FOLDER_PATH;
-            }
-        }
-        $objectData = $this->getDataFromDataFile($dataFolderPath . $dataFileName);
-        $this->$type = new $configObjectMap[$type]($objectData);
-    }
-
+//    /**
+//     * @param $type
+//     * @param $dataFileName
+//     */
+//    public function setConfigObject($type, $dataFileName): void
+//    {
+//        codecept_debug($type);
+//        //check if full path provided in config file
+//        $dataFolderPath = $this->getFullPath(FileSystem::PAYMENT_METHOD_DATA_FOLDER_PATH);
+//        if ($type === self::CUSTOMER) {
+//            $dataFolderPath = $this->getFullPath(FileSystem::CUSTOMER_DATA_FOLDER_PATH);
+//        }
+//        $objectData = $this->getDataFromDataFile($dataFolderPath . $dataFileName);
+//        $this->$type = new $this->configObjectMap[$type]($objectData);
+//    }
 
     /**
      * @return mixed

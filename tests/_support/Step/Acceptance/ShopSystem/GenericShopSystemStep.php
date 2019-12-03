@@ -6,6 +6,7 @@ namespace Step\Acceptance\ShopSystem;
 
 use Codeception\Scenario;
 use Helper\Config\Customer\CustomerConfig;
+use Helper\Config\Filesystem;
 use Step\Acceptance\GenericStep;
 
 /**
@@ -96,11 +97,12 @@ class GenericShopSystemStep extends GenericStep
     /**
      * GenericStep constructor.
      * @param Scenario $scenario
+     * @param $gateway
      */
-    public function __construct(Scenario $scenario)
+    public function __construct(Scenario $scenario, $gateway)
     {
-        parent::__construct($scenario);
-        $this->setLocator($this->getDataFromDataFile(SHOP_SYSTEM_LOCATOR_FOLDER_PATH . static::STEP_NAME . DIRECTORY_SEPARATOR . static::STEP_NAME . 'Locators.json'));
+        parent::__construct($scenario, $gateway);
+        $this->setLocator($this->getDataFromDataFile($this->getFullPath(Filesystem::SHOP_SYSTEM_LOCATOR_FOLDER_PATH . static::STEP_NAME . DIRECTORY_SEPARATOR . static::STEP_NAME . 'Locators.json')));
     }
 
     /**
@@ -127,11 +129,7 @@ class GenericShopSystemStep extends GenericStep
      */
     public function setConfigObject($type, $dataFileName): void
     {
-        //check if full path provided in config file
-        $dataFolderPath = '';
-        if (pathinfo($dataFileName)['dirname'] === '.') {
-            $dataFolderPath = CUSTOMER_DATA_FOLDER_PATH;
-        }
+        $dataFolderPath = $this->getFullPath(Filesystem::CUSTOMER_DATA_FOLDER_PATH);
         $this->customer = new CustomerConfig($this->getDataFromDataFile($dataFolderPath . $dataFileName));
     }
 
@@ -162,13 +160,13 @@ class GenericShopSystemStep extends GenericStep
     }
 
     /**
-     * @param $purchaseSum
+     * @param $minPurchaseSum
      */
-    public function fillBasket($purchaseSum): void
+    public function fillBasket($minPurchaseSum): void
     {
         $this->amOnPage($this->getLocator()->page->product);
 
-        $amount = intdiv((int)$purchaseSum, (int)$this->getLocator()->product->price) + 1;
+        $amount = intdiv((int)$minPurchaseSum, (int)$this->getLocator()->product->price) + 1;
         //add to basket goods to fulfill desired purchase amount
         $this->fillField($this->getLocator()->product->quantity, $amount);
         $this->click($this->getLocator()->product->add_to_cart);
