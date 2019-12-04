@@ -15,34 +15,19 @@ use Step\Acceptance\GenericStep;
  */
 class GenericShopSystemStep extends GenericStep
 {
-    /**
-     *
-     */
-    public const SETTINGS_TABLE_NAME = '';
-    /**
-     *
-     */
-    public const NAME_COLUMN_NAME = '';
-    /**
-     *
-     */
-    public const VALUE_COLUMN_NAME = '';
-    /**
-     *
-     */
-    public const TRANSACTION_TABLE_NAME = '';
-    /**
-     *
-     */
-    public const WIRECARD_OPTION_NAME = '';
-    /**
-     *
-     */
-    public const CURRENCY_OPTION_NAME = '';
-    /**
-     *
-     */
-    public const DEFAULT_COUNTRY_OPTION_NAME = '';
+    const SETTINGS_TABLE_NAME = '';
+
+    const NAME_COLUMN_NAME = '';
+
+    const VALUE_COLUMN_NAME = '';
+
+    const TRANSACTION_TABLE_NAME = '';
+
+    const WIRECARD_OPTION_NAME = '';
+
+    const CURRENCY_OPTION_NAME = '';
+
+    const DEFAULT_COUNTRY_OPTION_NAME = '';
 
     /**
      * @var CustomerConfig;
@@ -74,70 +59,30 @@ class GenericShopSystemStep extends GenericStep
     ];
 
     /**
-     * @return array
-     */
-    public function getMappedPaymentActions(): array
-    {
-        return $this->mappedPaymentActions;
-    }
-
-    /**
      * @var array
      */
     private $redirectPaymentMethods = ['PayPal'];
 
     /**
-     * @return array
-     */
-    public function getRedirectPaymentMethods(): array
-    {
-        return $this->redirectPaymentMethods;
-    }
-
-    /**
      * GenericStep constructor.
      * @param Scenario $scenario
      * @param $gateway
+     * @param $customerDataFileName
      */
-    public function __construct(Scenario $scenario, $gateway)
+    public function __construct(Scenario $scenario, $gateway, $customerDataFileName)
     {
         parent::__construct($scenario, $gateway);
         $this->setLocator($this->getDataFromDataFile($this->getFullPath(Filesystem::SHOP_SYSTEM_LOCATOR_FOLDER_PATH . static::STEP_NAME . DIRECTORY_SEPARATOR . static::STEP_NAME . 'Locators.json')));
-    }
-
-    /**
-     * @param $name
-     * @return mixed
-     */
-    public function existsInDatabase($name)
-    {
-        return $this->grabFromDatabase(static::SETTINGS_TABLE_NAME, static::NAME_COLUMN_NAME, [static::NAME_COLUMN_NAME => $name]);
-    }
-
-    /**
-     * @param $paymentMethod
-     * @return bool
-     */
-    public function isRedirectPaymentMethod($paymentMethod): bool
-    {
-        return in_array($paymentMethod, $this->getRedirectPaymentMethods(), false);
+        $this->createCustomerObject($customerDataFileName);
     }
 
     /**
      * @param $dataFileName
      */
-    public function setConfigObject($dataFileName): void
+    public function createCustomerObject($dataFileName): void
     {
         $dataFolderPath = $this->getFullPath(Filesystem::CUSTOMER_DATA_FOLDER_PATH);
         $this->customer = new CustomerConfig($this->getDataFromDataFile($dataFolderPath . $dataFileName));
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getCustomer()
-    {
-        return $this->customer;
     }
 
     /**
@@ -149,13 +94,23 @@ class GenericShopSystemStep extends GenericStep
         if (!$this->existsInDatabase($name)) {
             $this->haveInDatabase(static::SETTINGS_TABLE_NAME,
                 [static::NAME_COLUMN_NAME => $name,
-                static::VALUE_COLUMN_NAME => $value]);
+                    static::VALUE_COLUMN_NAME => $value]);
         } else {
             $this->updateInDatabase(static::SETTINGS_TABLE_NAME,
                 [static::VALUE_COLUMN_NAME => $value],
                 [static::NAME_COLUMN_NAME => $name]
             );
         }
+    }
+
+    /**
+     * @param $currency
+     * @param $defaultCountry
+     */
+    public function configureShopSystemCurrencyAndCountry($currency, $defaultCountry): void
+    {
+        $this->putValueInDatabase(static::CURRENCY_OPTION_NAME, $currency);
+        $this->putValueInDatabase(static::DEFAULT_COUNTRY_OPTION_NAME, $defaultCountry);
     }
 
     /**
@@ -180,16 +135,6 @@ class GenericShopSystemStep extends GenericStep
     }
 
     /**
-     * @param $currency
-     * @param $defaultCountry
-     */
-    public function configureShopSystemCurrencyAndCountry($currency, $defaultCountry): void
-    {
-        $this->putValueInDatabase(static::CURRENCY_OPTION_NAME, $currency);
-        $this->putValueInDatabase(static::DEFAULT_COUNTRY_OPTION_NAME, $defaultCountry);
-    }
-
-    /**
      *
      */
     public function validateSuccessPage(): void
@@ -197,7 +142,6 @@ class GenericShopSystemStep extends GenericStep
         $this->waitUntil(60, [$this, 'waitUntilPageLoaded'], [$this->getLocator()->page->order_received]);
         $this->see($this->getLocator()->order_received->order_confirmed_message);
     }
-
 
     /**
      * @param $paymentMethod
@@ -219,4 +163,48 @@ class GenericShopSystemStep extends GenericStep
         $tempTxType = $this->getMappedPaymentActions()[$paymentArgs[0]]['tx_table'][$paymentArgs[1]];
         return end($transactionTypes) === $tempTxType;
     }
+
+    /**
+     * @return array
+     */
+    public function getMappedPaymentActions(): array
+    {
+        return $this->mappedPaymentActions;
+    }
+
+    /**
+     * @return array
+     */
+    public function getRedirectPaymentMethods(): array
+    {
+        return $this->redirectPaymentMethods;
+    }
+
+    /**
+     * @param $name
+     * @return mixed
+     */
+    public function existsInDatabase($name)
+    {
+        return $this->grabFromDatabase(static::SETTINGS_TABLE_NAME, static::NAME_COLUMN_NAME, [static::NAME_COLUMN_NAME => $name]);
+    }
+
+    /**
+     * @param $paymentMethod
+     * @return bool
+     */
+    public function isRedirectPaymentMethod($paymentMethod): bool
+    {
+        return in_array($paymentMethod, $this->getRedirectPaymentMethods(), false);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCustomer()
+    {
+        return $this->customer;
+    }
+
+
 }

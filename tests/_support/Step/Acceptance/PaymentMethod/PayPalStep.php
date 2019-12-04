@@ -12,14 +12,7 @@ use Exception;
  */
 class PayPalStep extends GenericPaymentMethodStep implements iPerformPayment
 {
-    /**
-     *
-     */
-    public const STEP_NAME = 'PayPal';
-
-    public function performPaymentActionsInTheShop()
-    {
-    }
+    const STEP_NAME = 'PayPal';
 
     /**
      * @return mixed
@@ -47,6 +40,10 @@ class PayPalStep extends GenericPaymentMethodStep implements iPerformPayment
         }
         $this->preparedFillField($this->getLocator()->password, $this->getPaymentMethod()->getPassword());
         $this->preparedClick($this->getLocator()->login);
+    }
+
+    public function performPaymentActionsInTheShop()
+    {
     }
 
 }

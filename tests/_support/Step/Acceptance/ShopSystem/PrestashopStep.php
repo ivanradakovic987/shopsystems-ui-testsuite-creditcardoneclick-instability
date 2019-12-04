@@ -2,7 +2,6 @@
 
 namespace Step\Acceptance\ShopSystem;
 
-use Codeception\Actor;
 use Step\Acceptance\iConfigurePaymentMethod;
 use Step\Acceptance\iPrepareCheckout;
 use Step\Acceptance\iValidateSuccess;
@@ -15,44 +14,23 @@ use Exception;
  */
 class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentMethod, iPrepareCheckout, iValidateSuccess
 {
-    /**
-     *
-     */
-    public const STEP_NAME = 'prestashop';
-    /**
-     *
-     */
-    public const SETTINGS_TABLE_NAME = 'ps_configuration';
-    /**
-     *
-     */
-    public const NAME_COLUMN_NAME = 'name';
-    /**
-     *
-     */
-    public const VALUE_COLUMN_NAME = 'value';
-    /**
-     *
-     */
-    public const PAYMENT_METHOD_PREFIX = 'WIRECARD_PAYMENT_GATEWAY_';
-    /**
-     *
-     */
-    public const TRANSACTION_TABLE_NAME = 'ps_wirecard_payment_gateway_tx';
-    /**
-     *
-     */
-    public const WIRECARD_OPTION_NAME = 'woocommerce_wirecard_ee_';
+    const STEP_NAME = 'prestashop';
 
-    /**
-     *
-     */
-    public const DEFAULT_COUNTRY_OPTION_NAME = 'PS_COUNTRY_DEFAULT';
+    const SETTINGS_TABLE_NAME = 'ps_configuration';
 
-    /**
-     *
-     */
-    public const CURRENCY_OPTION_NAME = 'PS_CURRENCY_DEFAULT';
+    const NAME_COLUMN_NAME = 'name';
+
+    const VALUE_COLUMN_NAME = 'value';
+
+    const PAYMENT_METHOD_PREFIX = 'WIRECARD_PAYMENT_GATEWAY_';
+
+    const TRANSACTION_TABLE_NAME = 'ps_wirecard_payment_gateway_tx';
+
+    const WIRECARD_OPTION_NAME = 'woocommerce_wirecard_ee_';
+
+    const DEFAULT_COUNTRY_OPTION_NAME = 'PS_COUNTRY_DEFAULT';
+
+    const CURRENCY_OPTION_NAME = 'PS_CURRENCY_DEFAULT';
 
     /**
      * @var array
@@ -61,15 +39,6 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
         [
             'cc_vault_enabled' => 'ccvault_enabled'
         ];
-
-
-    /**
-     * @return array
-     */
-    public function getPaymentMethodConfigurationNameExceptions(): array
-    {
-        return $this->paymentMethodConfigurationNameExceptions;
-    }
 
     /**
      * @param $paymentMethod
@@ -88,6 +57,46 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
             $fullName = self::PAYMENT_METHOD_PREFIX . strtoupper($paymentMethod) . '_' . strtoupper($name);
             $this->putValueInDatabase($fullName, $value);
         }
+    }
+
+    /**
+     * @param $currency
+     * @param $defaultCountry
+     * @throws Exception
+     */
+    public function configureShopSystemCurrencyAndCountry($currency, $defaultCountry): void
+    {
+        $moduleID = $this->grabFromDatabase('ps_module', 'id_module', ['name' => 'wirecardpaymentgateway']);
+        //countries are taken from ps_country table by numbers
+        $countryID = $this->grabFromDatabase('ps_country', 'id_country', ['iso_code' => $defaultCountry]);
+        //currencies are taken from ps_currency table by numbers
+        $currencyID = $this->grabFromDatabase('ps_currency', 'id_currency', ['iso_code' => $currency]);
+        $this->updateInDatabase('ps_country', ['active' => '1'], ['iso_code' => $defaultCountry]);
+        //payment modules needs to be activated for specific country
+        $this->updateInDatabase('ps_module_country', ['id_country' => $countryID], ['id_module' => $moduleID]);
+        parent::configureShopSystemCurrencyAndCountry($currencyID, $countryID);
+    }
+
+    /**
+     * @param $paymentMethod
+     * @return mixed
+     */
+    public function startPayment($paymentMethod)
+
+    {
+        $paymentMethodName = strtolower($paymentMethod) . '_name';
+        $paymentMethodForm = strtolower($paymentMethod) . '_form';
+        $this->selectOption($this->getLocator()->checkout->$paymentMethodForm, $this->getLocator()->checkout->$paymentMethodName);
+    }
+
+    /**
+     * @param $paymentMethod
+     * @return mixed
+     */
+    public function proceedWithPayment($paymentMethod)
+    {
+        $this->checkOption($this->getLocator()->checkout->agree_with_terms_of_service);
+        $this->click($this->getLocator()->checkout->order_with_obligation_to_pay);
     }
 
     /**
@@ -133,43 +142,11 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
     }
 
     /**
-     * @param $paymentMethod
-     * @return mixed
+     * @return array
      */
-    public function startPayment($paymentMethod)
-
+    public function getPaymentMethodConfigurationNameExceptions(): array
     {
-        $paymentMethodName = strtolower($paymentMethod) . '_name';
-        $paymentMethodForm = strtolower($paymentMethod) . '_form';
-        $this->selectOption($this->getLocator()->checkout->$paymentMethodForm, $this->getLocator()->checkout->$paymentMethodName);
-    }
-
-    /**
-     * @param $paymentMethod
-     * @return mixed
-     */
-    public function proceedWithPayment($paymentMethod)
-    {
-        $this->checkOption($this->getLocator()->checkout->agree_with_terms_of_service);
-        $this->click($this->getLocator()->checkout->order_with_obligation_to_pay);
-    }
-
-    /**
-     * @param $currency
-     * @param $defaultCountry
-     * @throws Exception
-     */
-    public function configureShopSystemCurrencyAndCountry($currency, $defaultCountry): void
-    {
-        $moduleID = $this->grabFromDatabase('ps_module', 'id_module', ['name' => 'wirecardpaymentgateway']);
-        //countries are taken from ps_country table by numbers
-        $countryID = $this->grabFromDatabase('ps_country', 'id_country', ['iso_code' => $defaultCountry]);
-        //currencies are taken from ps_currency table by numbers
-        $currencyID = $this->grabFromDatabase('ps_currency', 'id_currency', ['iso_code' => $currency]);
-        $this->updateInDatabase('ps_country', ['active' => '1'], ['iso_code' => $defaultCountry]);
-        //payment modules needs to be activated for specific country
-        $this->updateInDatabase('ps_module_country', ['id_country' => $countryID], ['id_module' => $moduleID]);
-        parent::configureShopSystemCurrencyAndCountry($currencyID, $countryID);
+        return $this->paymentMethodConfigurationNameExceptions;
     }
 
 }

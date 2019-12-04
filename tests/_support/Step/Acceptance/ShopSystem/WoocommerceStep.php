@@ -18,38 +18,21 @@ use Exception;
  */
 class WoocommerceStep extends GenericShopSystemStep implements iConfigurePaymentMethod, iPrepareCheckout, iValidateSuccess
 {
-    /**
-     *
-     */
-    public const STEP_NAME = 'woocommerce';
-    /**
-     *
-     */
-    public const SETTINGS_TABLE_NAME = 'wp_options';
-    /**
-     *
-     */
-    public const NAME_COLUMN_NAME = 'option_name';
-    /**
-     *
-     */
-    public const VALUE_COLUMN_NAME = 'option_value';
-    /**
-     *
-     */
-    public const TRANSACTION_TABLE_NAME = 'wp_wirecard_payment_gateway_tx';
-    /**
-     *
-     */
-    public const WIRECARD_OPTION_NAME = 'woocommerce_wirecard_ee_';
-    /**
-     *
-     */
-    public const CURRENCY_OPTION_NAME = 'woocommerce_currency';
-    /**
-     *
-     */
-    public const DEFAULT_COUNTRY_OPTION_NAME = 'woocommerce_default_country';
+    const STEP_NAME = 'woocommerce';
+
+    const SETTINGS_TABLE_NAME = 'wp_options';
+
+    const NAME_COLUMN_NAME = 'option_name';
+
+    const VALUE_COLUMN_NAME = 'option_value';
+
+    const TRANSACTION_TABLE_NAME = 'wp_wirecard_payment_gateway_tx';
+
+    const WIRECARD_OPTION_NAME = 'woocommerce_wirecard_ee_';
+
+    const CURRENCY_OPTION_NAME = 'woocommerce_currency';
+
+    const DEFAULT_COUNTRY_OPTION_NAME = 'woocommerce_default_country';
 
     /**
      * @param $paymentMethod
@@ -65,26 +48,6 @@ class WoocommerceStep extends GenericShopSystemStep implements iConfigurePayment
 
         $this->putValueInDatabase($optionName, $optionValue);
     }
-
-    /**
-     * @return mixed
-     * @throws Exception
-     */
-    public function fillCustomerDetails()
-    {
-        //woocommerce is dynamically loading possible payment methods while filling form, so we need to make sure all elements are fillable or clickable
-        $this->preparedFillField($this->getLocator()->checkout->first_name, $this->getCustomer()->getFirstName());
-        $this->preparedFillField($this->getLocator()->checkout->last_name, $this->getCustomer()->getLastName());
-        $this->preparedClick($this->getLocator()->checkout->country);
-        $this->preparedFillField($this->getLocator()->checkout->country_entry, $this->getCustomer()->getCountry());
-        $this->preparedClick($this->getLocator()->checkout->country_entry_selected);
-        $this->preparedFillField($this->getLocator()->checkout->street_address, $this->getCustomer()->getStreetAddress());
-        $this->preparedFillField($this->getLocator()->checkout->town, $this->getCustomer()->getTown());
-        $this->preparedFillField($this->getLocator()->checkout->post_code, $this->getCustomer()->getPostCode());
-        $this->preparedFillField($this->getLocator()->checkout->phone, $this->getCustomer()->getPhone());
-        $this->preparedFillField($this->getLocator()->checkout->email_address, $this->getCustomer()->getEmailAddress());
-    }
-
 
     /**
      * @param string $paymentMethod
@@ -113,6 +76,25 @@ class WoocommerceStep extends GenericShopSystemStep implements iConfigurePayment
     }
 
     /**
+     * @return mixed
+     * @throws Exception
+     */
+    public function fillCustomerDetails()
+    {
+        //woocommerce is dynamically loading possible payment methods while filling form, so we need to make sure all elements are fillable or clickable
+        $this->preparedFillField($this->getLocator()->checkout->first_name, $this->getCustomer()->getFirstName());
+        $this->preparedFillField($this->getLocator()->checkout->last_name, $this->getCustomer()->getLastName());
+        $this->preparedClick($this->getLocator()->checkout->country);
+        $this->preparedFillField($this->getLocator()->checkout->country_entry, $this->getCustomer()->getCountry());
+        $this->preparedClick($this->getLocator()->checkout->country_entry_selected);
+        $this->preparedFillField($this->getLocator()->checkout->street_address, $this->getCustomer()->getStreetAddress());
+        $this->preparedFillField($this->getLocator()->checkout->town, $this->getCustomer()->getTown());
+        $this->preparedFillField($this->getLocator()->checkout->post_code, $this->getCustomer()->getPostCode());
+        $this->preparedFillField($this->getLocator()->checkout->phone, $this->getCustomer()->getPhone());
+        $this->preparedFillField($this->getLocator()->checkout->email_address, $this->getCustomer()->getEmailAddress());
+    }
+
+    /**
      * @param $paymentMethod
      * @throws Exception
      */
@@ -122,5 +104,4 @@ class WoocommerceStep extends GenericShopSystemStep implements iConfigurePayment
         $this->waitForElementVisible($this->getLocator()->checkout->$paymentMethodForm);
         $this->scrollTo($this->getLocator()->checkout->$paymentMethodForm);
     }
-
 }

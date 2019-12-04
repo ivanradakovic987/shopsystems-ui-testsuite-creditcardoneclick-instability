@@ -8,14 +8,8 @@ namespace Helper\Config\PaymentMethod;
 class PayPalConfig
 {
 
-    /**
-     * @var
-     */
     private $userName;
 
-    /**
-     * @var
-     */
     private $password;
 
     /**

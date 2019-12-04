@@ -13,44 +13,19 @@ use Exception;
  */
 class GenericStep extends \AcceptanceTester
 {
-    /**
-     *
-     */
-    public const SETTINGS_TABLE_NAME = '';
-    /**
-     *
-     */
-    public const NAME_COLUMN_NAME = '';
-    /**
-     *
-     */
-    public const VALUE_COLUMN_NAME = '';
-    /**
-     *
-     */
-    public const TRANSACTION_TABLE_NAME = '';
-    /**
-     *
-     */
-    public const WIRECARD_OPTION_NAME = '';
+    const SETTINGS_TABLE_NAME = '';
 
-    /**
-     * @var
-     */
+    const NAME_COLUMN_NAME = '';
+
+    const VALUE_COLUMN_NAME = '';
+
+    const TRANSACTION_TABLE_NAME = '';
+
+    const WIRECARD_OPTION_NAME = '';
+
     private $gateway;
 
-    /**
-     * @var
-     */
     private $locator;
-
-    /**
-     * @param mixed $locator
-     */
-    public function setLocator($locator): void
-    {
-        $this->locator = $locator;
-    }
 
     /**
      * GenericStep constructor.
@@ -61,22 +36,6 @@ class GenericStep extends \AcceptanceTester
     {
         parent::__construct($scenario);
         $this->gateway = $gateway;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getGateway()
-    {
-        return $this->gateway;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getLocator()
-    {
-        return $this->locator;
     }
 
     /**
@@ -136,5 +95,29 @@ class GenericStep extends \AcceptanceTester
             return true;
         }
         return false;
+    }
+
+    /**
+     * @param mixed $locator
+     */
+    public function setLocator($locator): void
+    {
+        $this->locator = $locator;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getGateway()
+    {
+        return $this->gateway;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLocator()
+    {
+        return $this->locator;
     }
 }

@@ -22,8 +22,6 @@ class GenericPaymentMethodStep extends GenericStep
      */
     private $paymentMethod;
 
-    // @TODO: PaymentMethod Object should have a member config - it does not work without config and therefor it should be set in construct
-
     /**
      * @var array
      */
@@ -36,25 +34,26 @@ class GenericPaymentMethodStep extends GenericStep
      * GenericStep constructor.
      * @param Scenario $scenario
      * @param $gateway
+     * @param $type
+     * @param $paymentMethodDataFileName
      */
-    public function __construct(Scenario $scenario, $gateway)
+    public function __construct(Scenario $scenario, $gateway, $type, $paymentMethodDataFileName)
     {
         parent::__construct($scenario, $gateway);
         $this->setLocator($this->getDataFromDataFile($this->getFullPath(FileSystem::PAYMENT_METHOD_LOCATOR_FOLDER_PATH)
             . static::STEP_NAME . DIRECTORY_SEPARATOR . static::STEP_NAME . 'Locators.json'));
+        $this->createPaymentMethodObject($type, $paymentMethodDataFileName);
     }
 
     /**
      * @param $type
      * @param $dataFileName
      */
-    // @TODO: set config does not match what it does - here we create a new Config Instance
-    public function setConfigObject($type, $dataFileName): void
+    public function createPaymentMethodObject($type, $dataFileName): void
     {
         $dataFolderPath = $this->getFullPath(FileSystem::PAYMENT_METHOD_DATA_FOLDER_PATH);
         $this->paymentMethod = new $this->configObjectMap[$type]($this->getDataFromDataFile($dataFolderPath . $dataFileName));
     }
-
 
     /**
      * @return GenericConfig| CreditCardConfig| PayPalConfig

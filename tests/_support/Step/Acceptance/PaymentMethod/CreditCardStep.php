@@ -12,10 +12,7 @@ use Exception;
  */
 class CreditCardStep extends GenericPaymentMethodStep implements iPerformPayment
 {
-    /**
-     *
-     */
-    public const STEP_NAME = 'CreditCard';
+    const STEP_NAME = 'CreditCard';
 
     /**
      * @return mixed
@@ -24,8 +21,7 @@ class CreditCardStep extends GenericPaymentMethodStep implements iPerformPayment
     public function performPaymentActionsInTheShop()
     {
         $this->switchFrame();
-        try
-        {
+        try {
             $this->preparedFillField($this->getLocator()->last_name, $this->getPaymentMethod()->getLastName(), 60);
         } catch (TimeOutException $e) {
             $this->switchToIFrame();
@@ -51,7 +47,6 @@ class CreditCardStep extends GenericPaymentMethodStep implements iPerformPayment
 
     /**
      * Method switchFrame
-     * @since   1.4.4
      */
     public function switchFrame()
     {

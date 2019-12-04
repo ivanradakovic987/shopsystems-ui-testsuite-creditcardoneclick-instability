@@ -7,41 +7,22 @@ namespace Helper\Config\Customer;
  */
 class CustomerConfig
 {
-    /**
-     * @var
-     */
     private $lastName;
-    /**
-     * @var
-     */
+
     private $firstName;
-    /**
-     * @var
-     */
+
     private $country;
-    /**
-     * @var
-     */
+
     private $streetAddress;
-    /**
-     * @var
-     */
+
     private $town;
-    /**
-     * @var
-     */
+
     private $postCode;
-    /**
-     * @var
-     */
+
     private $phone;
-    /**
-     * @var
-     */
+
     private $emailAddress;
-    /**
-     * @var
-     */
+
     private $password;
 
     /**
@@ -132,5 +113,4 @@ class CustomerConfig
     {
         return $this->password;
     }
-
 }

@@ -7,7 +7,6 @@ namespace Helper;
 use phpDocumentor\Reflection\Types\Array_;
 use Helper\Config\Filesystem;
 
-define('CONFIG_FILE', 'config.json');
 
 class Acceptance extends \Codeception\Module
 {

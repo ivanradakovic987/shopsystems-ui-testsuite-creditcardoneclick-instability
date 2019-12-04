@@ -18,7 +18,6 @@ class DbHelper extends \Codeception\Module
      * @return array
      *
      * @throws ModuleException
-     * @since 2.0.1
      */
     public function getColumnFromDatabaseNoCriteria($table, $column): array
     {

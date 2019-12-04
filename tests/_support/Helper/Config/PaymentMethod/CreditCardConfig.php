@@ -7,39 +7,19 @@ namespace Helper\Config\PaymentMethod;
  */
 class CreditCardConfig
 {
-    /**
-     * @var
-     */
+
     private $firstName;
 
-    /**
-     * @var
-     */
     private $lastName;
 
-    /**
-     * @var
-     */
     private $cardNumber;
 
-    /**
-     * @var
-     */
     private $cvv;
 
-    /**
-     * @var
-     */
     private $validUntil;
 
-    /**
-     * @var
-     */
     private $password;
 
-    /**
-     * @var string
-     */
     public $paymentMethodName = 'creditCard';
 
 
