@@ -1,12 +1,10 @@
 <?php
 
-
 namespace Helper\Config;
-
 
 class Filesystem
 {
-
+    // @TODO: don't need to add the visibility if it is public - because of default
     public const CONFIG_FILE = DIRECTORY_SEPARATOR . 'config.json';
    // define('CONFIG_FILE', getcwd() . DIRECTORY_SEPARATOR . 'config.json');
 

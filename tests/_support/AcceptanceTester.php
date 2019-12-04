@@ -1,9 +1,9 @@
 <?php
 
-
 use Codeception\Actor;
 use Helper\Config\Filesystem;
 use Step\Acceptance\PaymentMethod\CreditCardStep;
+use Step\Acceptance\ShopSystem\GenericShopSystemStep;
 use Step\Acceptance\ShopSystem\PrestashopStep;
 use Step\Acceptance\ShopSystem\WoocommerceStep;
 
@@ -26,6 +26,10 @@ use Step\Acceptance\ShopSystem\WoocommerceStep;
 /**
  * Class AcceptanceTester
  */
+// @TODO: Correct order of members and methods:
+// @TODO: 1. const, 2. private members, 3. public methods, 4. private methods
+// @TODO: most important public method (e.g. init) should be first in order and then depending on the context and importance followed by the other public ones)
+// @TODO: remove empty doc blocks - we don't need them - methods should have docblock with @param (add Type before varname here), @return and @throws(if existing)
 class AcceptanceTester extends Actor
 {
     use _generated\AcceptanceTesterActions;
@@ -33,6 +37,8 @@ class AcceptanceTester extends Actor
     /**
      *
      */
+    // @TODO: Default visibility of Constants is public - if we don't want to use private once then we don't have to add the visibility
+    // @TODO: if we use shopInstanceMap as private const then this is correct because then we would need the be specific about the visibility
     public const CREDIT_CARD = 'creditCard';
 
     /**
@@ -43,6 +49,7 @@ class AcceptanceTester extends Actor
     /**
      *
      */
+    // @TODO: can be const - should not be adaptable during execution?
     private $shopInstanceMap = [
         'prestashop' => Step\Acceptance\ShopSystem\PrestashopStep::class,
         'woocommerce' => Step\Acceptance\ShopSystem\WoocommerceStep::class
@@ -76,6 +83,7 @@ class AcceptanceTester extends Actor
     /**
      * @return mixed
      */
+    // @TODO: Not used? - so we can remove it
     public function getConfigData()
     {
         return $this->configData;
@@ -93,6 +101,7 @@ class AcceptanceTester extends Actor
     /**
      * @return Actor|PrestashopStep|WoocommerceStep
      */
+    // @TODO: probably we do not need the getter for this - we can use the member directly
     private function getShopInstance()
     {
         return $this->shopInstance;
@@ -119,6 +128,7 @@ class AcceptanceTester extends Actor
      * @param $shopSystemName
      * @return bool
      */
+    // @TODO: this should be private - only used in class specific context
     public function isShopSystemSupported($shopSystemName): bool
     {
         return array_key_exists($shopSystemName, $this->shopInstanceMap);
@@ -132,10 +142,16 @@ class AcceptanceTester extends Actor
     {
         $this->configData = $this->getDataFromDataFile($this->getFullPath(Filesystem::CONFIG_FILE));
         $this->gateway = $this->configData->gateway;
+
+        // @TODO: Do we ned an OR here? Or can we check only for supported shopsystem?
+        // @TODO: The exception message reports both cases anyway - look at suggested solution - we could avoid the else too
+        // @TODO: Or we have specific error messages - if is set and if is not supported
         $usedShopEnvVariable = getenv('SHOP_SYSTEM');
         if ($usedShopEnvVariable || !$this->isShopSystemSupported($usedShopEnvVariable)) {
             $this->shopInstance = new $this->shopInstanceMap[$usedShopEnvVariable]($this->getScenario(), $this->gateway);
             //tell which customer data to use and initialize customer config
+            // @TODO: setConfigObject - this method does not do what it tells us - setConfigObject creates a new customerconfig object
+            // @TODO: but let's do that in the next step as soon as we have updated this file ;)
             $this->getShopInstance()->setConfigObject($this->configData->customer_data);
             $this->getShopInstance()->configureShopSystemCurrencyAndCountry($this->configData->currency, $this->configData->default_country);
         } else {
@@ -143,9 +159,26 @@ class AcceptanceTester extends Actor
         }
     }
 
+    private function createShopSystemInstance($shopSystemName): GenericShopSystemStep
+    {
+        // Hint: Use guard clause for immediate exit
+        if (!$this->isShopSystemSupported($shopSystemName)) {
+            throw new \RuntimeException('Environment variable SHOP_SYSTEM is not set or requested shop system is not supported');
+        }
+        $usedShopEnvVariable = getenv('SHOP_SYSTEM');
+
+        /** @var GenericShopSystemStep $shopInstance */
+        $shopInstance = new $this->shopInstanceMap[$usedShopEnvVariable]($this->getScenario(), $this->gateway);
+        $shopInstance->setConfigObject($this->configData->customer_data);
+        $shopInstance->configureShopSystemCurrencyAndCountry($this->configData->currency, $this->configData->default_country);
+
+        return $shopInstance;
+    }
+
     /**
      * @param $paymentMethod
      */
+    // @TODO: This method does not only select the payment method but also creates the object - but we can think about this in another step
     private function selectPaymentMethod($paymentMethod): void
     {
         $this->paymentMethod = new $this->paymentMethodInstanceMap[$paymentMethod]($this->getScenario(), $this->getGateway());
@@ -155,6 +188,8 @@ class AcceptanceTester extends Actor
         // in locators.json we use payment method names as prefix, like creditcard_data
         $paymentMethodDataName = strtolower($paymentMethod . '_data');
         //all php variables are camel case
+        // @TODO: we don't need to use getPaymentMethod when we have access to the member directly
+        // @TODO: - getters are mostly for public usage (so, if we want to use it within another class/context)
         $this->getPaymentMethod()->setConfigObject(lcfirst($paymentMethod), $this->configData->$paymentMethodDataName);
     }
 

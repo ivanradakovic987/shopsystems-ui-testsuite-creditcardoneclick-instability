@@ -22,6 +22,8 @@ class GenericPaymentMethodStep extends GenericStep
      */
     private $paymentMethod;
 
+    // @TODO: PaymentMethod Object should have a member config - it does not work without config and therefor it should be set in construct
+
     /**
      * @var array
      */
@@ -46,6 +48,7 @@ class GenericPaymentMethodStep extends GenericStep
      * @param $type
      * @param $dataFileName
      */
+    // @TODO: set config does not match what it does - here we create a new Config Instance
     public function setConfigObject($type, $dataFileName): void
     {
         $dataFolderPath = $this->getFullPath(FileSystem::PAYMENT_METHOD_DATA_FOLDER_PATH);
