@@ -178,6 +178,18 @@ class AcceptanceTester extends Actor
         $this->shopInstance->validateTransactionInDatabase($paymentMethod, $paymentAction);
     }
 
+    /**
+     * @return mixed
+     */
+    public function getGateway()
+    {
+        return $this->gateway;
+    }
+
+    /**
+     * @param $shopSystemName
+     * @return GenericShopSystemStep
+     */
     private function createShopSystemInstance($shopSystemName): GenericShopSystemStep
     {
         // Hint: Use guard clause for immediate exit
@@ -194,28 +206,11 @@ class AcceptanceTester extends Actor
     }
 
     /**
-     * @return mixed
-     */
-    public function getGateway()
-    {
-        return $this->gateway;
-    }
-
-    /**
      * @param $shopSystemName
      * @return bool
      */
     private function isShopSystemSupported($shopSystemName): bool
     {
         return array_key_exists($shopSystemName, $this->shopInstanceMap);
-    }
-
-    /**
-     * @param $paymentMethod
-     * @return bool
-     */
-    private function isPaymentMethodSelected($paymentMethod): bool
-    {
-        return $this->paymentMethod === null;
     }
 }
