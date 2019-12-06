@@ -9,25 +9,10 @@ use Step\Acceptance\GenericStep;
 
 /**
  * Class GenericShopSystemStep
- * @package Step\Acceptance
+ * @package Step\Acceptance|ShopSystem
  */
 class GenericShopSystemStep extends GenericStep
 {
-    // @TODO: empty constanst needed?
-    const SETTINGS_TABLE_NAME = '';
-
-    const NAME_COLUMN_NAME = '';
-
-    const VALUE_COLUMN_NAME = '';
-
-    const TRANSACTION_TABLE_NAME = '';
-
-    const WIRECARD_OPTION_NAME = '';
-
-    const CURRENCY_OPTION_NAME = '';
-
-    const DEFAULT_COUNTRY_OPTION_NAME = '';
-
     /**
      * @var CustomerConfig;
      */
@@ -103,8 +88,8 @@ class GenericShopSystemStep extends GenericStep
     }
 
     /**
-     * @param $currency
-     * @param $defaultCountry
+     * @param String $currency
+     * @param String $defaultCountry
      */
     public function configureShopSystemCurrencyAndCountry($currency, $defaultCountry): void
     {
@@ -113,7 +98,7 @@ class GenericShopSystemStep extends GenericStep
     }
 
     /**
-     * @param $minPurchaseSum
+     * @param String $minPurchaseSum
      */
     public function fillBasket($minPurchaseSum): void
     {
@@ -153,14 +138,13 @@ class GenericShopSystemStep extends GenericStep
     }
 
     /**
-     * @param $paymentArgs
+     * @param array $paymentArgs
      * @return bool
      */
-    protected function checkPaymentActionInTransactionTable($paymentArgs): bool
+    public function checkPaymentActionInTransactionTable($paymentArgs): bool
     {
         $transactionTypes = $this->getColumnFromDatabaseNoCriteria(static::TRANSACTION_TABLE_NAME, 'transaction_type');
-        // @TODO: we could use method to select the paymentaction - can we reduce complexity of mappedPaymentActions?
-        $tempTxType = $this->getMappedPaymentActions()[$paymentArgs[0]]['tx_table'][$paymentArgs[1]];
+        $tempTxType = $this->selectTxTypeFromMappedPaymentActions($paymentArgs);
         return end($transactionTypes) === $tempTxType;
     }
 
@@ -181,7 +165,7 @@ class GenericShopSystemStep extends GenericStep
     }
 
     /**
-     * @param $name
+     * @param String $name
      * @return mixed
      */
     public function existsInDatabase($name)
@@ -190,7 +174,7 @@ class GenericShopSystemStep extends GenericStep
     }
 
     /**
-     * @param $paymentMethod
+     * @param String $paymentMethod
      * @return bool
      */
     public function isRedirectPaymentMethod($paymentMethod): bool
@@ -206,5 +190,22 @@ class GenericShopSystemStep extends GenericStep
         return $this->customer;
     }
 
+    /**
+     * @param array $paymentMethod
+     * @return mixed
+     */
+    public function getMappedTxTableValuesForPaymentMethod($paymentMethod)
+    {
+       return $this->getMappedPaymentActions()[$paymentMethod]['tx_table'];
+    }
 
+
+    /**
+     * @param array $paymentArgs
+     * @return mixed
+     */
+    public function selectTxTypeFromMappedPaymentActions($paymentArgs)
+    {
+        return $this->getMappedTxTableValuesForPaymentMethod($paymentArgs[0])[$paymentArgs[1]];
+    }
 }

@@ -20,13 +20,13 @@ class CreditCardStep extends GenericPaymentMethodStep implements iPerformPayment
      */
     public function performPaymentActionsInTheShop()
     {
-        $this->switchFrame();
+        $this->switchToCreditCardUIFrame();
         try {
             $this->preparedFillField($this->getLocator()->last_name, $this->getPaymentMethod()->getLastName(), 60);
         } catch (TimeOutException $e) {
             $this->switchToIFrame();
             $this->wait(5);
-            $this->switchFrame();
+            $this->switchToCreditCardUIFrame();
             $this->preparedFillField($this->getLocator()->last_name, $this->getPaymentMethod()->getLastName(), 60);
         }
         $this->fillField($this->getLocator()->card_number, $this->getPaymentMethod()->getCardNumber());
@@ -46,13 +46,10 @@ class CreditCardStep extends GenericPaymentMethodStep implements iPerformPayment
     }
 
     /**
-     * Method switchFrame
+     * Method switchToCreditCardUIFrame
      */
-    // @TODO: naming - switchFrame is very generic - why not loadCreditCardUIFrame or something similar and then remove the comments which say exactly the same
-    public function switchFrame()
+    public function switchToCreditCardUIFrame()
     {
-        // Switch to Credit Card UI frame
-
         //wait for Javascript to load iframe and it's contents
         $this->wait(5);
         //get wirecard seemless frame name

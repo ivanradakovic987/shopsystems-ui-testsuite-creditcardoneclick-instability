@@ -13,7 +13,7 @@ class PayPalConfig
     private $password;
 
     /**
-     * PayPalCpnfig constructor.
+     * PayPalConfig constructor.
      * @param $payPalData
      */
     public function __construct($payPalData)

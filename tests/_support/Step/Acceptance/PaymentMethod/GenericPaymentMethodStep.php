@@ -31,9 +31,9 @@ class GenericPaymentMethodStep extends GenericStep
     /**
      * GenericStep constructor.
      * @param Scenario $scenario
-     * @param $gateway
-     * @param $type
-     * @param $paymentMethodDataFileName
+     * @param String $gateway
+     * @param String $type
+     * @param String $paymentMethodDataFileName
      */
     public function __construct(Scenario $scenario, $gateway, $type, $paymentMethodDataFileName)
     {
@@ -44,8 +44,8 @@ class GenericPaymentMethodStep extends GenericStep
     }
 
     /**
-     * @param $type
-     * @param $dataFileName
+     * @param String $type
+     * @param String $dataFileName
      */
     public function createPaymentMethodObject($type, $dataFileName): void
     {

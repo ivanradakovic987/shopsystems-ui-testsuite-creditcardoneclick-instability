@@ -3,6 +3,7 @@
 use Codeception\Actor;
 use Helper\Config\Filesystem;
 use Step\Acceptance\PaymentMethod\CreditCardStep;
+use Step\Acceptance\PaymentMethod\GenericPaymentMethodStep;
 use Step\Acceptance\ShopSystem\GenericShopSystemStep;
 use Step\Acceptance\ShopSystem\PrestashopStep;
 use Step\Acceptance\ShopSystem\WoocommerceStep;
@@ -26,7 +27,6 @@ use Step\Acceptance\ShopSystem\WoocommerceStep;
 /**
  * Class AcceptanceTester
  */
-// @TODO: remove empty doc blocks - we don't need them - methods should have docblock with @param (add Type before varname here), @return and @throws(if existing)
 class AcceptanceTester extends Actor
 {
     use _generated\AcceptanceTesterActions;
@@ -35,7 +35,7 @@ class AcceptanceTester extends Actor
 
     const PAY_PAL = 'payPal';
 
-    // @TODO: can be const - should not be adaptable during execution?
+    // @TODO: rethink the whole map structure
     //this is used to generate new class instance, so const doesn't work here
     private $shopInstanceMap = [
         'prestashop' => Step\Acceptance\ShopSystem\PrestashopStep::class,
@@ -131,7 +131,7 @@ class AcceptanceTester extends Actor
      */
     public function iPerformPaymentActionsInTheShop($paymentMethod): void
     {
-        $this->createPaymentMethod($paymentMethod);
+        $this->paymentMethod = $this->createPaymentMethod($paymentMethod);
         $this->paymentMethod->performPaymentActionsInTheShop();
         $this->shopInstance->proceedWithPayment($paymentMethod);
     }
@@ -163,23 +163,15 @@ class AcceptanceTester extends Actor
         $this->shopInstance->validateTransactionInDatabase($paymentMethod, $paymentAction);
     }
 
-    /**
-     * @return mixed
-     */
-    // @TODO: we do not need this
-    public function getGateway()
-    {
-        return $this->gateway;
-    }
 
     /**
      * @param $paymentMethod
-     * @return \Step\Acceptance\PaymentMethod\GenericPaymentMethodStep
+     * @return GenericPaymentMethodStep
      */
-    private function createPaymentMethod($paymentMethod): \Step\Acceptance\PaymentMethod\GenericPaymentMethodStep
+    private function createPaymentMethod($paymentMethod): GenericPaymentMethodStep
     {
         //tell which payment method data to use and initialize customer config
-        //@TODO: is there a way to make the paymentmethod name consistent over the whole project to avoid that strtolower and lcfirst is needed?
+        //@TODO: rethink how to make it consistent not to need  strtolower and lcfirst
         // in locators.json we use payment method names as prefix, like creditcard_data
         $paymentMethodDataName = strtolower($paymentMethod . '_data');
         //all php variables are camel case
@@ -204,8 +196,6 @@ class AcceptanceTester extends Actor
         }
         /** @var GenericShopSystemStep $shopInstance */
         $shopInstance = new $this->shopInstanceMap[$shopSystemName]($this->getScenario(), $this->gateway, $this->configData->customer_data);
-        // @TODO: setConfigObject - this method does not do what it tells us - setConfigObject creates a new customerconfig object
-        // @TODO: but let's do that in the next step as soon as we have updated this file ;)
         $shopInstance->configureShopSystemCurrencyAndCountry($this->configData->currency, $this->configData->default_country);
 
         return $shopInstance;

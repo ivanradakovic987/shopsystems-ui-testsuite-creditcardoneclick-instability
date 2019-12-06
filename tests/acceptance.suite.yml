@@ -12,6 +12,7 @@ modules:
 #              port: 80
               url: '%SHOP_URL%'
               browser: chrome # 'chrome' or 'firefox'
+              restart: true #run each test in new browser window
         - \Helper\Acceptance
         - \Helper\DbHelper
         - Asserts

@@ -1,11 +1,6 @@
 <?php
 
 namespace Step\Acceptance\ShopSystem;
-// @TODO: remove
-/**
- * Class WoocommerceActor
- * @package Helper\Actor
- */
 
 use Step\Acceptance\iConfigurePaymentMethod;
 use Step\Acceptance\iPrepareCheckout;
@@ -14,7 +9,7 @@ use Exception;
 
 /**
  * Class WoocommerceStep
- * @package Step\Acceptance
+ * @package Step\Acceptance|ShopSystem
  */
 class WoocommerceStep extends GenericShopSystemStep implements iConfigurePaymentMethod, iPrepareCheckout, iValidateSuccess
 {
@@ -35,8 +30,8 @@ class WoocommerceStep extends GenericShopSystemStep implements iConfigurePayment
     const DEFAULT_COUNTRY_OPTION_NAME = 'woocommerce_default_country';
 
     /**
-     * @param $paymentMethod
-     * @param $paymentAction
+     * @param String $paymentMethod
+     * @param String  $paymentAction
      * @return mixed|void
      * @throws Exception
      */
@@ -54,7 +49,7 @@ class WoocommerceStep extends GenericShopSystemStep implements iConfigurePayment
     }
 
     /**
-     * @param string $paymentMethod
+     * @param String $paymentMethod
      * @return mixed
      * @throws Exception
      */
@@ -68,7 +63,7 @@ class WoocommerceStep extends GenericShopSystemStep implements iConfigurePayment
     }
 
     /**
-     * @param $paymentMethod
+     * @param String $paymentMethod
      * @return mixed
      * @throws Exception
      */
@@ -99,7 +94,7 @@ class WoocommerceStep extends GenericShopSystemStep implements iConfigurePayment
     }
 
     /**
-     * @param $paymentMethod
+     * @param String $paymentMethod
      * @throws Exception
      */
     public function startCreditCardPayment($paymentMethod)

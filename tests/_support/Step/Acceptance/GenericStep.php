@@ -6,23 +6,11 @@ use Codeception\Scenario;
 use Exception;
 
 /**
- * Class GenericActor
- * @TODO: wrong package
- * @package Helper\Actor
+ * Class GenericStep
+ * @package Step\Acceptance
  */
 class GenericStep extends \AcceptanceTester
 {
-    // @TODO: do we need empty consts?
-    const SETTINGS_TABLE_NAME = '';
-
-    const NAME_COLUMN_NAME = '';
-
-    const VALUE_COLUMN_NAME = '';
-
-    const TRANSACTION_TABLE_NAME = '';
-
-    const WIRECARD_OPTION_NAME = '';
-
     private $gateway;
 
     private $locator;
@@ -81,15 +69,14 @@ class GenericStep extends \AcceptanceTester
     }
 
     /**
-     * @param $pageKeyWord
+     * @param String $pageKeyWord
      * @return bool
      */
     public function waitUntilPageLoaded($pageKeyWord): bool
     {
         $currentUrl = $this->grabFromCurrentUrl();
-        // @TODO: Extract conditionals to increase readability
-        if ($currentUrl === '' && $pageKeyWord[0] === null) {
-            return false;
+        if (empty($currentUrl) || empty($pageKeyWord)) {
+                return false;
         }
         if (strpos($currentUrl, $pageKeyWord[0]) !== false) {
             $this->wait(3);
@@ -110,6 +97,7 @@ class GenericStep extends \AcceptanceTester
      * @return mixed
      */
     // @TODO: let us see if we need it -
+    // we need this in both child classes (prestashop and woocommerce), when configuring shops
     public function getGateway()
     {
         return $this->gateway;
@@ -122,4 +110,5 @@ class GenericStep extends \AcceptanceTester
     {
         return $this->locator;
     }
+
 }

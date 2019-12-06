@@ -6,11 +6,11 @@ use Step\Acceptance\iConfigurePaymentMethod;
 use Step\Acceptance\iPrepareCheckout;
 use Step\Acceptance\iValidateSuccess;
 
-use Exception;
-// @TODO: Add param types where possible
+use Exception as ExceptionAlias;
+
 /**
- * Class PrestashopActor
- * @package Helper\Actor
+ * Class PrestashopStep
+ * @package Step\Acceptance|ShopSystem
  */
 class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentMethod, iPrepareCheckout, iValidateSuccess
 {
@@ -26,8 +26,6 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
 
     const TRANSACTION_TABLE_NAME = 'ps_wirecard_payment_gateway_tx';
 
-    const WIRECARD_OPTION_NAME = 'woocommerce_wirecard_ee_';
-
     const DEFAULT_COUNTRY_OPTION_NAME = 'PS_COUNTRY_DEFAULT';
 
     const CURRENCY_OPTION_NAME = 'PS_CURRENCY_DEFAULT';
@@ -41,8 +39,8 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
         ];
 
     /**
-     * @param $paymentMethod
-     * @param $paymentAction
+     * @param String $paymentMethod
+     * @param String $paymentAction
      * @return mixed|void
      * @throws Exception
      */
@@ -60,9 +58,9 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
     }
 
     /**
-     * @param $currency
-     * @param $defaultCountry
-     * @throws Exception
+     * @param String $currency
+     * @param String $defaultCountry
+     * @throws ExceptionAlias
      */
     public function configureShopSystemCurrencyAndCountry($currency, $defaultCountry): void
     {
@@ -78,7 +76,7 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
     }
 
     /**
-     * @param $paymentMethod
+     * @param String $paymentMethod
      * @return mixed
      */
     public function startPayment($paymentMethod)
@@ -89,7 +87,7 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
     }
 
     /**
-     * @param $paymentMethod
+     * @param String $paymentMethod
      * @return mixed
      */
     public function proceedWithPayment($paymentMethod)
@@ -99,8 +97,8 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
     }
 
     /**
-     * @param $minPurchaseSum
-     * @throws Exception
+     * @param String $minPurchaseSum
+     * @throws ExceptionAlias
      */
     public function fillBasket($minPurchaseSum): void
     {
@@ -110,7 +108,7 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
 
     /**
      * @return mixed
-     * @throws Exception
+     * @throws ExceptionAlias
      */
     public function fillCustomerDetails()
     {
@@ -125,7 +123,7 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
 
     /**
      *
-     * @throws Exception
+     * @throws ExceptionAlias
      */
     public function fillBillingDetails()
     {
