@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Step\Acceptance\ShopSystem;
-
 
 use Codeception\Scenario;
 use Helper\Config\Customer\CustomerConfig;
@@ -15,6 +13,7 @@ use Step\Acceptance\GenericStep;
  */
 class GenericShopSystemStep extends GenericStep
 {
+    // @TODO: empty constanst needed?
     const SETTINGS_TABLE_NAME = '';
 
     const NAME_COLUMN_NAME = '';
@@ -160,6 +159,7 @@ class GenericShopSystemStep extends GenericStep
     protected function checkPaymentActionInTransactionTable($paymentArgs): bool
     {
         $transactionTypes = $this->getColumnFromDatabaseNoCriteria(static::TRANSACTION_TABLE_NAME, 'transaction_type');
+        // @TODO: we could use method to select the paymentaction - can we reduce complexity of mappedPaymentActions?
         $tempTxType = $this->getMappedPaymentActions()[$paymentArgs[0]]['tx_table'][$paymentArgs[1]];
         return end($transactionTypes) === $tempTxType;
     }

@@ -1,7 +1,7 @@
 <?php
 
 namespace Step\Acceptance\ShopSystem;
-
+// @TODO: remove
 /**
  * Class WoocommerceActor
  * @package Helper\Actor
@@ -42,9 +42,13 @@ class WoocommerceStep extends GenericShopSystemStep implements iConfigurePayment
      */
     public function configurePaymentMethodCredentials($paymentMethod, $paymentAction)
     {
-
         $optionName = self::WIRECARD_OPTION_NAME . strtolower($paymentMethod) . '_settings';
-        $optionValue = serialize($this->buildPaymentMethodConfig($paymentMethod, $paymentAction, $this->getMappedPaymentActions(), $this->getGateway()));
+        $optionValue = serialize($this->buildPaymentMethodConfig(
+            $paymentMethod,
+            $paymentAction,
+            $this->getMappedPaymentActions(),
+            $this->getGateway()
+        ));
 
         $this->putValueInDatabase($optionName, $optionValue);
     }

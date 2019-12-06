@@ -48,6 +48,7 @@ class CreditCardStep extends GenericPaymentMethodStep implements iPerformPayment
     /**
      * Method switchFrame
      */
+    // @TODO: naming - switchFrame is very generic - why not loadCreditCardUIFrame or something similar and then remove the comments which say exactly the same
     public function switchFrame()
     {
         // Switch to Credit Card UI frame

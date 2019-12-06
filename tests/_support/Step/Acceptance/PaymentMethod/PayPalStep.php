@@ -42,6 +42,7 @@ class PayPalStep extends GenericPaymentMethodStep implements iPerformPayment
         $this->preparedClick($this->getLocator()->login);
     }
 
+    // @TODO: what's with the empty method?
     public function performPaymentActionsInTheShop()
     {
     }

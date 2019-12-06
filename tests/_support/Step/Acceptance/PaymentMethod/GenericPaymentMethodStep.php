@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Step\Acceptance\PaymentMethod;
-
 
 use Codeception\Scenario;
 use Helper\Config\GenericConfig;

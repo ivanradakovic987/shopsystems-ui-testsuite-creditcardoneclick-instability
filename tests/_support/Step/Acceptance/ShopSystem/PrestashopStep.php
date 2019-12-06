@@ -7,7 +7,7 @@ use Step\Acceptance\iPrepareCheckout;
 use Step\Acceptance\iValidateSuccess;
 
 use Exception;
-
+// @TODO: Add param types where possible
 /**
  * Class PrestashopActor
  * @package Helper\Actor
@@ -82,7 +82,6 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
      * @return mixed
      */
     public function startPayment($paymentMethod)
-
     {
         $paymentMethodName = strtolower($paymentMethod) . '_name';
         $paymentMethodForm = strtolower($paymentMethod) . '_form';

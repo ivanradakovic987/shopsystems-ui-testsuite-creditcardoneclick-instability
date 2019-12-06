@@ -1,18 +1,18 @@
 <?php
 
-
 namespace Step\Acceptance;
-
 
 use Codeception\Scenario;
 use Exception;
 
 /**
  * Class GenericActor
+ * @TODO: wrong package
  * @package Helper\Actor
  */
 class GenericStep extends \AcceptanceTester
 {
+    // @TODO: do we need empty consts?
     const SETTINGS_TABLE_NAME = '';
 
     const NAME_COLUMN_NAME = '';
@@ -87,6 +87,7 @@ class GenericStep extends \AcceptanceTester
     public function waitUntilPageLoaded($pageKeyWord): bool
     {
         $currentUrl = $this->grabFromCurrentUrl();
+        // @TODO: Extract conditionals to increase readability
         if ($currentUrl === '' && $pageKeyWord[0] === null) {
             return false;
         }
@@ -108,6 +109,7 @@ class GenericStep extends \AcceptanceTester
     /**
      * @return mixed
      */
+    // @TODO: let us see if we need it -
     public function getGateway()
     {
         return $this->gateway;

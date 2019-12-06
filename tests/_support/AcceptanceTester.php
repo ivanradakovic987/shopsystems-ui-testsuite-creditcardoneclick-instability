@@ -83,21 +83,6 @@ class AcceptanceTester extends Actor
     }
 
     /**
-     * @param $paymentMethod
-     */
-    private function createPaymentMethod($paymentMethod): void
-    {
-        //tell which payment method data to use and initialize customer config
-        //@TODO: is there a way to make the paymentmethod name consistent over the whole project to avoid that strtolower and lcfirst is needed?
-        // in locators.json we use payment method names as prefix, like creditcard_data
-        $paymentMethodDataName = strtolower($paymentMethod . '_data');
-        //all php variables are camel case
-        $this->paymentMethod = new $this->paymentMethodInstanceMap[$paymentMethod]($this->getScenario(), $this->getGateway(),
-            //all php variables are camel case
-            lcfirst($paymentMethod), $this->configData->$paymentMethodDataName);
-    }
-
-    /**
      * @Given I activate :paymentMethod payment action :paymentAction in configuration
      * @param $paymentMethod
      * @param $paymentAction
@@ -181,9 +166,30 @@ class AcceptanceTester extends Actor
     /**
      * @return mixed
      */
+    // @TODO: we do not need this
     public function getGateway()
     {
         return $this->gateway;
+    }
+
+    /**
+     * @param $paymentMethod
+     * @return \Step\Acceptance\PaymentMethod\GenericPaymentMethodStep
+     */
+    private function createPaymentMethod($paymentMethod): \Step\Acceptance\PaymentMethod\GenericPaymentMethodStep
+    {
+        //tell which payment method data to use and initialize customer config
+        //@TODO: is there a way to make the paymentmethod name consistent over the whole project to avoid that strtolower and lcfirst is needed?
+        // in locators.json we use payment method names as prefix, like creditcard_data
+        $paymentMethodDataName = strtolower($paymentMethod . '_data');
+        //all php variables are camel case
+        $paymentMethodInstance = new $this->paymentMethodInstanceMap[$paymentMethod](
+            $this->getScenario(),
+            $this->gateway,
+            //all php variables are camel case
+            lcfirst($paymentMethod), $this->configData->$paymentMethodDataName);
+
+        return $paymentMethodInstance;
     }
 
     /**
