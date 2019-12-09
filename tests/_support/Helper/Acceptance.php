@@ -29,19 +29,19 @@ class Acceptance extends \Codeception\Module
     }
 
     /**
-     * @param $array
+     * @param $inputArray
      * @param $keyWord
      * @param $newValue
      * @return array
      */
-    public static function substituteArrayKey($array, $keyWord, $newValue): array
+    public static function substituteArrayKey($inputArray, $keyWord, $newValue): array
     {
-        foreach (array_keys($array) as $key) {
+        foreach (array_keys($inputArray) as $key) {
             if ($key === $keyWord) {
-                $array[$key] = $newValue;
+                $inputArray[$key] = $newValue;
             }
         }
-        return $array;
+        return $inputArray;
     }
 
     public static function paymentMethodGatewayConfigExists($fileData, $gateway): bool

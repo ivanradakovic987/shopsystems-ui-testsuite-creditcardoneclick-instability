@@ -35,7 +35,6 @@ class AcceptanceTester extends Actor
 
     const PAY_PAL = 'payPal';
 
-    // @TODO: rethink the whole map structure
     //this is used to generate new class instance, so const doesn't work here
     private $shopInstanceMap = [
         'prestashop' => Step\Acceptance\ShopSystem\PrestashopStep::class,
@@ -171,7 +170,6 @@ class AcceptanceTester extends Actor
     private function createPaymentMethod($paymentMethod): GenericPaymentMethodStep
     {
         //tell which payment method data to use and initialize customer config
-        //@TODO: rethink how to make it consistent not to need  strtolower and lcfirst
         // in locators.json we use payment method names as prefix, like creditcard_data
         $paymentMethodDataName = strtolower($paymentMethod . '_data');
         //all php variables are camel case

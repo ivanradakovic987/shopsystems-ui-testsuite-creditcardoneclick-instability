@@ -10,17 +10,17 @@ To run tests locally:
     `composer install codeception/codeception`
 4. Export environment variables
 
-        `SHOP_SYSTEM = prestashop #(or woocommerce)`
+    `SHOP_SYSTEM = prestashop #(or woocommerce)`
         
-        `DB_HOST`
+     `DB_HOST`
         
-        `DB_PORT`
+     `DB_PORT`
         
-        `DB_NAME`
+     `DB_NAME`
         
-        `SHOP_URL`
+     `SHOP_URL`
         
-        if running on browserstack
+     if running on browserstack
         `BROWSERSTACK_USER`
         `BROWSERSTACK_ACCESS_KEY`
 5. Start codeception 

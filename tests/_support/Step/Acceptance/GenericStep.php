@@ -96,7 +96,6 @@ class GenericStep extends \AcceptanceTester
     /**
      * @return mixed
      */
-    // @TODO: let us see if we need it -
     // we need this in both child classes (prestashop and woocommerce), when configuring shops
     public function getGateway()
     {
