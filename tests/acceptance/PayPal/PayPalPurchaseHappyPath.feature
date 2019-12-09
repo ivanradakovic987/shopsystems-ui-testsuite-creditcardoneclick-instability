@@ -13,7 +13,7 @@ Feature: PayPalPurchaseHappyPath
   @patch @minor @major
   Scenario: purchase
     Given I perform "PayPal" payment actions in the shop
-    And I perform payment method actions  outside the shop
+    And I perform payment method actions outside of the shop
     Then I see successful payment
     And I see "PayPal" transaction type "purchase" in transaction table
 

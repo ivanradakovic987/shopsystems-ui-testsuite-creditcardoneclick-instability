@@ -136,10 +136,10 @@ class AcceptanceTester extends Actor
     }
 
     /**
-     * @When I perform payment method actions  outside the shop
+     * @When I perform payment method actions outside of the shop
      * @throws Exception
      */
-    public function iPerformPaymentMethodActionsOutsideTheShop(): void
+    public function iPerformPaymentMethodActionsOutsideOfTheShop(): void
     {
         $this->paymentMethod->performPaymentMethodActionsOutsideShop();
     }
