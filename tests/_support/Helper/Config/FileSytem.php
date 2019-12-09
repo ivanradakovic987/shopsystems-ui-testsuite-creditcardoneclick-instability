@@ -2,7 +2,7 @@
 
 namespace Helper\Config;
 
-class Filesystem
+class FileSytem
 {
     const CONFIG_FILE = DIRECTORY_SEPARATOR . 'config.json';
 

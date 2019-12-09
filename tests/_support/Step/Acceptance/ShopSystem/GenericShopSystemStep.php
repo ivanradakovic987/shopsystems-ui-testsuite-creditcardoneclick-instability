@@ -4,7 +4,7 @@ namespace Step\Acceptance\ShopSystem;
 
 use Codeception\Scenario;
 use Helper\Config\Customer\CustomerConfig;
-use Helper\Config\Filesystem;
+use Helper\Config\FileSytem;
 use Step\Acceptance\GenericStep;
 
 /**
@@ -56,7 +56,7 @@ class GenericShopSystemStep extends GenericStep
     public function __construct(Scenario $scenario, $gateway, $customerDataFileName)
     {
         parent::__construct($scenario, $gateway);
-        $this->setLocator($this->getDataFromDataFile($this->getFullPath(Filesystem::SHOP_SYSTEM_LOCATOR_FOLDER_PATH . static::STEP_NAME . DIRECTORY_SEPARATOR . static::STEP_NAME . 'Locators.json')));
+        $this->setLocator($this->getDataFromDataFile($this->getFullPath(FileSytem::SHOP_SYSTEM_LOCATOR_FOLDER_PATH . static::STEP_NAME . DIRECTORY_SEPARATOR . static::STEP_NAME . 'Locators.json')));
         $this->createCustomerObject($customerDataFileName);
     }
 
@@ -65,7 +65,7 @@ class GenericShopSystemStep extends GenericStep
      */
     public function createCustomerObject($dataFileName): void
     {
-        $dataFolderPath = $this->getFullPath(Filesystem::CUSTOMER_DATA_FOLDER_PATH);
+        $dataFolderPath = $this->getFullPath(FileSytem::CUSTOMER_DATA_FOLDER_PATH);
         $this->customer = new CustomerConfig($this->getDataFromDataFile($dataFolderPath . $dataFileName));
     }
 

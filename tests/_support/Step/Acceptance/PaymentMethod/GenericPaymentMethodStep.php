@@ -7,7 +7,7 @@ use Helper\Config\GenericConfig;
 use Helper\Config\PaymentMethod\CreditCardConfig;
 use Helper\Config\PaymentMethod\PayPalConfig;
 use Step\Acceptance\GenericStep;
-use Helper\Config\Filesystem;
+use Helper\Config\FileSytem;
 
 /**
  * Class GenericPaymentMethodStep
@@ -38,7 +38,7 @@ class GenericPaymentMethodStep extends GenericStep
     public function __construct(Scenario $scenario, $gateway, $type, $paymentMethodDataFileName)
     {
         parent::__construct($scenario, $gateway);
-        $this->setLocator($this->getDataFromDataFile($this->getFullPath(FileSystem::PAYMENT_METHOD_LOCATOR_FOLDER_PATH)
+        $this->setLocator($this->getDataFromDataFile($this->getFullPath(FileSytem::PAYMENT_METHOD_LOCATOR_FOLDER_PATH)
             . static::STEP_NAME . DIRECTORY_SEPARATOR . static::STEP_NAME . 'Locators.json'));
         $this->createPaymentMethodObject($type, $paymentMethodDataFileName);
     }
@@ -49,7 +49,7 @@ class GenericPaymentMethodStep extends GenericStep
      */
     public function createPaymentMethodObject($type, $dataFileName): void
     {
-        $dataFolderPath = $this->getFullPath(FileSystem::PAYMENT_METHOD_DATA_FOLDER_PATH);
+        $dataFolderPath = $this->getFullPath(FileSytem::PAYMENT_METHOD_DATA_FOLDER_PATH);
         $this->paymentMethod = new $this->configObjectMap[$type]($this->getDataFromDataFile($dataFolderPath . $dataFileName));
     }
 

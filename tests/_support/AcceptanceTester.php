@@ -1,7 +1,7 @@
 <?php
 
 use Codeception\Actor;
-use Helper\Config\Filesystem;
+use Helper\Config\FileSytem;
 use Step\Acceptance\PaymentMethod\CreditCardStep;
 use Step\Acceptance\PaymentMethod\GenericPaymentMethodStep;
 use Step\Acceptance\ShopSystem\GenericShopSystemStep;
@@ -77,7 +77,7 @@ class AcceptanceTester extends Actor
         if (!$usedShopEnvVariable) {
             throw new \RuntimeException('Environment variable SHOP_SYSTEM is not set');
         }
-        $this->configData = $this->getDataFromDataFile($this->getFullPath(Filesystem::CONFIG_FILE));
+        $this->configData = $this->getDataFromDataFile($this->getFullPath(FileSytem::CONFIG_FILE));
         $this->gateway = $this->configData->gateway;
         $this->shopInstance = $this->createShopSystemInstance($usedShopEnvVariable);
     }
