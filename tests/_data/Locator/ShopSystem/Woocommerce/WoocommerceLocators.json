@@ -24,7 +24,9 @@
     "place_order": "//*[@id='place_order']",
     "creditcard_name" : "Wirecard Credit Card",
     "creditcard_form" : "//*[@id='wc_payment_method_wirecard_new_credit_card']",
-    "paypal_form" : "//*[@id='payment_method_wirecard_ee_paypal']"
+    "paypal_form" : "//*[@id='payment_method_wirecard_ee_paypal']",
+    "wirecard_creditcard":  "//*[@id='payment']/ul/li[contains(@class, 'creditcard')]",
+    "wirecard_paypal":  "//*[@id='payment']/ul/li[contains(@class, 'paypal')]"
   },
   "order_pay": {
     "pay": "//*[@id='seamless-submit']"

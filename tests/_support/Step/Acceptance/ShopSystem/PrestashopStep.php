@@ -84,6 +84,9 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
         $paymentMethodName = strtolower($paymentMethod) . '_name';
         $paymentMethodForm = strtolower($paymentMethod) . '_form';
         $this->selectOption($this->getLocator()->checkout->$paymentMethodForm, $this->getLocator()->checkout->$paymentMethodName);
+        if (!$this->isRedirectPaymentMethod($paymentMethod)) {
+            $this->proceedWithPayment($paymentMethod);
+        }
     }
 
     /**

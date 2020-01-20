@@ -21,6 +21,13 @@ class PayPalStep extends GenericPaymentMethodStep implements iPerformPayment
     public function performPaymentMethodActionsOutsideShop()
     {
         $this->performPaypalLogin();
+        //Nothing happens after first time accepting cookies
+        // page needs to be reloaded and clicked again
+        $this->preparedClick($this->getLocator()->accept_cookies);
+ //       $this->pause();
+        $this->reloadPage();
+        $this->wait(5);
+        $this->preparedClick($this->getLocator()->accept_cookies, 80);
         $this->preparedClick($this->getLocator()->continue, 80);
         $this->preparedClick($this->getLocator()->pay_now, 60);
     }
@@ -43,8 +50,13 @@ class PayPalStep extends GenericPaymentMethodStep implements iPerformPayment
     }
 
     // we need to define this method for consistency, because it will be called in every scenario, empty method just means do nothing here
-    public function performPaymentActionsInTheShop()
+    public function fillFieldsInTheShop()
     {
     }
+
+//    // we need to define this method for consistency, because it will be called in every scenario, empty method just means do nothing here
+//    public function performPaymentActionsInTheShop()
+//    {
+//    }
 
 }

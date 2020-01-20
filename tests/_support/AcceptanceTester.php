@@ -121,28 +121,30 @@ class AcceptanceTester extends Actor
     public function iStartPayment($paymentMethod): void
     {
         $this->shopInstance->startPayment($paymentMethod);
+//        $this->createPaymentMethodIfNeeded($paymentMethod);
+
     }
 
-    /**
-     * @Given I perform :paymentMethod payment actions in the shop
-     * @param $paymentMethod
-     * @throws Exception
-     */
-    public function iPerformPaymentActionsInTheShop($paymentMethod): void
-    {
-        $this->paymentMethod = $this->createPaymentMethod($paymentMethod);
-        $this->paymentMethod->performPaymentActionsInTheShop();
-        $this->shopInstance->proceedWithPayment($paymentMethod);
-    }
+//    /**
+//     * @Given I perform :paymentMethod payment actions in the shop
+//     * @param $paymentMethod
+//     * @throws Exception
+//     */
+//    public function iPerformPaymentActionsInTheShop($paymentMethod): void
+//    {
+//       // $this->paymentMethod = $this->createPaymentMethod($paymentMethod);
+//        $this->paymentMethod->performPaymentActionsInTheShop();
+//        $this->shopInstance->proceedWithPayment($paymentMethod);
+//    }
 
-    /**
-     * @When I perform payment method actions outside of the shop
-     * @throws Exception
-     */
-    public function iPerformPaymentMethodActionsOutsideOfTheShop(): void
-    {
-        $this->paymentMethod->performPaymentMethodActionsOutsideShop();
-    }
+//    /**
+//     * @When I perform payment method actions outside of the shop
+//     * @throws Exception
+//     */
+//    public function iPerformPaymentMethodActionsOutsideOfTheShop(): void
+//    {
+//        $this->paymentMethod->performPaymentMethodActionsOutsideShop();
+//    }
 
     /**
      * @Then I see successful payment
@@ -160,6 +162,28 @@ class AcceptanceTester extends Actor
     public function iSeeTransactionTypeInTransactionTable($paymentMethod, $paymentAction): void
     {
         $this->shopInstance->validateTransactionInDatabase($paymentMethod, $paymentAction);
+    }
+
+    /**
+     * @Given I fill :paymentMethod fields in the shop
+     * @throws Exception
+     */
+    public function iFillFieldsInTheShop($paymentMethod)
+    {
+        $this->createPaymentMethodIfNeeded($paymentMethod);
+        $this->paymentMethod->fillFieldsInTheShop();
+        $this->shopInstance->proceedWithPayment($paymentMethod);
+    }
+
+    /**
+     * @Given I perform :paymentMethod actions outside of the shop
+     * @throws Exception
+     */
+    public function iPerformActionsOutsideOfTheShop($paymentMethod)
+    {
+        $this->createPaymentMethodIfNeeded($paymentMethod);
+       // $this->shopInstance->proceedWithPayment($paymentMethod);
+        $this->paymentMethod->performPaymentMethodActionsOutsideShop();
     }
 
 
@@ -206,5 +230,29 @@ class AcceptanceTester extends Actor
     private function isShopSystemSupported($shopSystemName): bool
     {
         return array_key_exists($shopSystemName, $this->shopInstanceMap);
+    }
+
+    /**
+     * @param $paymentMethod
+     * @return bool
+     */
+    private function paymentMethodCreated($paymentMethod)
+    {
+        if ($this->paymentMethod !== null)
+        {
+            return $this->paymentMethod::STEP_NAME === $paymentMethod;
+        }
+        return false;
+    }
+
+    /**
+     * @param $paymentMethod
+     */
+    private function createPaymentMethodIfNeeded($paymentMethod)
+    {
+        if (! $this->paymentMethodCreated($paymentMethod) )
+        {
+            $this->paymentMethod = $this->createPaymentMethod($paymentMethod);
+        }
     }
 }
