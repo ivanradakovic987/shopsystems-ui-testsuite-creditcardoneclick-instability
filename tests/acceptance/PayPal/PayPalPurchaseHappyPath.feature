@@ -15,5 +15,3 @@ Feature: PayPalPurchaseHappyPath
     When I perform "PayPal" actions outside of the shop
     Then I see successful payment
     And I see "PayPal" transaction type "purchase" in transaction table
-
-
