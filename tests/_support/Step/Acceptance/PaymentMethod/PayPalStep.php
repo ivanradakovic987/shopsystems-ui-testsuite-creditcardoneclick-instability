@@ -3,6 +3,7 @@
 namespace Step\Acceptance\PaymentMethod;
 
 use Facebook\WebDriver\Exception\TimeOutException;
+use Facebook\WebDriver\Exception\UnrecognizedExceptionException;
 use Step\Acceptance\iPerformPayment;
 use Exception;
 
@@ -21,14 +22,24 @@ class PayPalStep extends GenericPaymentMethodStep implements iPerformPayment
     public function performPaymentMethodActionsOutsideShop()
     {
         $this->performPaypalLogin();
-        //Nothing happens after first time accepting cookies
+        // Nothing happens after first time accepting cookies
         // page needs to be reloaded and clicked again
-        $this->preparedClick($this->getLocator()->accept_cookies);
- //       $this->pause();
-        $this->reloadPage();
-        $this->wait(5);
-        $this->preparedClick($this->getLocator()->accept_cookies, 80);
-        $this->preparedClick($this->getLocator()->continue, 80);
+        $retry = true;
+        $retryCount = 0;
+        while($retry || $retryCount>3) {
+            try {
+                $this->preparedClick($this->getLocator()->accept_cookies,30);
+                $this->preparedClick($this->getLocator()->continue, 80);
+                $retry = false;
+            } catch (UnrecognizedExceptionException $e) {
+               // $this->preparedClick($this->getLocator()->accept_cookies,30);
+                $this->reloadPage();
+                $this->wait(10);
+                $this->preparedClick($this->getLocator()->accept_cookies, 80);
+                $retryCount ++;
+            }
+        }
+
         $this->preparedClick($this->getLocator()->pay_now, 60);
     }
 
