@@ -123,25 +123,6 @@ class AcceptanceTester extends Actor
         $this->shopInstance->startPayment($paymentMethod);
     }
 
-
-    /**
-     * @Then I see successful payment
-     */
-    public function iSeeSuccessfulPayment(): void
-    {
-        $this->shopInstance->validateSuccessPage();
-    }
-
-    /**
-     * @Then I see :paymentMethod transaction type :paymentAction in transaction table
-     * @param $paymentMethod
-     * @param $paymentAction
-     */
-    public function iSeeTransactionTypeInTransactionTable($paymentMethod, $paymentAction): void
-    {
-        $this->shopInstance->validateTransactionInDatabase($paymentMethod, $paymentAction);
-    }
-
     /**
      * @Given I fill :paymentMethod fields in the shop
      * @param $paymentMethod
@@ -163,6 +144,24 @@ class AcceptanceTester extends Actor
     {
         $this->createPaymentMethodIfNeeded($paymentMethod);
         $this->paymentMethod->performPaymentMethodActionsOutsideShop();
+    }
+
+    /**
+     * @Then I see successful payment
+     */
+    public function iSeeSuccessfulPayment(): void
+    {
+        $this->shopInstance->validateSuccessPage();
+    }
+
+    /**
+     * @Then I see :paymentMethod transaction type :paymentAction in transaction table
+     * @param $paymentMethod
+     * @param $paymentAction
+     */
+    public function iSeeTransactionTypeInTransactionTable($paymentMethod, $paymentAction): void
+    {
+        $this->shopInstance->validateTransactionInDatabase($paymentMethod, $paymentAction);
     }
 
     /**
