@@ -14,7 +14,5 @@ Feature: CreditCard3DSAuthorizationHappyPath
   Scenario: authorize
     Given I fill "CreditCard" fields in the shop
     When I perform "CreditCard" actions outside of the shop
-#      Given I perform "CreditCard" payment actions in the shop
-#    And I perform payment method actions outside of the shop
     Then I see successful payment
     And I see "CreditCard" transaction type "authorization" in transaction table

@@ -61,10 +61,4 @@ class PayPalStep extends GenericPaymentMethodStep implements iPerformPayment
     public function fillFieldsInTheShop()
     {
     }
-
-//    // we need to define this method for consistency, because it will be called in every scenario, empty method just means do nothing here
-//    public function performPaymentActionsInTheShop()
-//    {
-//    }
-
 }

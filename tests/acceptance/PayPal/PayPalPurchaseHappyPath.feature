@@ -12,7 +12,6 @@ Feature: PayPalPurchaseHappyPath
 
   @patch @minor @major
   Scenario: purchase
-    #Given I perform "PayPal" payment actions in the shop
     When I perform "PayPal" actions outside of the shop
     Then I see successful payment
     And I see "PayPal" transaction type "purchase" in transaction table
