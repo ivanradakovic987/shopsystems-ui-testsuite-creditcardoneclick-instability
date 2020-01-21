@@ -22,24 +22,21 @@ class PayPalStep extends GenericPaymentMethodStep implements iPerformPayment
     public function performPaymentMethodActionsOutsideShop()
     {
         $this->performPaypalLogin();
-        // Nothing happens after first time accepting cookies
-        // page needs to be reloaded and clicked again
         $retry = true;
         $retryCount = 0;
         while($retry || $retryCount>3) {
             try {
-                $this->preparedClick($this->getLocator()->accept_cookies,30);
                 $this->preparedClick($this->getLocator()->continue, 80);
                 $retry = false;
             } catch (UnrecognizedExceptionException $e) {
-               // $this->preparedClick($this->getLocator()->accept_cookies,30);
+                // Nothing happens when just clicking 'accept cookies'
+                // page needs to be reloaded and 'accept cookies' clicked then
                 $this->reloadPage();
-                $this->wait(10);
+                $this->waitForText($this->getLocator()->payment_page_text,60);
                 $this->preparedClick($this->getLocator()->accept_cookies, 80);
                 $retryCount ++;
             }
         }
-
         $this->preparedClick($this->getLocator()->pay_now, 60);
     }
 

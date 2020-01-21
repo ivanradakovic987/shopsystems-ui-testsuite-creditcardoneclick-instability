@@ -121,30 +121,8 @@ class AcceptanceTester extends Actor
     public function iStartPayment($paymentMethod): void
     {
         $this->shopInstance->startPayment($paymentMethod);
-//        $this->createPaymentMethodIfNeeded($paymentMethod);
-
     }
 
-//    /**
-//     * @Given I perform :paymentMethod payment actions in the shop
-//     * @param $paymentMethod
-//     * @throws Exception
-//     */
-//    public function iPerformPaymentActionsInTheShop($paymentMethod): void
-//    {
-//       // $this->paymentMethod = $this->createPaymentMethod($paymentMethod);
-//        $this->paymentMethod->performPaymentActionsInTheShop();
-//        $this->shopInstance->proceedWithPayment($paymentMethod);
-//    }
-
-//    /**
-//     * @When I perform payment method actions outside of the shop
-//     * @throws Exception
-//     */
-//    public function iPerformPaymentMethodActionsOutsideOfTheShop(): void
-//    {
-//        $this->paymentMethod->performPaymentMethodActionsOutsideShop();
-//    }
 
     /**
      * @Then I see successful payment
@@ -166,9 +144,10 @@ class AcceptanceTester extends Actor
 
     /**
      * @Given I fill :paymentMethod fields in the shop
+     * @param $paymentMethod
      * @throws Exception
      */
-    public function iFillFieldsInTheShop($paymentMethod)
+    public function iFillFieldsInTheShop($paymentMethod): void
     {
         $this->createPaymentMethodIfNeeded($paymentMethod);
         $this->paymentMethod->fillFieldsInTheShop();
@@ -177,15 +156,14 @@ class AcceptanceTester extends Actor
 
     /**
      * @Given I perform :paymentMethod actions outside of the shop
+     * @param $paymentMethod
      * @throws Exception
      */
-    public function iPerformActionsOutsideOfTheShop($paymentMethod)
+    public function iPerformActionsOutsideOfTheShop($paymentMethod): void
     {
         $this->createPaymentMethodIfNeeded($paymentMethod);
-       // $this->shopInstance->proceedWithPayment($paymentMethod);
         $this->paymentMethod->performPaymentMethodActionsOutsideShop();
     }
-
 
     /**
      * @param $paymentMethod
@@ -212,7 +190,6 @@ class AcceptanceTester extends Actor
      */
     private function createShopSystemInstance($shopSystemName): GenericShopSystemStep
     {
-        // Hint: Use guard clause for immediate exit
         if (!$this->isShopSystemSupported($shopSystemName)) {
             throw new \RuntimeException('Environment variable SHOP_SYSTEM is not set or requested shop system is not supported');
         }
@@ -236,7 +213,7 @@ class AcceptanceTester extends Actor
      * @param $paymentMethod
      * @return bool
      */
-    private function paymentMethodCreated($paymentMethod)
+    private function paymentMethodCreated($paymentMethod): bool
     {
         if ($this->paymentMethod !== null)
         {
@@ -248,7 +225,7 @@ class AcceptanceTester extends Actor
     /**
      * @param $paymentMethod
      */
-    private function createPaymentMethodIfNeeded($paymentMethod)
+    private function createPaymentMethodIfNeeded($paymentMethod): void
     {
         if (! $this->paymentMethodCreated($paymentMethod) )
         {

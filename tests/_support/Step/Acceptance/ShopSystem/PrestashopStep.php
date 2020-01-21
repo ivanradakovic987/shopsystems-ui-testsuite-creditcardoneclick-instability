@@ -78,13 +78,14 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
     /**
      * @param String $paymentMethod
      * @return mixed
+     * @throws ExceptionAlias
      */
     public function startPayment($paymentMethod)
     {
         $paymentMethodName = strtolower($paymentMethod) . '_name';
         $paymentMethodForm = strtolower($paymentMethod) . '_form';
         $this->selectOption($this->getLocator()->checkout->$paymentMethodForm, $this->getLocator()->checkout->$paymentMethodName);
-        if (!$this->isRedirectPaymentMethod($paymentMethod)) {
+        if ($this->isRedirectPaymentMethod($paymentMethod)) {
             $this->proceedWithPayment($paymentMethod);
         }
     }
@@ -92,11 +93,12 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
     /**
      * @param String $paymentMethod
      * @return mixed
+     * @throws ExceptionAlias
      */
     public function proceedWithPayment($paymentMethod)
     {
         $this->checkOption($this->getLocator()->checkout->agree_with_terms_of_service);
-        $this->click($this->getLocator()->checkout->order_with_obligation_to_pay);
+        $this->preparedClick($this->getLocator()->checkout->order_with_obligation_to_pay);
     }
 
     /**
