@@ -1,8 +1,9 @@
-# **Concept for UI test code**
+# **ShopSystems UI test suite**
+
+This project contains acceptance tests for Wirecard Shop Systems extensions. 
 
 Supported Shop Systems
 ========
-
 
 |  Shop system | Supported | This project used in CI |   
 |---|---|:---:|
