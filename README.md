@@ -5,10 +5,17 @@ To run tests locally:
 
 1. Start the shop system with our extension installed
 2. Start selenium driver on port 4444
-3. Install codeception
+3. Clone 
+    ```
+    git clone https://github.com/wirecard/shopsystems-ui-testsuite.git
+    
+    cd shopsystems-ui-testsuite
+ 
+
+4. Install codeception
     
     `composer install codeception/codeception`
-4. Export environment variables
+5. Export environment variables
 
     `SHOP_SYSTEM = prestashop #(or woocommerce)`
         
@@ -23,7 +30,7 @@ To run tests locally:
      if running on browserstack
         `BROWSERSTACK_USER`
         `BROWSERSTACK_ACCESS_KEY`
-5. Start codeception 
+6. Start codeception 
     
     `vendor/bin/codecept run acceptance  --debug --html`
 
