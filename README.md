@@ -1,5 +1,15 @@
 # **Concept for UI test code**
 
+Supported Shop Systems
+========
+
+
+|  Shop system | Supported | This project used in CI |   
+|---|---|:---:|
+| **Prestashop** | &#9989; | &#9744; |   
+| **Woocommerce** | &#9989; | &#9744; |
+
+
 To run tests locally:
 ========
 
