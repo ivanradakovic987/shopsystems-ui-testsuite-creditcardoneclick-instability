@@ -3,7 +3,7 @@
 To run tests locally:
 ========
 
-1. Start the shop system
+1. Start the shop system with our extension installed
 2. Start selenium driver on port 4444
 3. Install codeception
     
