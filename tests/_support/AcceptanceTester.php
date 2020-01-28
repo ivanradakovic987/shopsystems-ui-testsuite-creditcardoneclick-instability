@@ -214,8 +214,7 @@ class AcceptanceTester extends Actor
      */
     private function paymentMethodCreated($paymentMethod): bool
     {
-        if ($this->paymentMethod !== null)
-        {
+        if ($this->paymentMethod !== null) {
             return $this->paymentMethod::STEP_NAME === $paymentMethod;
         }
         return false;
@@ -226,8 +225,7 @@ class AcceptanceTester extends Actor
      */
     private function createPaymentMethodIfNeeded($paymentMethod): void
     {
-        if (! $this->paymentMethodCreated($paymentMethod) )
-        {
+        if (!$this->paymentMethodCreated($paymentMethod)) {
             $this->paymentMethod = $this->createPaymentMethod($paymentMethod);
         }
     }
