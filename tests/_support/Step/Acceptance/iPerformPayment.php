@@ -6,10 +6,11 @@ namespace Step\Acceptance;
  * Interface iPerformPayment
  */
 interface iPerformPayment {
+
     /**
      * @return mixed
      */
-    public function performPaymentActionsInTheShop();
+    public function fillFieldsInTheShop();
 
     /**
      * @return mixed

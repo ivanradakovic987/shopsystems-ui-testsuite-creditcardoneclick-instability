@@ -18,7 +18,7 @@ class CreditCardStep extends GenericPaymentMethodStep implements iPerformPayment
      * @return mixed
      * @throws Exception
      */
-    public function performPaymentActionsInTheShop()
+    public function fillFieldsInTheShop()
     {
         $this->switchToCreditCardUIFrame();
         try {

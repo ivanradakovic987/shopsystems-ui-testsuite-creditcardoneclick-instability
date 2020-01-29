@@ -124,23 +124,25 @@ class AcceptanceTester extends Actor
     }
 
     /**
-     * @Given I perform :paymentMethod payment actions in the shop
+     * @Given I fill :paymentMethod fields in the shop
      * @param $paymentMethod
      * @throws Exception
      */
-    public function iPerformPaymentActionsInTheShop($paymentMethod): void
+    public function iFillFieldsInTheShop($paymentMethod): void
     {
-        $this->paymentMethod = $this->createPaymentMethod($paymentMethod);
-        $this->paymentMethod->performPaymentActionsInTheShop();
+        $this->createPaymentMethodIfNeeded($paymentMethod);
+        $this->paymentMethod->fillFieldsInTheShop();
         $this->shopInstance->proceedWithPayment($paymentMethod);
     }
 
     /**
-     * @When I perform payment method actions outside of the shop
+     * @Given I perform :paymentMethod actions outside of the shop
+     * @param $paymentMethod
      * @throws Exception
      */
-    public function iPerformPaymentMethodActionsOutsideOfTheShop(): void
+    public function iPerformActionsOutsideOfTheShop($paymentMethod): void
     {
+        $this->createPaymentMethodIfNeeded($paymentMethod);
         $this->paymentMethod->performPaymentMethodActionsOutsideShop();
     }
 
@@ -161,7 +163,6 @@ class AcceptanceTester extends Actor
     {
         $this->shopInstance->validateTransactionInDatabase($paymentMethod, $paymentAction);
     }
-
 
     /**
      * @param $paymentMethod
@@ -188,7 +189,6 @@ class AcceptanceTester extends Actor
      */
     private function createShopSystemInstance($shopSystemName): GenericShopSystemStep
     {
-        // Hint: Use guard clause for immediate exit
         if (!$this->isShopSystemSupported($shopSystemName)) {
             throw new \RuntimeException('Environment variable SHOP_SYSTEM is not set or requested shop system is not supported');
         }
@@ -206,5 +206,27 @@ class AcceptanceTester extends Actor
     private function isShopSystemSupported($shopSystemName): bool
     {
         return array_key_exists($shopSystemName, $this->shopInstanceMap);
+    }
+
+    /**
+     * @param $paymentMethod
+     * @return bool
+     */
+    private function paymentMethodCreated($paymentMethod): bool
+    {
+        if ($this->paymentMethod !== null) {
+            return $this->paymentMethod::STEP_NAME === $paymentMethod;
+        }
+        return false;
+    }
+
+    /**
+     * @param $paymentMethod
+     */
+    private function createPaymentMethodIfNeeded($paymentMethod): void
+    {
+        if (!$this->paymentMethodCreated($paymentMethod)) {
+            $this->paymentMethod = $this->createPaymentMethod($paymentMethod);
+        }
     }
 }

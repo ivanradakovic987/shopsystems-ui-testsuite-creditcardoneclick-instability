@@ -56,6 +56,8 @@ class WoocommerceStep extends GenericShopSystemStep implements iConfigurePayment
     public function startPayment($paymentMethod)
     {
         $this->wait(2);
+        $paymentMethodRadioButtonLocator  = 'wirecard_' . strtolower($paymentMethod);
+        $this->preparedClick($this->getLocator()->checkout->$paymentMethodRadioButtonLocator);
         $this->preparedClick($this->getLocator()->checkout->place_order);
         if (!$this->isRedirectPaymentMethod($paymentMethod)) {
             $this->startCreditCardPayment($paymentMethod);

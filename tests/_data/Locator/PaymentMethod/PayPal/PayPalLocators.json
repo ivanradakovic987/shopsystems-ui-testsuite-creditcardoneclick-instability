@@ -4,5 +4,7 @@
     "login": "//*[@id='btnLogin']",
     "next" : "//*[@id='btnNext']",
     "pay_now": "//*[@id='confirmButtonTop']",
-    "continue": "//*[@class='btn full confirmButton continueButton']"
+    "continue": "//*[@class='btn full confirmButton continueButton']",
+    "accept_cookies": "//*[@id='acceptAllButton']",
+    "payment_page_text": "Hi, Wirecardbuyer!"
 }
