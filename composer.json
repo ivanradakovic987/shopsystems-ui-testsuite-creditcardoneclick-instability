@@ -1,15 +1,20 @@
 {
-    "name": "tatjana.starcenko/ui-test-concept",
-    "authors": [
-        {
-            "name": "Tatjana Starcenko",
-            "email": "tatjana.starcenko@wirecard.com"
-        }
-    ],
+    "name": "wirecard/shopsystem-ui-testsuite",
+    "description": "Shop System UI Test Suite",
+    "license": "MIT",
     "require": {
-      "ext-json": "*"
+        "php": ">=5.6",
+        "ext-json": "*"
     },
     "require-dev": {
         "codeception/codeception": "^3.1"
+    },
+    "scripts": {
+        "run-ui-tests": "vendor/bin/codecept run acceptance  --debug --html"
+    },
+    "autoload": {
+        "psr-4": {
+            "WirecardEE\\Tests\\": "tests/"
+        }
     }
 }
