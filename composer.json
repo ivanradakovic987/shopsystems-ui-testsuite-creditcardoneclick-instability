@@ -11,5 +11,10 @@
     },
     "scripts": {
         "run-ui-tests": "vendor/bin/codecept run acceptance  --debug --html"
+    },
+    "autoload": {
+        "psr-4": {
+            "WirecardEE\\Tests\\": "tests/"
+        }
     }
 }
