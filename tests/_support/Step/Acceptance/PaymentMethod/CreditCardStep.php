@@ -15,10 +15,9 @@ class CreditCardStep extends GenericPaymentMethodStep implements iPerformPayment
     const STEP_NAME = 'CreditCard';
 
     /**
-     * @return mixed
      * @throws Exception
      */
-    public function fillFieldsInTheShop()
+    public function fillFieldsInTheShop(): void
     {
         $this->switchToCreditCardUIFrame();
         try {
@@ -36,10 +35,9 @@ class CreditCardStep extends GenericPaymentMethodStep implements iPerformPayment
     }
 
     /**
-     * @return mixed
      * @throws Exception
      */
-    public function performPaymentMethodActionsOutsideShop()
+    public function performPaymentMethodActionsOutsideShop() : void
     {
         $this->preparedFillField($this->getLocator()->password, $this->getPaymentMethod()->getPassword());
         $this->click($this->getLocator()->continue_button);

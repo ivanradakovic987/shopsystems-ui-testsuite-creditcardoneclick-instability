@@ -21,13 +21,16 @@ To run tests locally:
     git clone https://github.com/wirecard/shopsystems-ui-testsuite.git
     
     cd shopsystems-ui-testsuite
- 
 
-4. Install codeception
-    
-    `composer install codeception/codeception`
+4. Install codeception and it's dependencies 
+    ```
+    composer require codeception/module-webdriver --dev
+    composer require codeception/module-asserts --dev
+    composer require codeception/module-db --dev
+    composer require codeception/codeception --dev  
+
 5. Export environment variables
-
+    
     `SHOP_SYSTEM = prestashop #(or woocommerce)`
         
      `DB_HOST`
@@ -35,15 +38,15 @@ To run tests locally:
      `DB_PORT`
         
      `DB_NAME`
+     
+     `DB_USER`
+             
+     `DB_PASSWORD`
         
-     `SHOP_URL`
-        
-     if running on browserstack
-        `BROWSERSTACK_USER`
-        `BROWSERSTACK_ACCESS_KEY`
-6. Start codeception 
-    
-    `vendor/bin/codecept run acceptance  --debug --html`
+     `SHOP_URL`           
+
+6. Start codeception   
+    `vendor/bin/codecept run acceptance -g ${SHOP_SYSTEM} --debug --html`
 
 Configuring test data
 =====
@@ -53,12 +56,14 @@ For that use `config.json` file. There it is possible to change used currency, d
 `config.json` file content:
 `````
 {
-     "gateway" : "API-TEST",
-     "customer_data": "CustomerData.json",
-     "currency": "EUR",
-     "default_country": "AT",
-     "creditcard_data": "CreditCardData.json",
-     "paypal_data": "PayPalData.json"
+  "gateway" : "API-TEST",
+  "guest_customer_data": "GuestCustomerData.json",
+  "registered_customer_data": "RegisteredCustomerData.json",
+  "currency": "EUR",
+  "default_country": "AT",
+  "creditcard_data": "CreditCardData.json",
+  "creditcardoneclick_data": "CreditCardOneClickData.json",
+  "paypal_data": "PayPalData.json"
 }
 `````
 Note: if you want to use custom `*_data.json` path, please put the full file path. Otherwise the file should be located in respective folder inside `_data` folder.

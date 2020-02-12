@@ -2,7 +2,11 @@
   "page": {
     "product": "index.php?id_product=1&id_product_attribute=1&rewrite=hummingbird-printed-t-shirt&controller=product#/1-size-s/8-color-white",
     "checkout": "index.php?controller=order",
-    "order_received": "order-confirmation"
+    "order_received": "order-confirmation",
+    "register": "index.php?controller=authentication&create_account=1",
+    "log_out": "index.php?mylogout=",
+    "sign_in": "index.php?controller=authentication&back=my-account",
+    "my_account": "index.php?controller=my-account"
   },
   "product": {
     "price": "22.94",
@@ -20,13 +24,14 @@
     "post_code": "//*[@name='postcode']",
     "phone": "//*[@name='phone']",
     "email_address": "//*[@name='email']",
+    "password":  "//*[@name='password']",
     "creditcard_name" : "Wirecard Credit Card",
     "paypal_name" : "Wirecard PayPal",
     "creditcard_form" : "//input[@type='radio'][contains(@data-module-name, 'wd-creditcard')]",
     "paypal_form" : "//input[@type='radio'][contains(@data-module-name, 'wd-paypal')]",
     "continue" : "//button[@type='submit'][contains(@data-link-action, 'register-new-customer')]",
-    "continue2": "//*[@name='confirm-addresses']",
-    "continue3": "//*[@name='confirmDeliveryOption']",
+    "continue_confirm_address": "//*[@name='confirm-addresses']",
+    "continue_confirm_delivery": "//*[@name='confirmDeliveryOption']",
     "agree_to_terms_and_conditions_and_privacy_policy": "//*[@name='psgdpr']",
     "agree_with_terms_of_service":  "//*[@name='conditions_to_approve[terms-and-conditions]']",
     "order_with_obligation_to_pay": "//*[@class='btn btn-primary center-block']"
@@ -36,5 +41,14 @@
   },
   "order_received": {
     "order_confirmed_message": "YOUR ORDER IS CONFIRMED"
+  },
+  "register": {
+    "save": "//button[@type='submit'][contains(@data-link-action, 'save-customer')]",
+    "log_out": "//*[@class='logout hidden-sm-down]']"
+  },
+  "sign_in": {
+    "email": "//*[@name='email']",
+    "password": "//*[@name='password']",
+    "sign_in": "//*[@id='submit-login']"
   }
 }

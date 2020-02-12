@@ -4,11 +4,13 @@ namespace Helper;
 
 //namespace Codeception\Module;
 use Codeception\Exception\ModuleException;
+use Codeception\Module;
+use PDO;
 
 /**
  * Additional methods for DB module
  */
-class DbHelper extends \Codeception\Module
+class DbHelper extends Module
 {
 
     /**
@@ -22,11 +24,11 @@ class DbHelper extends \Codeception\Module
     public function getColumnFromDatabaseNoCriteria($table, $column): array
     {
         $dbh = $this->getModule('Db')->dbh;
-        $query = "select %s from %s";
+        $query = 'select %s from %s';
         $query = sprintf($query, $column, $table);
         $this->debugSection('Query', $query);
         $sth = $dbh->prepare($query);
         $sth->execute();
-        return $sth->fetchAll(\PDO::FETCH_COLUMN, 0);
+        return $sth->fetchAll(PDO::FETCH_COLUMN, 0);
     }
 }

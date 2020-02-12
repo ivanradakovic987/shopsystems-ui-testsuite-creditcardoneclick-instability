@@ -8,8 +8,6 @@ actor: AcceptanceTester
 modules:
     enabled:
         - WebDriver:
-#              host: 'hub-cloud.browserstack.com'
-#              port: 80
               url: '%SHOP_URL%'
               browser: chrome # 'chrome' or 'firefox'
               restart: true #run each test in new browser window

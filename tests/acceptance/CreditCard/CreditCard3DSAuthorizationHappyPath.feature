@@ -6,11 +6,11 @@ Feature: CreditCard3DSAuthorizationHappyPath
   Background:
     Given I initialize shop system
     And I activate "CreditCard" payment action "reserve" in configuration
-    And I prepare checkout with purchase sum "100" in shop system
+    And I prepare checkout with purchase sum "100" in shop system as "guest customer"
     And I see "Wirecard Credit Card"
     And I start "CreditCard" payment
 
-  @patch @minor @major
+  @woocommerce @prestashop
   Scenario: authorize
     When I fill "CreditCard" fields in the shop
     And I perform "CreditCard" actions outside of the shop

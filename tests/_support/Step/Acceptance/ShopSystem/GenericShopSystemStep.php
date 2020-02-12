@@ -16,7 +16,12 @@ class GenericShopSystemStep extends GenericStep
     /**
      * @var CustomerConfig;
      */
-    private $customer;
+    private $guestCustomer;
+
+    /**
+     * @var CustomerConfig;
+     */
+    private $registeredCustomer;
 
     /**
      * @var array
@@ -51,22 +56,25 @@ class GenericShopSystemStep extends GenericStep
      * GenericStep constructor.
      * @param Scenario $scenario
      * @param $gateway
-     * @param $customerDataFileName
+     * @param $guestFileName
+     * @param $registeredFileName
      */
-    public function __construct(Scenario $scenario, $gateway, $customerDataFileName)
+    public function __construct(Scenario $scenario, $gateway, $guestFileName, $registeredFileName)
     {
         parent::__construct($scenario, $gateway);
         $this->setLocator($this->getDataFromDataFile($this->getFullPath(FileSytem::SHOP_SYSTEM_LOCATOR_FOLDER_PATH . static::STEP_NAME . DIRECTORY_SEPARATOR . static::STEP_NAME . 'Locators.json')));
-        $this->createCustomerObject($customerDataFileName);
+        $this->createCustomerObjects($guestFileName, $registeredFileName);
     }
 
     /**
-     * @param $dataFileName
+     * @param $guestFileName
+     * @param $registeredFileName
      */
-    public function createCustomerObject($dataFileName): void
+    public function createCustomerObjects($guestFileName, $registeredFileName): void
     {
         $dataFolderPath = $this->getFullPath(FileSytem::CUSTOMER_DATA_FOLDER_PATH);
-        $this->customer = new CustomerConfig($this->getDataFromDataFile($dataFolderPath . $dataFileName));
+        $this->guestCustomer = new CustomerConfig($this->getDataFromDataFile($dataFolderPath . $guestFileName));
+        $this->registeredCustomer = new CustomerConfig($this->getDataFromDataFile($dataFolderPath . $registeredFileName));
     }
 
     /**
@@ -113,7 +121,7 @@ class GenericShopSystemStep extends GenericStep
     /**
      * @return mixed
      */
-    public function goToCheckout()
+    public function goToCheckout() : void
     {
         $this->amOnPage($this->getLocator()->page->checkout);
     }
@@ -183,20 +191,25 @@ class GenericShopSystemStep extends GenericStep
     }
 
     /**
+     * @param $customerType
      * @return mixed
      */
-    public function getCustomer()
+    public function getCustomer($customerType)
     {
-        return $this->customer;
+        if ($customerType === static::REGISTERED_CUSTOMER)
+        {
+            return $this->registeredCustomer;
+        }
+        return $this->guestCustomer;
     }
 
     /**
-     * @param array $paymentMethod
+     * @param string $paymentMethod
      * @return mixed
      */
     public function getMappedTxTableValuesForPaymentMethod($paymentMethod)
     {
-       return $this->getMappedPaymentActions()[$paymentMethod]['tx_table'];
+        return $this->getMappedPaymentActions()[$paymentMethod]['tx_table'];
     }
 
 

@@ -33,7 +33,11 @@ class AcceptanceTester extends Actor
 
     const CREDIT_CARD = 'creditCard';
 
+    const CREDIT_CARD_ONE_CLICK = 'creditCardOneClick';
+
     const PAY_PAL = 'payPal';
+
+    const REGISTERED_CUSTOMER = 'registered customer';
 
     //this is used to generate new class instance, so const doesn't work here
     private $shopInstanceMap = [
@@ -43,6 +47,7 @@ class AcceptanceTester extends Actor
 
     private $paymentMethodInstanceMap = [
         'CreditCard' => Step\Acceptance\PaymentMethod\CreditCardStep::class,
+        'CreditCardOneClick' => Step\Acceptance\PaymentMethod\CreditCardOneClickStep::class,
         'PayPal' => Step\Acceptance\PaymentMethod\PayPalStep::class
     ];
 
@@ -74,11 +79,13 @@ class AcceptanceTester extends Actor
     {
         $usedShopEnvVariable = getenv('SHOP_SYSTEM');
         if (!$usedShopEnvVariable) {
-            throw new \RuntimeException('Environment variable SHOP_SYSTEM is not set');
+            throw new RuntimeException('Environment variable SHOP_SYSTEM is not set');
         }
         $this->configData = $this->getDataFromDataFile($this->getFullPath(FileSytem::CONFIG_FILE));
         $this->gateway = $this->configData->gateway;
-        $this->shopInstance = $this->createShopSystemInstance($usedShopEnvVariable);
+        if (!$this->shopInstance) {
+            $this->shopInstance = $this->createShopSystemInstance($usedShopEnvVariable);
+        }
     }
 
     /**
@@ -93,15 +100,19 @@ class AcceptanceTester extends Actor
     }
 
     /**
-     * @Given I prepare checkout with purchase sum :minPurchaseSum in shop system
+     * @Given I prepare checkout with purchase sum :minPurchaseSum in shop system as :arg2
      * @param $minPurchaseSum
+     * @param $customerType
      * @throws Exception
      */
-    public function iPrepareCheckoutWithPurchaseSumInShopSystem($minPurchaseSum): void
+    public function iPrepareCheckoutWithPurchaseSumInShopSystemAs($minPurchaseSum, $customerType): void
     {
+        if ($customerType === static::REGISTERED_CUSTOMER) {
+            $this->shopInstance->logIn();
+        }
         $this->shopInstance->fillBasket($minPurchaseSum);
         $this->shopInstance->goToCheckout();
-        $this->shopInstance->fillCustomerDetails();
+        $this->shopInstance->fillCustomerDetails($customerType);
     }
 
     /**
@@ -132,6 +143,31 @@ class AcceptanceTester extends Actor
     {
         $this->createPaymentMethodIfNeeded($paymentMethod);
         $this->paymentMethod->fillFieldsInTheShop();
+        if(strcasecmp($paymentMethod, static::CREDIT_CARD_ONE_CLICK) !== 0)
+        {
+            $this->shopInstance->proceedWithPayment($paymentMethod);
+        }
+    }
+
+    /**
+     * @When I save :paymentMethod for later use
+     * @param $paymentMethod
+     * @throws Exception
+     */
+    public function iSaveForLaterUse($paymentMethod): void
+    {
+        $this->paymentMethod->saveForLaterUse();
+        $this->shopInstance->proceedWithPayment($paymentMethod);
+    }
+
+    /**
+     * @When I choose :paymentMethod from saved cards list
+     * @param $paymentMethod
+     * @throws Exception
+     */
+    public function iChooseFromSavedCardsList($paymentMethod): void
+    {
+        $this->paymentMethod->chooseCardFromSavedCardsList();
         $this->shopInstance->proceedWithPayment($paymentMethod);
     }
 
@@ -190,12 +226,12 @@ class AcceptanceTester extends Actor
     private function createShopSystemInstance($shopSystemName): GenericShopSystemStep
     {
         if (!$this->isShopSystemSupported($shopSystemName)) {
-            throw new \RuntimeException('Environment variable SHOP_SYSTEM is not set or requested shop system is not supported');
+            throw new RuntimeException('Environment variable SHOP_SYSTEM is not set or requested shop system is not supported');
         }
         /** @var GenericShopSystemStep $shopInstance */
-        $shopInstance = new $this->shopInstanceMap[$shopSystemName]($this->getScenario(), $this->gateway, $this->configData->customer_data);
+        $shopInstance = new $this->shopInstanceMap[$shopSystemName]($this->getScenario(), $this->gateway, $this->configData->guest_customer_data, $this->configData->registered_customer_data);
         $shopInstance->configureShopSystemCurrencyAndCountry($this->configData->currency, $this->configData->default_country);
-
+        $shopInstance->registerCustomer();
         return $shopInstance;
     }
 

@@ -16,10 +16,9 @@ class PayPalStep extends GenericPaymentMethodStep implements iPerformPayment
     const STEP_NAME = 'PayPal';
 
     /**
-     * @return mixed
      * @throws Exception
      */
-    public function performPaymentMethodActionsOutsideShop()
+    public function performPaymentMethodActionsOutsideShop() : void
     {
         $this->performPaypalLogin();
 

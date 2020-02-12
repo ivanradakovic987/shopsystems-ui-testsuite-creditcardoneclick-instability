@@ -1,8 +1,10 @@
 {
   "gateway" : "API-TEST",
-  "customer_data": "CustomerData.json",
+  "guest_customer_data": "GuestCustomerData.json",
+  "registered_customer_data": "RegisteredCustomerData.json",
   "currency": "EUR",
   "default_country": "AT",
   "creditcard_data": "CreditCardData.json",
+  "creditcardoneclick_data": "CreditCardOneClickData.json",
   "paypal_data": "PayPalData.json"
 }

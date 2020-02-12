@@ -25,6 +25,7 @@ class GenericPaymentMethodStep extends GenericStep
      */
     private $configObjectMap = [
         self::CREDIT_CARD => CreditCardConfig::class,
+        self::CREDIT_CARD_ONE_CLICK => CreditCardConfig::class,
         self::PAY_PAL => PayPalConfig::class
     ];
 
