@@ -10,7 +10,7 @@ Feature: CreditCard3DSOneClickHappyPath
     And I see "Wirecard Credit Card"
     And I start "CreditCard" payment
 
-  @prestashop
+  @prestashop @major @minor @patch
   Scenario: authorize
     When I fill "CreditCardOneClick" fields in the shop
     And I save "CreditCardOneClick" for later use
