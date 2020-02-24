@@ -48,6 +48,58 @@ To run tests locally:
 6. Start codeception   
     `vendor/bin/codecept run acceptance -g ${SHOP_SYSTEM} --debug --html`
 
+How to include project and run tests in continuous integration:
+========
+1. Include wirecard/shopsystem-ui-testsuite to your composer set up
+`composer require wirecard/shopsystem-ui-testsuite` 
+
+2. Add codeception service to your docker-compose 
+Example docker-compose.yml
+```
+version: '3'
+services:
+  # Reference: https://hub.docker.com/_/mysql
+  db:
+    image: mysql
+    networks:
+      - shop-net
+  web:
+    build:
+      context: .
+    networks:
+      - shop-net
+    depends_on:
+      - db
+  codecept:
+    image: codeception/codeception
+    build:
+      context: .
+      dockerfile: Dockerfile_codeception
+    volumes:
+      - "${PWD}/<location-to-vendor/wirecard/shopsystem-ui-testsuite>:/project"
+    networks:
+      - shop-net
+networks:
+  shop-net:
+```
+3. Run tests passing required all variables
+```
+docker-compose run \
+              -e SHOP_SYSTEM="${SHOP_SYSTEM}" \
+              -e SHOP_URL="${SHOP_URL}" \
+              -e SHOP_VERSION="${SHOP_VERSION}" \
+              -e EXTENSION_VERSION="${EXTENSION_VERSION}" \
+              -e DB_HOST="${DB_SERVER}" \
+              -e DB_NAME="${DB_NAME}" \
+              -e DB_USER="${DB_USER}" \
+              -e DB_PASSWORD="${DB_PASSWORD}" \
+              -e BROWSERSTACK_USER="${BROWSERSTACK_USER}" \
+              -e BROWSERSTACK_ACCESS_KEY="${BROWSERSTACK_ACCESS_KEY}" \
+              codecept run acceptance \
+              -g "${TEST_GROUP}" -g "${SHOP_SYSTEM}"  \
+              --env ci --html --xml
+```
+
 Configuring test data
 =====
 It is possible instead of specified test data (Customer information, payment method credentials (like credit card numbers, PayPal credentials, etc)) to use custom one.
