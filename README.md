@@ -15,7 +15,7 @@ To run tests locally:
 ========
 
 1. Start the shop system with our extension installed
-2. Start selenium driver on port 4444
+2. Start chrome driver and selenium driver on port 4444
 3. Clone 
     ```
     git clone https://github.com/wirecard/shopsystems-ui-testsuite.git
@@ -24,10 +24,10 @@ To run tests locally:
 
 4. Install codeception and it's dependencies 
     ```
+    composer require codeception/codeception --dev 
     composer require codeception/module-webdriver --dev
     composer require codeception/module-asserts --dev
-    composer require codeception/module-db --dev
-    composer require codeception/codeception --dev  
+    composer require codeception/module-db --dev 
 
 5. Export environment variables
     
