@@ -3,9 +3,9 @@
 namespace Step\Acceptance\PaymentMethod;
 
 use Facebook\WebDriver\Exception\TimeOutException;
-use Facebook\WebDriver\Exception\UnrecognizedExceptionException;
 use Step\Acceptance\iPerformPayment;
 use Exception;
+use Facebook\WebDriver\Exception\ElementClickInterceptedException;
 
 /**
  * Class PayPalStep
@@ -24,7 +24,7 @@ class PayPalStep extends GenericPaymentMethodStep implements iPerformPayment
 
         try {
             $this->preparedClick($this->getLocator()->continue, 80);
-        } catch (UnrecognizedExceptionException $e) {
+        } catch (ElementClickInterceptedException $e) {
             //sometimes we need to accept cookies first
             $this->waitForText($this->getLocator()->payment_page_text, 60);
             $this->preparedClick($this->getLocator()->accept_cookies, 80);
