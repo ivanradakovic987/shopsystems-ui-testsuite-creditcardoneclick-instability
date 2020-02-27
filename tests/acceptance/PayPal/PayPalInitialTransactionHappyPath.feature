@@ -1,7 +1,7 @@
-Feature: PayPal
-  As a guest  user
-  I want to make a transaction with a PayPal
-  And to see that transaction was successful
+Feature: PayPalInitialTransaction
+  As a guest user
+  I want to make an initial transaction with a PayPal
+  And to see that initial transaction was successful
 
   Background:
     Given I initialize shop system
