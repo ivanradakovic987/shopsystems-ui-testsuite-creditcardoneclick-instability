@@ -1,6 +1,6 @@
 Feature: PayPalInitialTransaction
   As a guest user
-  I want to make an initial transaction with a PayPal
+  I want to make an initial transaction with PayPal
   And to see that initial transaction was successful
 
   Background:
