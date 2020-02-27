@@ -7,15 +7,15 @@ Supported Shop Systems
 
 |  Shop system | Supported | This project used in CI |   
 |---|---|:---:|
-| **Prestashop** | &#9989; | &#9744; |   
+| **Prestashop** | &#9989; | &#9989; |   
 | **Woocommerce** | &#9989; | &#9744; |
 
 
 To run tests locally:
 ========
 
-1. Start the shop system with our extension installed
-2. Start chrome driver and selenium driver on port 4444
+1. Start the shop system with wirecard "ee" extension installed
+2. Start selenium driver on port 4444
 3. Clone 
     ```
     git clone https://github.com/wirecard/shopsystems-ui-testsuite.git
@@ -53,7 +53,7 @@ How to include project and run tests in continuous integration:
 1. Include wirecard/shopsystem-ui-testsuite to your composer set up
 `composer require wirecard/shopsystem-ui-testsuite` 
 
-2. Add codeception service to your docker-compose 
+2. Add codeception service to docker-compose 
 Example docker-compose.yml
 ```
 version: '3'
@@ -82,7 +82,7 @@ services:
 networks:
   shop-net:
 ```
-3. Run tests passing required all variables
+3. Run tests passing all required variables
 ```
 docker-compose run \
               -e SHOP_SYSTEM="${SHOP_SYSTEM}" \
