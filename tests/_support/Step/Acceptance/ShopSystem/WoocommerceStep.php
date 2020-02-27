@@ -13,7 +13,7 @@ use Exception;
  */
 class WoocommerceStep extends GenericShopSystemStep implements iConfigurePaymentMethod, iPrepareCheckout, iValidateSuccess
 {
-    const STEP_NAME = 'woocommerce';
+    const STEP_NAME = 'Woocommerce';
 
     const SETTINGS_TABLE_NAME = 'wp_options';
 
