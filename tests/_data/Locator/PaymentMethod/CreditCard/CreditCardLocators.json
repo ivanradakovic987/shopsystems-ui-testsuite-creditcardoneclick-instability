@@ -9,6 +9,8 @@
   "continue_button": "//*[@name='authenticate']",
   "save_for_later_use": "//*[@id='wirecard-store-card']",
   "use_saved_card": "//*[@id='stored-card']",
-  "use_card": "//*[@class='btn btn-success']",
+  "cc_token" : "//input[@type='radio'][contains(@name, 'cc-reuse')]",
+  "cc_token_text": "//*[@id='cc-reuse-mask']",
+  "use_card": "//*[@id='use-new-card']",
   "use_different_card": "Use different card"
 }

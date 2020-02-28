@@ -4,6 +4,9 @@ namespace Step\Acceptance;
 
 use Codeception\Scenario;
 use Exception;
+use Facebook\WebDriver\Exception\WebDriverException;
+use phpDocumentor\Reflection\Types\Boolean;
+use phpDocumentor\Reflection\Types\Void_;
 
 /**
  * Class GenericStep
@@ -83,6 +86,21 @@ class GenericStep extends \AcceptanceTester
             return true;
         }
         return false;
+    }
+
+    /**
+     * @param array $selectorDetails
+     * @return bool
+     */
+    public function waitUntilOptionSelected($selectorDetails): bool
+    {
+        try {
+            $this->seeOptionIsSelected($selectorDetails[0], $selectorDetails[1]);
+            return true;
+        } catch ( \PHPUnit\Framework\AssertionFailedError $e) {
+            $this->selectOption($selectorDetails[0], $selectorDetails[1]);
+            return false;
+        }
     }
 
     /**
