@@ -14,8 +14,8 @@ Supported Shop Systems
 To run tests locally:
 ========
 
-1. Start the shop system with wirecard "ee" extension installed
-2. Start selenium driver on port 4444
+1. Start the shop system with wirecard-ee extension installed
+2. Start chrome driver and selenium driver on port 4444
 3. Clone 
     ```
     git clone https://github.com/wirecard/shopsystems-ui-testsuite.git
