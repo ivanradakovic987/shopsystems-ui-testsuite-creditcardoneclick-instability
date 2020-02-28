@@ -21,7 +21,7 @@ Feature: CreditCardInitialTransactionHappyPath
       |    "reserve"    |  "10"  |  "authorization" |
       |      "pay"      |  "10"  |    "purchase"    |
 
-  @woocommerce @prestashop
+  @woocommerce @prestashop @major @minor @patch
   Scenario Outline: initial transaction 3DS
     Given I activate "CreditCard" payment action <payment_action> in configuration
     And I prepare checkout with purchase sum <amount> in shop system as "guest customer"
