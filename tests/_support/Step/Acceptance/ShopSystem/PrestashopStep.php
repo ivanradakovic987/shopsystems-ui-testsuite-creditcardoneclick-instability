@@ -19,7 +19,7 @@ use Exception as ExceptionAlias;
  */
 class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentMethod, iPrepareCheckout, iValidateSuccess
 {
-    const STEP_NAME = 'prestashop';
+    const STEP_NAME = 'Prestashop';
 
     const SETTINGS_TABLE_NAME = 'ps_configuration';
 

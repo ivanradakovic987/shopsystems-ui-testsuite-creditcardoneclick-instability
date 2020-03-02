@@ -7,14 +7,14 @@ Supported Shop Systems
 
 |  Shop system | Supported | This project used in CI |   
 |---|---|:---:|
-| **Prestashop** | &#9989; | &#9744; |   
+| **Prestashop** | &#9989; | &#9989; |   
 | **Woocommerce** | &#9989; | &#9744; |
 
 
 To run tests locally:
 ========
 
-1. Start the shop system with our extension installed
+1. Start the shop system with wirecard-ee extension installed
 2. Start chrome driver and selenium driver on port 4444
 3. Clone 
     ```
@@ -47,6 +47,58 @@ To run tests locally:
 
 6. Start codeception   
     `vendor/bin/codecept run acceptance -g ${SHOP_SYSTEM} --debug --html`
+
+How to include project and run tests in continuous integration:
+========
+1. Include wirecard/shopsystem-ui-testsuite to your composer set up
+`composer require wirecard/shopsystem-ui-testsuite` 
+
+2. Add codeception service to docker-compose 
+Example docker-compose.yml
+```
+version: '3'
+services:
+  # Reference: https://hub.docker.com/_/mysql
+  db:
+    image: mysql
+    networks:
+      - shop-net
+  web:
+    build:
+      context: .
+    networks:
+      - shop-net
+    depends_on:
+      - db
+  codecept:
+    image: codeception/codeception
+    build:
+      context: .
+      dockerfile: Dockerfile_codeception
+    volumes:
+      - "${PWD}/<location-to-vendor/wirecard/shopsystem-ui-testsuite>:/project"
+    networks:
+      - shop-net
+networks:
+  shop-net:
+```
+3. Run tests passing all required variables
+```
+docker-compose run \
+              -e SHOP_SYSTEM="${SHOP_SYSTEM}" \
+              -e SHOP_URL="${SHOP_URL}" \
+              -e SHOP_VERSION="${SHOP_VERSION}" \
+              -e EXTENSION_VERSION="${EXTENSION_VERSION}" \
+              -e DB_HOST="${DB_SERVER}" \
+              -e DB_NAME="${DB_NAME}" \
+              -e DB_USER="${DB_USER}" \
+              -e DB_PASSWORD="${DB_PASSWORD}" \
+              -e BROWSERSTACK_USER="${BROWSERSTACK_USER}" \
+              -e BROWSERSTACK_ACCESS_KEY="${BROWSERSTACK_ACCESS_KEY}" \
+              codecept run acceptance \
+              -g "${TEST_GROUP}" -g "${SHOP_SYSTEM}"  \
+              --env ci --html --xml
+```
 
 Configuring test data
 =====

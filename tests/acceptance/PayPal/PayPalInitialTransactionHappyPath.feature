@@ -1,12 +1,12 @@
 Feature: PayPalInitialTransaction
   As a guest user
-  I want to make an initial transaction with a PayPal
+  I want to make an initial transaction with PayPal
   And to see that initial transaction was successful
 
   Background:
     Given I initialize shop system
 
-  @woocommerce @prestashop
+  @woocommerce @prestashop @major @minor @patch
   Scenario Outline: initial transaction
     And I activate "PayPal" payment action <payment_action> in configuration
     And I prepare checkout with purchase sum "100" in shop system as "guest customer"

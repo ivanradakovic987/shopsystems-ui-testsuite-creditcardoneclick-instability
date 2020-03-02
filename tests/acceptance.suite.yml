@@ -6,16 +6,32 @@
 
 actor: AcceptanceTester
 modules:
-    enabled:
-        - WebDriver:
-              url: '%SHOP_URL%'
-              browser: chrome # 'chrome' or 'firefox'
-              restart: true #run each test in new browser window
-        - \Helper\Acceptance
-        - \Helper\DbHelper
-        - Asserts
-        - Db:
-            dsn: 'mysql:host=%DB_HOST%:%DB_PORT%;dbname=%DB_NAME%'
-            user: '%DB_USER%'
-            password: '%DB_PASSWORD%'
-            waitlock: 10
+  enabled:
+    - WebDriver:
+        url: '%SHOP_URL%'
+        browser: chrome # 'chrome' or 'firefox'
+        restart: true #run each test in new browser window
+    - \Helper\Acceptance
+    - \Helper\DbHelper
+    - Asserts
+    - Db:
+        dsn: 'mysql:host=%DB_HOST%:%DB_PORT%;dbname=%DB_NAME%'
+        user: '%DB_USER%'
+        password: '%DB_PASSWORD%'
+        waitlock: 10
+env:
+  ci:
+    modules:
+      config:
+        WebDriver:
+          host: 'hub-cloud.browserstack.com'
+          port: 80
+          url: '%SHOP_URL%'
+          browser: chrome # 'chrome' or 'firefox'
+          capabilities:
+            'build': '%SHOP_VERSION%'
+            'project': '%SHOP_SYSTEM%-%SHOP_VERSION%-%EXTENSION_VERSION%'
+            'browserstack.user': '%BROWSERSTACK_USER%'
+            'browserstack.key': '%BROWSERSTACK_ACCESS_KEY%'
+        Db:
+          dsn: 'mysql:host=%DB_HOST%;dbname=%DB_NAME%'
