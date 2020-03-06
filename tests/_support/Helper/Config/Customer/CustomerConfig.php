@@ -25,6 +25,8 @@ class CustomerConfig
 
     private $password;
 
+    private $loginUsername;
+
     /**
      * CustomerConfig constructor.
      * @param $customerData
@@ -40,6 +42,7 @@ class CustomerConfig
         $this->phone = $customerData->phone;
         $this->emailAddress = $customerData->email_address;
         $this->password = $customerData->password;
+        $this->loginUsername = $customerData->login_username;
     }
 
     /**
@@ -112,5 +115,13 @@ class CustomerConfig
     public function getPassword()
     {
         return $this->password;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLoginUsername()
+    {
+        return $this->loginUsername;
     }
 }

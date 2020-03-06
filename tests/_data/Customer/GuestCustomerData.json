@@ -7,5 +7,6 @@
   "post_code": "8010",
   "phone": "123456",
   "email_address": "guest_test@example.com",
-  "password": "testtest"
+  "password": "testtest",
+  "login_username": "registered_test"
 }

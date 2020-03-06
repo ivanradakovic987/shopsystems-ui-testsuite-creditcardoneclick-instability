@@ -2,7 +2,8 @@
   "page": {
     "product": "/product/polo/",
     "checkout": "/checkout",
-    "order_received": "order-received"
+    "order_received": "order-received",
+    "sign_in": "my-account/"
   },
   "product": {
     "price": "20",
@@ -33,5 +34,10 @@
   },
   "order_received": {
     "order_confirmed_message": "Order received"
+  },
+  "sign_in": {
+    "email": "//*[@id='username']",
+    "password": "//*[@name='password']",
+    "sign_in": "//*[@name='login']"
   }
 }
