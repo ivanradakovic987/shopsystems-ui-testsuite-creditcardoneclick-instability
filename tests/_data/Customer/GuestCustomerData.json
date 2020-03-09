@@ -8,5 +8,5 @@
   "phone": "123456",
   "email_address": "guest_test@example.com",
   "password": "testtest",
-  "login_username": "registered_test"
+  "login_username": "guest_test"
 }

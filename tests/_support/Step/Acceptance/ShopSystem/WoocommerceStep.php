@@ -61,6 +61,15 @@ class WoocommerceStep extends GenericShopSystemStep implements iConfigurePayment
 
         $this->putValueInDatabase($optionName, $optionValue);
 
+        $this->configurePaymentMethodCreditCardOneClick($paymentMethod, $optionName, $optionValue);
+    }
+
+    /**
+     * @param String $paymentMethod
+     * @param String $optionName
+     * @param $optionValue
+     */
+    public function configurePaymentMethodCreditCardOneClick($paymentMethod, $optionName, $optionValue) {
         if (strcasecmp($paymentMethod, static::CREDIT_CARD_ONE_CLICK) === 0)
         {
             $serializedValues = unserialize($optionValue);
@@ -172,15 +181,5 @@ class WoocommerceStep extends GenericShopSystemStep implements iConfigurePayment
         } catch (NoSuchElementException $e) {
             $this->amOnPage($this->getLocator()->page->sign_in);
         }
-    }
-
-    /**
-     * @return bool
-     */
-    private function isCustomerRegistered(): bool
-    {
-        $guest = $this->grabFromDatabase(self::CUSTOMER_TABLE, self::CUSTOMER_EMAIL_COLUMN_NAME,
-            [self::CUSTOMER_EMAIL_COLUMN_NAME => $this->getCustomer(self::REGISTERED_CUSTOMER)->getEmailAddress()]);
-        return $guest === '0';
     }
 }

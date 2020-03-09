@@ -1,6 +1,6 @@
 Feature: CreditCardOneClickInitialTransactionHappyPath
   As a registered user
-  I want to make an initial transaction with a Credit Card One-Click
+  I want to make an initial transaction with Credit Card One-Click
   And to see that initial transaction was successful
 
   Background:
