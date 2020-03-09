@@ -64,7 +64,7 @@ class WoocommerceStep extends GenericShopSystemStep implements iConfigurePayment
         if (strcasecmp($paymentMethod, static::CREDIT_CARD_ONE_CLICK) === 0)
         {
             $serializedValues = unserialize($optionValue);
-            foreach ($serializedValues as $key => $value)
+            foreach (array_keys($serializedValues) as $key)
             {
                 if ($key == self::CREDIT_CARD_ONE_CLICK_CONFIGURATION_VALUE)
                 {
