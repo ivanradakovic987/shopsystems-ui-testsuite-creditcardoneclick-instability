@@ -241,16 +241,6 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
     /**
      * @return bool
      */
-    private function isCustomerRegistered(): bool
-    {
-        $guest = $this->grabFromDatabase(self::CUSTOMER_TABLE, self::CUSTOMER_IS_GUEST_COLUMN_NAME,
-            [self::CUSTOMER_EMAIL_COLUMN_NAME => $this->getCustomer(self::REGISTERED_CUSTOMER)->getEmailAddress()]);
-        return $guest === '0';
-    }
-
-    /**
-     * @return bool
-     */
     private function isCustomerSignedIn(): bool
     {
         $this->wait(1);

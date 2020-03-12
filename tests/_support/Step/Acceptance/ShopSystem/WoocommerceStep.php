@@ -2,6 +2,7 @@
 
 namespace Step\Acceptance\ShopSystem;
 
+use Facebook\WebDriver\Exception\NoSuchElementException;
 use Step\Acceptance\iConfigurePaymentMethod;
 use Step\Acceptance\iPrepareCheckout;
 use Step\Acceptance\iValidateSuccess;
@@ -29,6 +30,18 @@ class WoocommerceStep extends GenericShopSystemStep implements iConfigurePayment
 
     const DEFAULT_COUNTRY_OPTION_NAME = 'woocommerce_default_country';
 
+    const CREDIT_CARD_ONE_CLICK_CONFIGURATION_VALUE = 'cc_vault_enabled';
+
+    const CUSTOMER_TABLE = 'wp_users';
+
+    const CUSTOMER_EMAIL_COLUMN_NAME = 'user_email';
+
+    const CUSTOMER_PASSWORD_COLUMN_NAME = 'user_pass';
+
+    const CUSTOMER_LOGIN_COLUMN_NAME = 'user_login';
+
+    const CUSTOMER_DATE_COLUMN_NAME = 'user_registered';
+
     /**
      * @param String $paymentMethod
      * @param String  $paymentAction
@@ -37,22 +50,53 @@ class WoocommerceStep extends GenericShopSystemStep implements iConfigurePayment
      */
     public function configurePaymentMethodCredentials($paymentMethod, $paymentAction)
     {
-        $optionName = self::WIRECARD_OPTION_NAME . strtolower($paymentMethod) . '_settings';
+        $actingPaymentMethod = $this->getActingPaymentMethod($paymentMethod);
+        $optionName = self::WIRECARD_OPTION_NAME . strtolower($actingPaymentMethod) . '_settings';
         $optionValue = serialize($this->buildPaymentMethodConfig(
-            $paymentMethod,
+            $actingPaymentMethod,
             $paymentAction,
             $this->getMappedPaymentActions(),
             $this->getGateway()
         ));
 
         $this->putValueInDatabase($optionName, $optionValue);
+
+        $this->configurePaymentMethodCreditCardOneClick($paymentMethod, $optionName, $optionValue);
+    }
+
+    /**
+     * @param String $paymentMethod
+     * @param String $optionName
+     * @param $optionValue
+     */
+    public function configurePaymentMethodCreditCardOneClick($paymentMethod, $optionName, $optionValue) {
+        if (strcasecmp($paymentMethod, static::CREDIT_CARD_ONE_CLICK) === 0)
+        {
+            $serializedValues = unserialize($optionValue);
+            foreach (array_keys($serializedValues) as $key)
+            {
+                if ($key == self::CREDIT_CARD_ONE_CLICK_CONFIGURATION_VALUE)
+                {
+                    $serializedValues[$key] = "yes";
+                }
+            }
+            $optionValue = serialize($serializedValues);
+            $this->putValueInDatabase($optionName, $optionValue);
+        }
     }
 
     /**
      */
     public function registerCustomer()
     {
-        //TODO implement this when working on Woocommerce one-click
+        if ($this->isCustomerRegistered() != true) {
+            $this->haveInDatabase(static::CUSTOMER_TABLE,
+                [static::CUSTOMER_EMAIL_COLUMN_NAME => $this->getCustomer(static::REGISTERED_CUSTOMER)->getEmailAddress(),
+                    static::CUSTOMER_PASSWORD_COLUMN_NAME => md5($this->getCustomer(static::REGISTERED_CUSTOMER)->getPassword()),
+                    static::CUSTOMER_LOGIN_COLUMN_NAME => $this->getCustomer(static::REGISTERED_CUSTOMER)->getLoginUserName(),
+                    static::CUSTOMER_DATE_COLUMN_NAME => date("Y-m-d h:i:s")
+                    ]);
+        }
     }
 
     /**
@@ -109,5 +153,33 @@ class WoocommerceStep extends GenericShopSystemStep implements iConfigurePayment
         $paymentMethodForm = strtolower($paymentMethod) . '_form';
         $this->waitForElementVisible($this->getLocator()->checkout->$paymentMethodForm);
         $this->scrollTo($this->getLocator()->checkout->$paymentMethodForm);
+    }
+
+    /**
+     * @param $paymentMethod
+     * @return string
+     */
+    private function getActingPaymentMethod($paymentMethod): string
+    {
+        if (strcasecmp($paymentMethod, static::CREDIT_CARD_ONE_CLICK) === 0) {
+            return 'CreditCard';
+        }
+        return $paymentMethod;
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function logIn()
+    {
+        $this->amOnPage($this->getLocator()->page->sign_in);
+        try
+        {
+            $this->preparedFillField($this->getLocator()->sign_in->email, $this->getCustomer(static::REGISTERED_CUSTOMER)->getEmailAddress());
+            $this->preparedFillField($this->getLocator()->sign_in->password, $this->getCustomer(static::REGISTERED_CUSTOMER)->getPassword());
+            $this->preparedClick($this->getLocator()->sign_in->sign_in, 60);
+        } catch (NoSuchElementException $e) {
+            $this->amOnPage($this->getLocator()->page->sign_in);
+        }
     }
 }
