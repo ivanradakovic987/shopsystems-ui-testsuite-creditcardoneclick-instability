@@ -6,7 +6,6 @@ Feature: CreditCardOneClickInitialTransactionHappyPath
   Background:
     Given I initialize shop system
 
-  @woocommerce @major @minor @patch
   Scenario Outline: initial transaction
     And I activate "CreditCardOneClick" payment action <payment_action> in configuration
     And I prepare checkout with purchase sum <amount> in shop system as "registered customer"
