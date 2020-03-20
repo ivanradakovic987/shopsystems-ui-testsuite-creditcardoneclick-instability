@@ -42,7 +42,8 @@ class AcceptanceTester extends Actor
     //this is used to generate new class instance, so const doesn't work here
     private $shopInstanceMap = [
         'prestashop' => Step\Acceptance\ShopSystem\PrestashopStep::class,
-        'woocommerce' => Step\Acceptance\ShopSystem\WoocommerceStep::class
+        'woocommerce' => Step\Acceptance\ShopSystem\WoocommerceStep::class,
+        'magento2' => Step\Acceptance\ShopSystem\Magento2Step::class
     ];
 
     private $paymentMethodInstanceMap = [
@@ -232,6 +233,7 @@ class AcceptanceTester extends Actor
         $shopInstance = new $this->shopInstanceMap[$shopSystemName]($this->getScenario(), $this->gateway, $this->configData->guest_customer_data, $this->configData->registered_customer_data);
         $shopInstance->configureShopSystemCurrencyAndCountry($this->configData->currency, $this->configData->default_country);
         $shopInstance->registerCustomer();
+        $this->pause();
         return $shopInstance;
     }
 

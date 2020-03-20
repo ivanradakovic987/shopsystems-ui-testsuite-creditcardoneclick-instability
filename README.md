@@ -9,6 +9,7 @@ Supported Shop Systems
 |---|---|:---:|
 | **Prestashop** | &#9989; | &#9989; |   
 | **Woocommerce** | &#9989; | &#9744; |
+| **Magento2** | &#9989; | &#9744; |
 
 
 To run tests locally:
@@ -31,7 +32,7 @@ To run tests locally:
 
 5. Export environment variables
     
-    `SHOP_SYSTEM = prestashop #(or woocommerce)`
+    `SHOP_SYSTEM = prestashop #(or woocommerce or magento2)`
         
      `DB_HOST`
         
