@@ -1,35 +1,36 @@
 {
   "page": {
-    "product": "index.php?id_product=1&id_product_attribute=1&rewrite=hummingbird-printed-t-shirt&controller=product#/1-size-s/8-color-white",
-    "checkout": "index.php?controller=order",
+    "product": "index.php/savvy-shoulder-tote.html",
+    "checkout": "index.php/checkout/",
     "order_received": "order-confirmation",
-    "register": "/index.php/customer/account/create",
-    "log_out": "index.php?mylogout=",
+    "register": "index.php/customer/account/create",
+    "log_out": "index.php/customer/account/logout/",
     "sign_in": "index.php?controller=authentication&back=my-account",
     "my_account": "index.php?controller=my-account"
   },
   "product": {
-    "price": "22.94",
-    "quantity": "//*[@id='quantity_wanted']",
-    "add_to_cart": "//*[@class='btn btn-primary add-to-cart']",
-    "cart": "//*[@class='material-icons shopping-cart']"
+    "price": "24.00",
+    "quantity": "//*[@id='qty']",
+    "add_to_cart": "//*[@id='product-addtocart-button']",
   },
   "checkout": {
-    "first_name": "//*[@id='firstname']",
-    "last_name": "//*[@id='lastname']",
-    "email_address": "//*[@id='email_address']",
+    "first_name": "//*[@name='firstname']",
+    "last_name": "//*[@name='lastname']",
+    "email_address": "//*[@id='customer-email']",
 
-    "country": "//*[@name='id_country']",
-    "street_address": "//*[@name='address1']",
+    "country": "//*[@name='country_id']",
+    "street_address": "//*[@name='street[0]']",
     "town": "//*[@name='city']",
     "post_code": "//*[@name='postcode']",
-    "phone": "//*[@name='phone']",
+    "phone": "//*[@name='telephone']",
+    "next" : "//*[@class='button action continue primary']",
+
     "password":  "//*[@name='password']",
     "creditcard_name" : "Wirecard Credit Card",
     "paypal_name" : "Wirecard PayPal",
     "creditcard_form" : "//input[@type='radio'][contains(@data-module-name, 'wd-creditcard')]",
     "paypal_form" : "//input[@type='radio'][contains(@data-module-name, 'wd-paypal')]",
-    "continue" : "//button[@type='submit'][contains(@data-link-action, 'register-new-customer')]",
+
     "continue_confirm_address": "//*[@name='confirm-addresses']",
     "continue_confirm_delivery": "//*[@name='confirmDeliveryOption']",
     "agree_to_terms_and_conditions_and_privacy_policy": "//*[@name='psgdpr']",

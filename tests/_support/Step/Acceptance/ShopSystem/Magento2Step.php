@@ -24,7 +24,7 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
 
     const VALUE_COLUMN_NAME = 'value';
 
-    const PAYMENT_METHOD_PREFIX = 'WIRECARD_PAYMENT_GATEWAY_';
+    const PAYMENT_METHOD_PREFIX = 'payment/wirecard_elasticengine_';
 
     const TRANSACTION_TABLE_NAME = 'ps_wirecard_payment_gateway_tx';
 
@@ -36,22 +36,7 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
 
     const CUSTOMER_TABLE = 'customer_entity';
 
-//    const CUSTOMER_IS_GUEST_COLUMN_NAME = 'is_guest';
-//
     const CUSTOMER_EMAIL_COLUMN_NAME = 'email';
-//
-//    const CUSTOMER_CREATED_DATE_COLUMN_NAME = 'created_at';
-//
-//    const CUSTOMER_UPDATED_DATE_COLUMN_NAME = 'updated_at';
-//
-//    const CUSTOMER_IS_ACTIVE_COLUMN_NAME = 'is_active';
-//
-//    const CUSTOMER_FIRST_NAME_COLUMN_NAME = 'firstname';
-//
-//    const CUSTOMER_LAST_NAME_COLUMN_NAME = 'lastname';
-//
-//    const CUSTOMER_PASSWORD_COLUMN_NAME = 'password_hash';
-//    const CUSTOMER_RPTOKEN_COLUMN_NAME = 'rp_token';
 
 
 
@@ -61,7 +46,9 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
      */
     private $paymentMethodConfigurationNameExceptions =
         [
-            'cc_vault_enabled' => 'ccvault_enabled'
+            'cc_vault_enabled' => 'cc_vault/active',
+            'enabled' => 'active',
+            'purchase' => 'authorize_capture'
         ];
 
     /**
@@ -79,12 +66,16 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
         }
         foreach ($db_config as $name => $value) {
             //some configuration options are different if different shops, this is handling the differences
-            if (array_key_exists($name, $this->getPaymentMethodConfigurationNameExceptions())) {
-                $name = $this->getPaymentMethodConfigurationNameExceptions()[$name];
+            if (array_key_exists($name, $this->paymentMethodConfigurationNameExceptions)) {
+                $name = $this->paymentMethodConfigurationNameExceptions[$name];
             }
-            $fullName = self::PAYMENT_METHOD_PREFIX . strtoupper($actingPaymentMethod) . '_' . strtoupper($name);
-            $this->putValueInDatabase($fullName, $value);
+            if (array_key_exists($value, $this->paymentMethodConfigurationNameExceptions)) {
+                $value = $this->paymentMethodConfigurationNameExceptions[$name];
+            }
+            $fullName = self::PAYMENT_METHOD_PREFIX . strtolower($actingPaymentMethod) . '/' . strtolower($name);
+            $this->putValueInDatabase($fullName, $this->convertWordValueToBinaryString($value));
         }
+        $this->pause();
     }
 
     /**
@@ -94,23 +85,12 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
     public function registerCustomer(): void
     {
         if (!$this->isCustomerRegistered()) {
-//            $this->haveInDatabase(static::CUSTOMER_TABLE,
-//                [static::CUSTOMER_EMAIL_COLUMN_NAME => $this->getCustomer(static::REGISTERED_CUSTOMER)->getEmailAddress(),
-//                    static::CUSTOMER_CREATED_DATE_COLUMN_NAME => date("Y-m-d h:i:s"),
-//                    static::CUSTOMER_UPDATED_DATE_COLUMN_NAME => date("Y-m-d h:i:s"),
-//                    static::CUSTOMER_IS_ACTIVE_COLUMN_NAME => '1',
-//                    static::CUSTOMER_RPTOKEN_COLUMN_NAME => 'null',
-//                    static::CUSTOMER_FIRST_NAME_COLUMN_NAME => $this->getCustomer(static::REGISTERED_CUSTOMER)->getFirstName(),
-//                    static::CUSTOMER_LAST_NAME_COLUMN_NAME => $this->getCustomer(static::REGISTERED_CUSTOMER)->getLastName(),
-//                    static::CUSTOMER_PASSWORD_COLUMN_NAME => md5($this->getCustomer(static::REGISTERED_CUSTOMER)->getPassword()),
-//                ]);
             $this->amOnPage($this->getLocator()->page->register);
             $this->fillMandatoryCustomerData(static::REGISTERED_CUSTOMER);
             $this->preparedFillField($this->getLocator()->register->password, $this->getCustomer(static::REGISTERED_CUSTOMER)->getPassword());
             $this->preparedFillField($this->getLocator()->register->confirm_password, $this->getCustomer(static::REGISTERED_CUSTOMER)->getPassword());
             $this->preparedClick($this->getLocator()->register->create_an_account);
-            $this->pause();
-            //  $this->amOnPage($this->getLocator()->page->log_out);
+            $this->amOnPage($this->getLocator()->page->log_out);
         }
     }
 
@@ -149,7 +129,7 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
     public function fillBasket($minPurchaseSum): void
     {
         parent::fillBasket($minPurchaseSum);
-        $this->waitForText('Product successfully added to your shopping cart');
+        $this->waitForText('You added');
     }
 
     /**
@@ -159,9 +139,9 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
     public function fillCustomerDetails($customerType): void
     {
         $this->fillUnregisteredCustomerDetails($customerType);
-        if ($customerType === static::REGISTERED_CUSTOMER) {
-            $this->preparedClick($this->getLocator()->checkout->continue_confirm_address);
-        }
+//        if ($customerType === static::REGISTERED_CUSTOMER) {
+//            $this->preparedClick($this->getLocator()->checkout->continue_confirm_address);
+//        }
         $this->fillBillingDetails($customerType);
     }
 
@@ -171,9 +151,9 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
      */
     public function fillMandatoryCustomerData($customerType)
     {
+        $this->preparedFillField($this->getLocator()->checkout->email_address, $this->getCustomer($customerType)->getEmailAddress());
         $this->preparedFillField($this->getLocator()->checkout->first_name, $this->getCustomer($customerType)->getFirstName());
         $this->preparedFillField($this->getLocator()->checkout->last_name, $this->getCustomer($customerType)->getLastName());
-        $this->preparedFillField($this->getLocator()->checkout->email_address, $this->getCustomer($customerType)->getEmailAddress());
     }
 
     /**
@@ -183,18 +163,18 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
      */
     public function fillBillingDetails($customerType)
     {
-        try {
+//        try {
             $this->preparedFillField($this->getLocator()->checkout->street_address, $this->getCustomer($customerType)->getStreetAddress());
             $this->preparedFillField($this->getLocator()->checkout->town, $this->getCustomer($customerType)->getTown());
             $this->preparedFillField($this->getLocator()->checkout->post_code, $this->getCustomer($customerType)->getPostCode());
             $this->preparedFillField($this->getLocator()->checkout->phone, $this->getCustomer($customerType)->getPhone());
             $this->selectOption($this->getLocator()->checkout->country, $this->getCustomer($customerType)->getCountry());
             $this->preparedClick($this->getLocator()->checkout->continue_confirm_address);
-        } catch (NoSuchElementException $e) {
-            //this means the address has already been saved
-        }
+//        } catch (NoSuchElementException $e) {
+//            //this means the address has already been saved
+//        }
         //this button should appear on the next page, so wait till we see it
-        $this->preparedClick($this->getLocator()->checkout->continue_confirm_delivery, 60);
+        $this->preparedClick($this->getLocator()->checkout->bext, 60);
     }
 
     /**

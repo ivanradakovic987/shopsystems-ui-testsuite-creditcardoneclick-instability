@@ -84,4 +84,22 @@ class Acceptance extends Module
         }
         return $path;
     }
+
+    /**
+     * @param $wordValue
+     * @return string
+     */
+    public static function convertWordValueToBinaryString($wordValue):string
+    {
+        switch ($wordValue) {
+            case 'yes':
+                return '1';
+                break;
+            case 'no':
+                return '0';
+                break;
+            default:
+                return $wordValue;
+        }
+    }
 }
