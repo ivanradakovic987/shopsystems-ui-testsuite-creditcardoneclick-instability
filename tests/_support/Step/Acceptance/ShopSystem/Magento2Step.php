@@ -24,42 +24,70 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
 
     const VALUE_COLUMN_NAME = 'value';
 
+    const DB_SEPARATOR = '/';
+
     const PAYMENT_METHOD_PREFIX = 'payment/wirecard_elasticengine_';
 
-    const TRANSACTION_TABLE_NAME = 'ps_wirecard_payment_gateway_tx';
+    const TRANSACTION_TABLE_NAME = 'sales_payment_transaction';
+
+    const TRANSACTION_TYPE_COLUMN_NAME = 'txn_type';
 
     const DEFAULT_COUNTRY_OPTION_NAME = 'general/country/default';
 
     const CURRENCY_OPTION_NAME = 'currency/options/base';
 
-    const CREDIT_CARD_ONE_CLICK_CONFIGURATION_OPTION = 'cc_vault_enabled';
+    const CREDIT_CARD_ONE_CLICK_CONFIGURATION_OPTION = 'cc_vault/active';
 
     const CUSTOMER_TABLE = 'customer_entity';
 
     const CUSTOMER_EMAIL_COLUMN_NAME = 'email';
 
-
-
-
+    /**
+     * @var array
+     */
+    private $mappedPaymentActions = [
+        'CreditCard' => [
+            'config' => [
+                'row' => 'payment_action',
+                'reserve' => 'authorize',
+                'pay' => 'authorize_capture'
+            ],
+            'tx_table' => [
+                'authorization' => 'authorization',
+                'purchase' => 'capture'
+            ]
+        ],
+        'PayPal' => [
+            'config' => [
+                'row' => 'payment_action',
+                'reserve' => 'authorize',
+                'pay' => 'authorize_capture'
+            ],
+            'tx_table' => [
+                'authorization' => 'authorization',
+                'purchase' => 'debit'
+            ]
+        ]
+    ];
     /**
      * @var array
      */
     private $paymentMethodConfigurationNameExceptions =
         [
             'cc_vault_enabled' => 'cc_vault/active',
-            'enabled' => 'active',
-            'purchase' => 'authorize_capture'
+            'enabled' => 'active'
         ];
 
     /**
      * @param String $paymentMethod
      * @param String $paymentAction
      * @return mixed|void
+     * @throws ExceptionAlias
      */
     public function configurePaymentMethodCredentials($paymentMethod, $paymentAction)
     {
         $actingPaymentMethod = $this->getActingPaymentMethod($paymentMethod);
-        $db_config = $this->buildPaymentMethodConfig($actingPaymentMethod, $paymentAction, $this->getMappedPaymentActions(), $this->getGateway());
+        $db_config = $this->buildPaymentMethodConfig($actingPaymentMethod, $paymentAction, $this->mappedPaymentActions, $this->getGateway());
         if (strcasecmp($paymentMethod, static::CREDIT_CARD_ONE_CLICK) === 0) {
             //CreditCard One click is not a separate payment method but a configuration of CreditCard
             $db_config[self::CREDIT_CARD_ONE_CLICK_CONFIGURATION_OPTION] = '1';
@@ -69,13 +97,15 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
             if (array_key_exists($name, $this->paymentMethodConfigurationNameExceptions)) {
                 $name = $this->paymentMethodConfigurationNameExceptions[$name];
             }
-            if (array_key_exists($value, $this->paymentMethodConfigurationNameExceptions)) {
-                $value = $this->paymentMethodConfigurationNameExceptions[$name];
-            }
-            $fullName = self::PAYMENT_METHOD_PREFIX . strtolower($actingPaymentMethod) . '/' . strtolower($name);
+            $fullName = self::PAYMENT_METHOD_PREFIX . strtolower($actingPaymentMethod) . static::DB_SEPARATOR . strtolower($name);
             $this->putValueInDatabase($fullName, $this->convertWordValueToBinaryString($value));
+
+            if (strpos($fullName, "payment_action") !== false)
+            {     //clean magento2 cache to for changes in database to come in place
+                exec("docker exec -it " . getenv("MAGENTO_CONTAINER_NAME") . " php bin/magento cache:clean");
+                exec("docker exec -it " . getenv("MAGENTO_CONTAINER_NAME") . " php bin/magento cache:flush");
+            }
         }
-        $this->pause();
     }
 
     /**
@@ -103,7 +133,7 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
     {
         $paymentMethodName = strtolower($paymentMethod) . '_name';
         $paymentMethodForm = strtolower($paymentMethod) . '_form';
-        $this->selectOption($this->getLocator()->checkout->$paymentMethodForm, $this->getLocator()->checkout->$paymentMethodName);
+        $this->selectOption($this->getLocator()->payment->$paymentMethodForm, $this->getLocator()->payment->$paymentMethodName);
         if ($this->isRedirectPaymentMethod($paymentMethod)) {
             $this->proceedWithPayment($paymentMethod);
         }
@@ -117,8 +147,7 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
     public function proceedWithPayment($paymentMethod): void
     {
         if ($paymentMethod !== '') {
-            $this->checkOption($this->getLocator()->checkout->agree_with_terms_of_service);
-            $this->preparedClick($this->getLocator()->checkout->order_with_obligation_to_pay);
+            $this->preparedClick($this->getLocator()->payment->place_order);
         }
     }
 
@@ -169,12 +198,14 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
             $this->preparedFillField($this->getLocator()->checkout->post_code, $this->getCustomer($customerType)->getPostCode());
             $this->preparedFillField($this->getLocator()->checkout->phone, $this->getCustomer($customerType)->getPhone());
             $this->selectOption($this->getLocator()->checkout->country, $this->getCustomer($customerType)->getCountry());
-            $this->preparedClick($this->getLocator()->checkout->continue_confirm_address);
+//            $this->preparedClick($this->getLocator()->checkout->continue_confirm_address);
 //        } catch (NoSuchElementException $e) {
 //            //this means the address has already been saved
 //        }
-        //this button should appear on the next page, so wait till we see it
-        $this->preparedClick($this->getLocator()->checkout->bext, 60);
+        $this->wait(10);
+        $this->preparedClick($this->getLocator()->checkout->next, 60);
+        $this->waitUntil(60, [$this, 'waitUntilPageLoaded'], [$this->getLocator()->page->payment]);
+
     }
 
     /**
@@ -185,8 +216,8 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
     {
         if ($customerType !== static::REGISTERED_CUSTOMER) {
             $this->fillMandatoryCustomerData($customerType);
-            $this->checkOption($this->getLocator()->checkout->agree_to_terms_and_conditions_and_privacy_policy);
-            $this->preparedClick($this->getLocator()->checkout->continue);
+//            $this->checkOption($this->getLocator()->checkout->agree_to_terms_and_conditions_and_privacy_policy);
+//            $this->preparedClick($this->getLocator()->checkout->continue);
         }
     }
 
@@ -209,6 +240,24 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
     public function getPaymentMethodConfigurationNameExceptions(): array
     {
         return $this->paymentMethodConfigurationNameExceptions;
+    }
+
+    /**
+     * @param $paymentMethod
+     * @param $paymentAction
+     */
+    public function validateTransactionInDatabase($paymentMethod, $paymentAction): void
+    {
+        exec("docker exec -it " . getenv("MAGENTO_CONTAINER_NAME") . " /usr/local/bin/php /var/www/html/bin/magento cron:run");
+        parent::validateTransactionInDatabase($paymentMethod, $paymentAction);
+   }
+
+    /**
+     * @return array
+     */
+    public function getMappedPaymentActions(): array
+    {
+        return $this->mappedPaymentActions;
     }
 
     /**

@@ -19,7 +19,7 @@ class Acceptance extends Module
     public static function getDataFromDataFile($fileName)
     {
         // decode the JSON feed
-        $json_data = json_decode(file_get_contents($fileName));
+        $json_data = json_decode(file_get_contents($fileName), false);
         if (!$json_data) {
             $error = error_get_last();
             echo 'Failed to get data from ' . $fileName . '. Error was: ' . $error['message'];
@@ -61,13 +61,14 @@ class Acceptance extends Module
         $array = [];
         $gatewayConfigurationFile = self::getFullPath(FileSytem::PAYMENT_METHOD_CONFIG_FOLDER_PATH . $paymentMethod . 'Config.json');
         $paymentActionConfigurationRow = $mappedPaymentActions[$paymentMethod]['config']['row'];
+        $paymentActionInDb = $mappedPaymentActions[$paymentMethod]['config'][$paymentAction];
         //process data in payment configuration file
         $jsonData = self::getDataFromDataFile($gatewayConfigurationFile);
         if (self::paymentMethodGatewayConfigExists($jsonData, $gateway)) {
             //convert json object to array
             $array = get_object_vars($jsonData->$gateway);
             //go through array and substitute payment action
-            $array = self::substituteArrayKey($array, $paymentActionConfigurationRow, $paymentAction);
+            $array = self::substituteArrayKey($array, $paymentActionConfigurationRow, $paymentActionInDb);
         }
         return $array;
     }

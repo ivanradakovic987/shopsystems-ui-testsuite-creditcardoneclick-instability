@@ -7,6 +7,7 @@ use Step\Acceptance\PaymentMethod\GenericPaymentMethodStep;
 use Step\Acceptance\ShopSystem\GenericShopSystemStep;
 use Step\Acceptance\ShopSystem\PrestashopStep;
 use Step\Acceptance\ShopSystem\WoocommerceStep;
+use Step\Acceptance\ShopSystem\Magento2Step;
 
 /**
  * Inherited Methods
@@ -53,7 +54,7 @@ class AcceptanceTester extends Actor
     ];
 
     /**
-     * @var Actor|PrestashopStep|WoocommerceStep
+     * @var Actor|PrestashopStep|WoocommerceStep|Magento2Step
      */
     private $shopInstance;
 

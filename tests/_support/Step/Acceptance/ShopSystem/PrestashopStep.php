@@ -31,6 +31,8 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
 
     const TRANSACTION_TABLE_NAME = 'ps_wirecard_payment_gateway_tx';
 
+    const TRANSACTION_TYPE_COLUMN_NAME = 'transaction_type';
+
     const DEFAULT_COUNTRY_OPTION_NAME = 'PS_COUNTRY_DEFAULT';
 
     const CURRENCY_OPTION_NAME = 'PS_CURRENCY_DEFAULT';

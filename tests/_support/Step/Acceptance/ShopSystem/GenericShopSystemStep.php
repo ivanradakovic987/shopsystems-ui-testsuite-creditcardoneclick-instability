@@ -3,6 +3,7 @@
 namespace Step\Acceptance\ShopSystem;
 
 use Codeception\Scenario;
+use Exception;
 use Helper\Config\Customer\CustomerConfig;
 use Helper\Config\FileSytem;
 use Step\Acceptance\GenericStep;
@@ -29,7 +30,9 @@ class GenericShopSystemStep extends GenericStep
     private $mappedPaymentActions = [
         'CreditCard' => [
             'config' => [
-                'row' => 'payment_action'
+                'row' => 'payment_action',
+                'reserve' => 'reserve',
+                'pay' => 'pay'
             ],
             'tx_table' => [
                 'authorization' => 'authorization',
@@ -38,7 +41,9 @@ class GenericShopSystemStep extends GenericStep
         ],
         'PayPal' => [
             'config' => [
-                'row' => 'payment_action'
+                'row' => 'payment_action',
+                'reserve' => 'reserve',
+                'pay' => 'pay'
             ],
             'tx_table' => [
                 'authorization' => 'authorization',
@@ -107,6 +112,7 @@ class GenericShopSystemStep extends GenericStep
 
     /**
      * @param String $minPurchaseSum
+     * @throws Exception
      */
     public function fillBasket($minPurchaseSum): void
     {
@@ -115,7 +121,7 @@ class GenericShopSystemStep extends GenericStep
         $amount = intdiv((int)$minPurchaseSum, (int)$this->getLocator()->product->price) + 1;
         //add to basket goods to fulfill desired purchase amount
         $this->fillField($this->getLocator()->product->quantity, $amount);
-        $this->click($this->getLocator()->product->add_to_cart);
+        $this->preparedClick($this->getLocator()->product->add_to_cart);
     }
 
     /**
@@ -151,8 +157,9 @@ class GenericShopSystemStep extends GenericStep
      */
     public function checkPaymentActionInTransactionTable($paymentArgs): bool
     {
-        $transactionTypes = $this->getColumnFromDatabaseNoCriteria(static::TRANSACTION_TABLE_NAME, 'transaction_type');
+        $transactionTypes = $this->getColumnFromDatabaseNoCriteria(static::TRANSACTION_TABLE_NAME, static::TRANSACTION_TYPE_COLUMN_NAME);
         $tempTxType = $this->selectTxTypeFromMappedPaymentActions($paymentArgs);
+        codecept_debug($tempTxType);
         return end($transactionTypes) === $tempTxType;
     }
 

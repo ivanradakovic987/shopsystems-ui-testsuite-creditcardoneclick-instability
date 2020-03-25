@@ -24,6 +24,8 @@ class WoocommerceStep extends GenericShopSystemStep implements iConfigurePayment
 
     const TRANSACTION_TABLE_NAME = 'wp_wirecard_payment_gateway_tx';
 
+    const TRANSACTION_TYPE_COLUMN_NAME = 'transaction_type';
+
     const WIRECARD_OPTION_NAME = 'woocommerce_wirecard_ee_';
 
     const CURRENCY_OPTION_NAME = 'woocommerce_currency';

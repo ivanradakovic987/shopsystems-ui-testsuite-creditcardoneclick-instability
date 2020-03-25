@@ -44,7 +44,11 @@ To run tests locally:
              
      `DB_PASSWORD`
         
-     `SHOP_URL`           
+     `SHOP_URL`
+      
+      only for Magento2 testing (since tests need to execute cash flushing and cron commends in the container)
+      
+     `MAGENTO_CONTAINER_NAME`           
 
 6. Start codeception   
     `vendor/bin/codecept run acceptance -g ${SHOP_SYSTEM} --debug --html`
