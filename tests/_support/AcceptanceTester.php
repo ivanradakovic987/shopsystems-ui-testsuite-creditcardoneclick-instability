@@ -233,7 +233,7 @@ class AcceptanceTester extends Actor
         /** @var GenericShopSystemStep $shopInstance */
         $shopInstance = new $this->shopInstanceMap[$shopSystemName]($this->getScenario(), $this->gateway, $this->configData->guest_customer_data, $this->configData->registered_customer_data);
         $shopInstance->configureShopSystemCurrencyAndCountry($this->configData->currency, $this->configData->default_country);
- //       $shopInstance->registerCustomer();
+        $shopInstance->registerCustomer();
         return $shopInstance;
     }
 

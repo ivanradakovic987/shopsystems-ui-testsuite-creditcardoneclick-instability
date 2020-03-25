@@ -40,6 +40,9 @@
     "order_confirmed_message": "Thank you for your purchase!"
   },
   "register": {
+    "first_name": "//*[@name='firstname']",
+    "last_name": "//*[@name='lastname']",
+    "email_address": "//*[@id='email_address']",
     "password": "//*[@id='password']",
     "confirm_password": "//*[@id='password-confirmation']",
     "create_an_account": "//button[@type='submit'][contains(@title, 'Create an Account')]",
