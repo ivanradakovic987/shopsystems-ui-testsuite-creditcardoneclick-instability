@@ -207,18 +207,18 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
         }
     }
 
-//    /**
-//     * @throws ExceptionAlias
-//     */
-//    public function logIn()
-//    {
-//        $this->amOnPage($this->getLocator()->page->sign_in);
-//        if (!$this->isCustomerSignedIn()) {
-//            $this->preparedFillField($this->getLocator()->sign_in->email, $this->getCustomer(static::REGISTERED_CUSTOMER)->getEmailAddress());
-//            $this->preparedFillField($this->getLocator()->sign_in->password, $this->getCustomer(static::REGISTERED_CUSTOMER)->getPassword());
-//            $this->preparedClick($this->getLocator()->sign_in->sign_in, 60);
-//        }
-//    }
+    /**
+     * @throws ExceptionAlias
+     */
+    public function logIn()
+    {
+        $this->amOnPage($this->getLocator()->page->sign_in);
+        if (!$this->isCustomerSignedIn()) {
+            $this->preparedFillField($this->getLocator()->sign_in->email, $this->getCustomer(static::REGISTERED_CUSTOMER)->getEmailAddress());
+            $this->preparedFillField($this->getLocator()->sign_in->password, $this->getCustomer(static::REGISTERED_CUSTOMER)->getPassword());
+            $this->preparedClick($this->getLocator()->sign_in->sign_in, 60);
+        }
+    }
 
     /**
      * @return array
