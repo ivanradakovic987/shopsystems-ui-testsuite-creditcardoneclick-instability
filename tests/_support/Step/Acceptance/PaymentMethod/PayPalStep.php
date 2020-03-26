@@ -6,7 +6,7 @@ use Facebook\WebDriver\Exception\TimeOutException;
 use Facebook\WebDriver\Exception\WebDriverException;
 use Step\Acceptance\iPerformPayment;
 use Exception;
-use Facebook\WebDriver\Exception\ElementClickInterceptedException;
+//use Facebook\WebDriver\Exception\ElementClickInterceptedException;
 
 /**
  * Class PayPalStep

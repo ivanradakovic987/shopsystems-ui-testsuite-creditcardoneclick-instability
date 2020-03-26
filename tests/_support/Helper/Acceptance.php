@@ -23,9 +23,8 @@ class Acceptance extends Module
         if (!$json_data) {
             $error = error_get_last();
             echo 'Failed to get data from ' . $fileName . '. Error was: ' . $error['message'];
-        } else {
-            return $json_data;
         }
+        return $json_data;
     }
 
     /**

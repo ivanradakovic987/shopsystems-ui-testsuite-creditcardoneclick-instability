@@ -2,17 +2,16 @@
 
 namespace Step\Acceptance;
 
+use AcceptanceTester;
 use Codeception\Scenario;
 use Exception;
-use Facebook\WebDriver\Exception\WebDriverException;
-use phpDocumentor\Reflection\Types\Boolean;
-use phpDocumentor\Reflection\Types\Void_;
+use PHPUnit\Framework\AssertionFailedError;
 
 /**
  * Class GenericStep
  * @package Step\Acceptance
  */
-class GenericStep extends \AcceptanceTester
+class GenericStep extends AcceptanceTester
 {
     private $gateway;
 
@@ -97,7 +96,7 @@ class GenericStep extends \AcceptanceTester
         try {
             $this->seeOptionIsSelected($selectorDetails[0], $selectorDetails[1]);
             return true;
-        } catch ( \PHPUnit\Framework\AssertionFailedError $e) {
+        } catch ( AssertionFailedError $e) {
             $this->selectOption($selectorDetails[0], $selectorDetails[1]);
             return false;
         }

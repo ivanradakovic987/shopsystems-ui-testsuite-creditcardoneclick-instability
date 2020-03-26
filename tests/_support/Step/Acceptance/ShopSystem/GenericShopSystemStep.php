@@ -125,6 +125,20 @@ class GenericShopSystemStep extends GenericStep
     }
 
     /**
+     *
+     * @param $customerType
+     * @throws Exception
+     */
+        public function fillBillingDetails($customerType) : void
+    {
+        $this->preparedFillField($this->getLocator()->checkout->street_address, $this->getCustomer($customerType)->getStreetAddress());
+        $this->preparedFillField($this->getLocator()->checkout->town, $this->getCustomer($customerType)->getTown());
+        $this->preparedFillField($this->getLocator()->checkout->post_code, $this->getCustomer($customerType)->getPostCode());
+        $this->preparedFillField($this->getLocator()->checkout->phone, $this->getCustomer($customerType)->getPhone());
+//        $this->selectOption($this->getLocator()->checkout->country, $this->getCustomer($customerType)->getCountry());
+    }
+
+    /**
      * @return mixed
      */
     public function goToCheckout() : void
@@ -237,5 +251,17 @@ class GenericShopSystemStep extends GenericStep
         $guest = $this->grabFromDatabase(static::CUSTOMER_TABLE, static::CUSTOMER_EMAIL_COLUMN_NAME,
             [static::CUSTOMER_EMAIL_COLUMN_NAME => $this->getCustomer(static::REGISTERED_CUSTOMER)->getEmailAddress()]);
         return $guest === '0';
+    }
+
+    /**
+     * @param $paymentMethod
+     * @return string
+     */
+    public function getActingPaymentMethod($paymentMethod): string
+    {
+        if (strcasecmp($paymentMethod, static::CREDIT_CARD_ONE_CLICK) === 0) {
+            return 'CreditCard';
+        }
+        return $paymentMethod;
     }
 }

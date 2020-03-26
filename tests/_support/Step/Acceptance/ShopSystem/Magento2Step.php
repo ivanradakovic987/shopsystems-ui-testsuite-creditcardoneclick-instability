@@ -2,12 +2,12 @@
 
 namespace Step\Acceptance\ShopSystem;
 
+use Codeception\Scenario;
+use RuntimeException;
 use Step\Acceptance\iConfigurePaymentMethod;
 use Step\Acceptance\iPrepareCheckout;
 use Step\Acceptance\iValidateSuccess;
-
-use Facebook\WebDriver\Exception\NoSuchElementException;
-
+use Helper\Config\DockerCommands;
 use Exception as ExceptionAlias;
 
 /**
@@ -41,6 +41,13 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
     const CUSTOMER_TABLE = 'customer_entity';
 
     const CUSTOMER_EMAIL_COLUMN_NAME = 'email';
+
+    const MAGENTO_CACHE_CLEAN_COMMAND = ' php bin/magento cache:clean';
+
+    const MAGENTO_CACHE_FLUSH_COMMAND = ' php bin/magento cache:flush';
+
+    const MAGENTO_CRON_RUN_COMMAND = ' /usr/local/bin/php /var/www/html/bin/magento cron:run';
+
 
     /**
      * @var array
@@ -78,6 +85,24 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
             'enabled' => 'active'
         ];
 
+    public $magentoContainerName = '';
+
+    /**
+     * GenericStep constructor.
+     * @param Scenario $scenario
+     * @param $gateway
+     * @param $guestFileName
+     * @param $registeredFileName
+     */
+    public function __construct(Scenario $scenario, $gateway, $guestFileName, $registeredFileName)
+    {
+        $this->magentoContainerName = getenv('MAGENTO_CONTAINER_NAME');
+        if (!$this->magentoContainerName) {
+            throw new RuntimeException('Environment variable MAGENTO_CONTAINER_NAME is not set');
+        }
+        parent::__construct($scenario, $gateway, $guestFileName, $registeredFileName);
+    }
+
     /**
      * @param String $paymentMethod
      * @param String $paymentAction
@@ -100,10 +125,8 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
             $fullName = self::PAYMENT_METHOD_PREFIX . strtolower($actingPaymentMethod) . static::DB_SEPARATOR . strtolower($name);
             $this->putValueInDatabase($fullName, $this->convertWordValueToBinaryString($value));
 
-            if (strpos($fullName, "payment_action") !== false)
-            {     //clean magento2 cache to for changes in database to come in place
-                exec("docker exec -it " . getenv("MAGENTO_CONTAINER_NAME") . " php bin/magento cache:clean");
-                exec("docker exec -it " . getenv("MAGENTO_CONTAINER_NAME") . " php bin/magento cache:flush");
+            if (strpos($fullName, 'payment_action') !== false) {    //to make changes in database to come in place
+                $this->cleanAndFlushMagentoCache();
             }
         }
     }
@@ -122,7 +145,6 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
             $this->preparedFillField($this->getLocator()->register->password, $this->getCustomer(static::REGISTERED_CUSTOMER)->getPassword());
             $this->preparedFillField($this->getLocator()->register->confirm_password, $this->getCustomer(static::REGISTERED_CUSTOMER)->getPassword());
             $this->preparedClick($this->getLocator()->register->create_an_account);
-            $this->pause();
             $this->amOnPage($this->getLocator()->page->log_out);
         }
     }
@@ -170,58 +192,18 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
      */
     public function fillCustomerDetails($customerType): void
     {
-        $this->fillUnregisteredCustomerDetails($customerType);
-        $this->fillBillingDetails($customerType);
-    }
-
-    /**
-     * @param $customerType
-     * @throws ExceptionAlias
-     */
-    public function fillMandatoryCustomerData($customerType)
-    {
         $this->preparedFillField($this->getLocator()->checkout->email_address, $this->getCustomer($customerType)->getEmailAddress());
         $this->preparedFillField($this->getLocator()->checkout->first_name, $this->getCustomer($customerType)->getFirstName());
         $this->preparedFillField($this->getLocator()->checkout->last_name, $this->getCustomer($customerType)->getLastName());
-    }
-
-    /**
-     *
-     * @param $customerType
-     * @throws ExceptionAlias
-     */
-    public function fillBillingDetails($customerType)
-    {
-
-        $this->preparedFillField($this->getLocator()->checkout->street_address, $this->getCustomer($customerType)->getStreetAddress());
-        $this->preparedFillField($this->getLocator()->checkout->town, $this->getCustomer($customerType)->getTown());
-        $this->preparedFillField($this->getLocator()->checkout->post_code, $this->getCustomer($customerType)->getPostCode());
-        $this->preparedFillField($this->getLocator()->checkout->phone, $this->getCustomer($customerType)->getPhone());
+        $this->fillBillingDetails($customerType);
         $this->selectOption($this->getLocator()->checkout->country, $this->getCustomer($customerType)->getCountry());
+        //this magento view is very flaky, after the address is filled the shop is loading the delivery options
+        // and the button is active or not active at random times, we have to wait to safely click the button
         $this->wait(10);
         $this->preparedClick($this->getLocator()->checkout->next, 60);
         $this->waitUntil(60, [$this, 'waitUntilPageLoaded'], [$this->getLocator()->page->payment]);
-
     }
 
-    /**
-     * @param string $customerType
-     * @throws ExceptionAlias
-     */
-    public function fillUnregisteredCustomerDetails($customerType)
-    {
-        if ($customerType !== static::REGISTERED_CUSTOMER) {
-            $this->fillMandatoryCustomerData($customerType);
-        }
-    }
-
-    /**
-     * @return array
-     */
-    public function getPaymentMethodConfigurationNameExceptions(): array
-    {
-        return $this->paymentMethodConfigurationNameExceptions;
-    }
 
     /**
      * @param $paymentMethod
@@ -229,11 +211,12 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
      */
     public function validateTransactionInDatabase($paymentMethod, $paymentAction): void
     {
-        exec("docker exec -it " . getenv("MAGENTO_CONTAINER_NAME") . " /usr/local/bin/php /var/www/html/bin/magento cron:run");
+        //run cron command so that transaction state updates
+        exec(DockerCommands::DOCKER_EXEC_COMMAND . $this->magentoContainerName . self::MAGENTO_CRON_RUN_COMMAND);
         parent::validateTransactionInDatabase($paymentMethod, $paymentAction);
-   }
+    }
 
-   /**
+    /**
      * @return bool
      */
     public function isCustomerRegistered(): bool
@@ -252,26 +235,11 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
     }
 
     /**
-     * @param $paymentMethod
-     * @return string
      */
-    private function getActingPaymentMethod($paymentMethod): string
+    private function cleanAndFlushMagentoCache() : void
     {
-        if (strcasecmp($paymentMethod, static::CREDIT_CARD_ONE_CLICK) === 0) {
-            return 'CreditCard';
-        }
-        return $paymentMethod;
-    }
-
-    /**
-     * @return bool
-     */
-    private function isCustomerSignedIn(): bool
-    {
-        $this->wait(1);
-        $currentUrl = $this->grabFromCurrentUrl();
-        //otherwise we are already signed in
-        return strpos($currentUrl, $this->getLocator()->page->my_account) !== false;
+        exec(DockerCommands::DOCKER_EXEC_COMMAND . $this->magentoContainerName . self::MAGENTO_CACHE_CLEAN_COMMAND);
+        exec(DockerCommands::DOCKER_EXEC_COMMAND . $this->magentoContainerName . self::MAGENTO_CACHE_FLUSH_COMMAND);
     }
 
 }

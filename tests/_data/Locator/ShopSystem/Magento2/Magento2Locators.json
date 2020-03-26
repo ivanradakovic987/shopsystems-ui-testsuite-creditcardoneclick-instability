@@ -5,9 +5,7 @@
     "payment": "payment",
     "order_received": "success",
     "register": "index.php/customer/account/create",
-    "log_out": "index.php/customer/account/logout/",
-    "sign_in": "index.php?controller=authentication&back=my-account",
-    "my_account": "index.php?controller=my-account"
+    "log_out": "index.php/customer/account/logout/"
   },
   "product": {
     "price": "24.00",

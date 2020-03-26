@@ -77,9 +77,9 @@ class WoocommerceStep extends GenericShopSystemStep implements iConfigurePayment
             $serializedValues = unserialize($optionValue);
             foreach (array_keys($serializedValues) as $key)
             {
-                if ($key == self::CREDIT_CARD_ONE_CLICK_CONFIGURATION_VALUE)
+                if ($key === self::CREDIT_CARD_ONE_CLICK_CONFIGURATION_VALUE)
                 {
-                    $serializedValues[$key] = "yes";
+                    $serializedValues[$key] = 'yes';
                 }
             }
             $optionValue = serialize($serializedValues);
@@ -91,12 +91,12 @@ class WoocommerceStep extends GenericShopSystemStep implements iConfigurePayment
      */
     public function registerCustomer()
     {
-        if ($this->isCustomerRegistered() != true) {
+        if ($this->isCustomerRegistered() !== true) {
             $this->haveInDatabase(static::CUSTOMER_TABLE,
                 [static::CUSTOMER_EMAIL_COLUMN_NAME => $this->getCustomer(static::REGISTERED_CUSTOMER)->getEmailAddress(),
                     static::CUSTOMER_PASSWORD_COLUMN_NAME => md5($this->getCustomer(static::REGISTERED_CUSTOMER)->getPassword()),
                     static::CUSTOMER_LOGIN_COLUMN_NAME => $this->getCustomer(static::REGISTERED_CUSTOMER)->getLoginUserName(),
-                    static::CUSTOMER_DATE_COLUMN_NAME => date("Y-m-d h:i:s")
+                    static::CUSTOMER_DATE_COLUMN_NAME => date('Y-m-d h:i:s')
                     ]);
         }
     }
@@ -139,10 +139,7 @@ class WoocommerceStep extends GenericShopSystemStep implements iConfigurePayment
         $this->preparedClick($this->getLocator()->checkout->country);
         $this->preparedFillField($this->getLocator()->checkout->country_entry, $this->getCustomer($customerType)->getCountry());
         $this->preparedClick($this->getLocator()->checkout->country_entry_selected);
-        $this->preparedFillField($this->getLocator()->checkout->street_address, $this->getCustomer($customerType)->getStreetAddress());
-        $this->preparedFillField($this->getLocator()->checkout->town, $this->getCustomer($customerType)->getTown());
-        $this->preparedFillField($this->getLocator()->checkout->post_code, $this->getCustomer($customerType)->getPostCode());
-        $this->preparedFillField($this->getLocator()->checkout->phone, $this->getCustomer($customerType)->getPhone());
+        $this->fillBillingDetails($customerType);
         $this->preparedFillField($this->getLocator()->checkout->email_address, $this->getCustomer($customerType)->getEmailAddress());
     }
 
@@ -155,18 +152,6 @@ class WoocommerceStep extends GenericShopSystemStep implements iConfigurePayment
         $paymentMethodForm = strtolower($paymentMethod) . '_form';
         $this->waitForElementVisible($this->getLocator()->checkout->$paymentMethodForm);
         $this->scrollTo($this->getLocator()->checkout->$paymentMethodForm);
-    }
-
-    /**
-     * @param $paymentMethod
-     * @return string
-     */
-    private function getActingPaymentMethod($paymentMethod): string
-    {
-        if (strcasecmp($paymentMethod, static::CREDIT_CARD_ONE_CLICK) === 0) {
-            return 'CreditCard';
-        }
-        return $paymentMethod;
     }
 
     /**
