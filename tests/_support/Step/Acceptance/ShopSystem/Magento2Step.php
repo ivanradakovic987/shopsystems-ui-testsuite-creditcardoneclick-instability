@@ -79,7 +79,7 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
     /**
      * @var array
      */
-    private $paymentMethodConfigurationNameExceptions =
+    private $configNameDiffs =
         [
             'cc_vault_enabled' => 'cc_vault/active',
             'enabled' => 'active'
@@ -119,8 +119,8 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
         }
         foreach ($db_config as $name => $value) {
             //some configuration options are different if different shops, this is handling the differences
-            if (array_key_exists($name, $this->paymentMethodConfigurationNameExceptions)) {
-                $name = $this->paymentMethodConfigurationNameExceptions[$name];
+            if (array_key_exists($name, $this->configNameDiffs)) {
+                $name = $this->configNameDiffs[$name];
             }
             $fullName = self::PAYMENT_METHOD_PREFIX . strtolower($actingPaymentMethod) . static::DB_SEPARATOR . strtolower($name);
             $this->putValueInDatabase($fullName, $this->convertWordValueToBinaryString($value));

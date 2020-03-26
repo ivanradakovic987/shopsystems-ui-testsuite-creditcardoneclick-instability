@@ -44,7 +44,7 @@ class AcceptanceTester extends Actor
     private $shopInstanceMap = [
         'prestashop' => Step\Acceptance\ShopSystem\PrestashopStep::class,
         'woocommerce' => Step\Acceptance\ShopSystem\WoocommerceStep::class,
-        'magento2' => Step\Acceptance\ShopSystem\Magento2Step::class
+        'magento2' => Step\Acceptance\ShopSystem\Magento2Step::class,
     ];
 
     private $paymentMethodInstanceMap = [

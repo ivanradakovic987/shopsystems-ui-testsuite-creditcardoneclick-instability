@@ -46,7 +46,7 @@ To run tests locally:
         
      `SHOP_URL`
       
-      only for Magento2 testing (since tests need to execute cash flushing and cron commends in the container)
+      only for Magento2 testing (since tests need to execute cash flushing and cron commands in the container)
       
      `MAGENTO_CONTAINER_NAME`           
 

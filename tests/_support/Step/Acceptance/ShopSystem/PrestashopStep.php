@@ -46,7 +46,7 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
     /**
      * @var array
      */
-    private $paymentMethodConfigurationNameExceptions =
+    private $configNameDiffs =
         [
             'cc_vault_enabled' => 'ccvault_enabled'
         ];
@@ -66,8 +66,8 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
         }
         foreach ($db_config as $name => $value) {
             //some configuration options are different if different shops, this is handling the differences
-            if (array_key_exists($name, $this->paymentMethodConfigurationNameExceptions)) {
-                $name = $this->paymentMethodConfigurationNameExceptions[$name];
+            if (array_key_exists($name, $this->configNameDiffs)) {
+                $name = $this->configNameDiffs[$name];
             }
             $fullName = self::PAYMENT_METHOD_PREFIX . strtoupper($actingPaymentMethod) . '_' . strtoupper($name);
             $this->putValueInDatabase($fullName, $value);
