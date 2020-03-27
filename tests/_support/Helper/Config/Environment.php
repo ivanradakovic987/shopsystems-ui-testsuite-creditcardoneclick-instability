@@ -22,7 +22,6 @@ class Environment
 
     /**
      * Environment constructor.
-     * @param $environment
      */
     public function __construct()
     {
