@@ -173,7 +173,6 @@ class GenericShopSystemStep extends GenericStep
     {
         $transactionTypes = $this->getColumnFromDatabaseNoCriteria(static::TRANSACTION_TABLE_NAME, static::TRANSACTION_TYPE_COLUMN_NAME);
         $tempTxType = $this->selectTxTypeFromMappedPaymentActions($paymentArgs);
-        codecept_debug($tempTxType);
         return end($transactionTypes) === $tempTxType;
     }
 
