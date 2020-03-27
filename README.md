@@ -48,7 +48,7 @@ To run tests locally:
       
       only for Magento2 testing (since tests need to execute cash flushing and cron commands in the container)
       
-     `MAGENTO_CONTAINER_NAME`           
+     `SHOP_SYSTEM_CONTAINER_NAME`           
 
 6. Start codeception   
     `vendor/bin/codecept run acceptance -g ${SHOP_SYSTEM} --debug --html`

@@ -85,22 +85,20 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
             'enabled' => 'active'
         ];
 
-    public $magentoContainerName = '';
-
     /**
      * GenericStep constructor.
      * @param Scenario $scenario
      * @param $gateway
+     * @param $shopSystemContainerName
      * @param $guestFileName
      * @param $registeredFileName
      */
-    public function __construct(Scenario $scenario, $gateway, $guestFileName, $registeredFileName)
+    public function __construct(Scenario $scenario, $gateway, $shopSystemContainerName, $guestFileName, $registeredFileName)
     {
-        $this->magentoContainerName = getenv('MAGENTO_CONTAINER_NAME');
-        if (!$this->magentoContainerName) {
-            throw new RuntimeException('Environment variable MAGENTO_CONTAINER_NAME is not set');
+        parent::__construct($scenario, $gateway, $shopSystemContainerName, $guestFileName, $registeredFileName);
+        if ($this->getContainerName() === '' ) {
+            throw new RuntimeException('Environment variable SHOP_SYSTEM_CONTAINER_NAME is not set');
         }
-        parent::__construct($scenario, $gateway, $guestFileName, $registeredFileName);
     }
 
     /**
@@ -212,7 +210,7 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
     public function validateTransactionInDatabase($paymentMethod, $paymentAction): void
     {
         //run cron command so that transaction state updates
-        exec(DockerCommands::DOCKER_EXEC_COMMAND . $this->magentoContainerName . self::MAGENTO_CRON_RUN_COMMAND);
+        exec(DockerCommands::DOCKER_EXEC_COMMAND . $this->getContainerName() . self::MAGENTO_CRON_RUN_COMMAND);
         parent::validateTransactionInDatabase($paymentMethod, $paymentAction);
     }
 
@@ -238,8 +236,8 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
      */
     private function cleanAndFlushMagentoCache() : void
     {
-        exec(DockerCommands::DOCKER_EXEC_COMMAND . $this->magentoContainerName . self::MAGENTO_CACHE_CLEAN_COMMAND);
-        exec(DockerCommands::DOCKER_EXEC_COMMAND . $this->magentoContainerName . self::MAGENTO_CACHE_FLUSH_COMMAND);
+        exec(DockerCommands::DOCKER_EXEC_COMMAND . $this->getContainerName() . self::MAGENTO_CACHE_CLEAN_COMMAND);
+        exec(DockerCommands::DOCKER_EXEC_COMMAND . $this->getContainerName() . self::MAGENTO_CACHE_FLUSH_COMMAND);
     }
 
 }

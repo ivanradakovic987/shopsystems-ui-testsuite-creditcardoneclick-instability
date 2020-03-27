@@ -25,6 +25,11 @@ class GenericShopSystemStep extends GenericStep
     private $registeredCustomer;
 
     /**
+     * @var
+     */
+    private $containerName;
+
+    /**
      * @var array
      */
     private $mappedPaymentActions = [
@@ -61,14 +66,16 @@ class GenericShopSystemStep extends GenericStep
      * GenericStep constructor.
      * @param Scenario $scenario
      * @param $gateway
+     * @param $shopSystemContainerName
      * @param $guestFileName
      * @param $registeredFileName
      */
-    public function __construct(Scenario $scenario, $gateway, $guestFileName, $registeredFileName)
+    public function __construct(Scenario $scenario, $gateway, $shopSystemContainerName, $guestFileName, $registeredFileName)
     {
         parent::__construct($scenario, $gateway);
         $this->setLocator($this->getDataFromDataFile($this->getFullPath(FileSytem::SHOP_SYSTEM_LOCATOR_FOLDER_PATH . static::STEP_NAME . DIRECTORY_SEPARATOR . static::STEP_NAME . 'Locators.json')));
         $this->createCustomerObjects($guestFileName, $registeredFileName);
+        $this->containerName = $shopSystemContainerName;
     }
 
     /**
@@ -262,5 +269,13 @@ class GenericShopSystemStep extends GenericStep
             return 'CreditCard';
         }
         return $paymentMethod;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getContainerName()
+    {
+        return $this->containerName;
     }
 }

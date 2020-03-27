@@ -6,6 +6,7 @@ use AcceptanceTester;
 use Codeception\Scenario;
 use Exception;
 use PHPUnit\Framework\AssertionFailedError;
+use Helper\Config\Environment;
 
 /**
  * Class GenericStep
