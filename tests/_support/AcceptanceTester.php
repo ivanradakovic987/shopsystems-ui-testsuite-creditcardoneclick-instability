@@ -90,11 +90,11 @@ class AcceptanceTester extends Actor
         if ($usedShopEnvVariable === '') {
             throw new RuntimeException('Environment variable SHOP_SYSTEM is not set');
         }
-        $shopSystemContainerName = $this->env->getEnv()['SHOP_SYSTEM_CONTAINER_NAME'];
+        $shopContainerName = $this->env->getEnv()['SHOP_SYSTEM_CONTAINER_NAME'];
         $this->configData = $this->getDataFromDataFile($this->getFullPath(FileSytem::CONFIG_FILE));
         $this->gateway = $this->configData->gateway;
         if (!$this->shopInstance) {
-            $this->shopInstance = $this->createShopSystemInstance($usedShopEnvVariable, $shopSystemContainerName);
+            $this->shopInstance = $this->createShopSystemInstance($usedShopEnvVariable, $shopContainerName);
         }
     }
 
@@ -239,10 +239,10 @@ class AcceptanceTester extends Actor
 
     /**
      * @param $shopSystemName
-     * @param string $shopSystemContainerName
+     * @param string $shopContainerName
      * @return GenericShopSystemStep
      */
-    private function createShopSystemInstance($shopSystemName, $shopSystemContainerName = ''): GenericShopSystemStep
+    private function createShopSystemInstance($shopSystemName, $shopContainerName = ''): GenericShopSystemStep
     {
         if (!$this->isShopSystemSupported($shopSystemName)) {
             throw new RuntimeException('Environment variable SHOP_SYSTEM is not set or requested shop system is not supported');
@@ -250,7 +250,7 @@ class AcceptanceTester extends Actor
         /** @var GenericShopSystemStep $shopInstance */
         $shopInstance = new $this->shopInstanceMap[$shopSystemName]($this->getScenario(),
                                                                     $this->gateway,
-                                                                    $shopSystemContainerName,
+                                                                    $shopContainerName,
                                                                     $this->configData->guest_customer_data,
                                                                     $this->configData->registered_customer_data);
         $shopInstance->configureShopSystemCurrencyAndCountry($this->configData->currency, $this->configData->default_country);

@@ -89,13 +89,13 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
      * GenericStep constructor.
      * @param Scenario $scenario
      * @param $gateway
-     * @param $shopSystemContainerName
+     * @param $shopContainerName
      * @param $guestFileName
      * @param $registeredFileName
      */
-    public function __construct(Scenario $scenario, $gateway, $shopSystemContainerName, $guestFileName, $registeredFileName)
+    public function __construct(Scenario $scenario, $gateway, $shopContainerName, $guestFileName, $registeredFileName)
     {
-        parent::__construct($scenario, $gateway, $shopSystemContainerName, $guestFileName, $registeredFileName);
+        parent::__construct($scenario, $gateway, $shopContainerName, $guestFileName, $registeredFileName);
         if ($this->getContainerName() === '' ) {
             throw new RuntimeException('Environment variable SHOP_SYSTEM_CONTAINER_NAME is not set');
         }
@@ -200,6 +200,7 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
         $this->wait(10);
         $this->preparedClick($this->getLocator()->checkout->next, 60);
         $this->waitUntil(60, [$this, 'waitUntilPageLoaded'], [$this->getLocator()->page->payment]);
+        $this->wait(3);
     }
 
 
@@ -210,6 +211,7 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
     public function validateTransactionInDatabase($paymentMethod, $paymentAction): void
     {
         //run cron command so that transaction state updates
+        codecept_debug(DockerCommands::DOCKER_EXEC_COMMAND . $this->getContainerName() . self::MAGENTO_CRON_RUN_COMMAND);
         exec(DockerCommands::DOCKER_EXEC_COMMAND . $this->getContainerName() . self::MAGENTO_CRON_RUN_COMMAND);
         parent::validateTransactionInDatabase($paymentMethod, $paymentAction);
     }
@@ -236,7 +238,9 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
      */
     private function cleanAndFlushMagentoCache() : void
     {
+        codecept_debug(DockerCommands::DOCKER_EXEC_COMMAND . $this->getContainerName() . self::MAGENTO_CACHE_CLEAN_COMMAND);
         exec(DockerCommands::DOCKER_EXEC_COMMAND . $this->getContainerName() . self::MAGENTO_CACHE_CLEAN_COMMAND);
+        codecept_debug(DockerCommands::DOCKER_EXEC_COMMAND . $this->getContainerName() . self::MAGENTO_CACHE_FLUSH_COMMAND);
         exec(DockerCommands::DOCKER_EXEC_COMMAND . $this->getContainerName() . self::MAGENTO_CACHE_FLUSH_COMMAND);
     }
 
