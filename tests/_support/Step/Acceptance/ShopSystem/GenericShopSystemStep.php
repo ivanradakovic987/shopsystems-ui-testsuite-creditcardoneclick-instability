@@ -142,7 +142,6 @@ class GenericShopSystemStep extends GenericStep
         $this->preparedFillField($this->getLocator()->checkout->town, $this->getCustomer($customerType)->getTown());
         $this->preparedFillField($this->getLocator()->checkout->post_code, $this->getCustomer($customerType)->getPostCode());
         $this->preparedFillField($this->getLocator()->checkout->phone, $this->getCustomer($customerType)->getPhone());
-//        $this->selectOption($this->getLocator()->checkout->country, $this->getCustomer($customerType)->getCountry());
     }
 
     /**
