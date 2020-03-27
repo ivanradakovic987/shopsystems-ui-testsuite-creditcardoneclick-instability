@@ -24,8 +24,9 @@ class Environment
      * Environment constructor.
      * @param $environment
      */
-    public function __construct($environment)
+    public function __construct()
     {
+        $environment = $_ENV;
         foreach ( $this->requiredEnvVariables as $var) {
             try {
                 $this->env[$var] = $environment[$var];

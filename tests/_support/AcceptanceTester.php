@@ -85,7 +85,7 @@ class AcceptanceTester extends Actor
      */
     public function iInitializeShopSystem(): void
     {
-        $this->env = new Environment($_ENV);
+        $this->env = new Environment();
         $usedShopEnvVariable = $this->env->getEnv()['SHOP_SYSTEM'];
         if ($usedShopEnvVariable === '') {
             throw new RuntimeException('Environment variable SHOP_SYSTEM is not set');
