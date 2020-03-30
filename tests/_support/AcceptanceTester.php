@@ -87,9 +87,6 @@ class AcceptanceTester extends Actor
     {
         $this->env = new Environment();
         $usedShopEnvVariable = $this->env->getEnv()['SHOP_SYSTEM'];
-        if ($usedShopEnvVariable === '') {
-            throw new RuntimeException('Environment variable SHOP_SYSTEM is not set');
-        }
         $shopContainerName = $this->env->getEnv()['SHOP_SYSTEM_CONTAINER_NAME'];
         $this->configData = $this->getDataFromDataFile($this->getFullPath(FileSytem::CONFIG_FILE));
         $this->gateway = $this->configData->gateway;

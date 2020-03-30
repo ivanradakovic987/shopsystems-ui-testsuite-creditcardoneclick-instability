@@ -18,20 +18,17 @@ class Environment
      */
     private $env;
 
-    private $requiredEnvVariables = ['SHOP_SYSTEM', 'SHOP_SYSTEM_CONTAINER_NAME'];
-
     /**
      * Environment constructor.
      */
     public function __construct()
     {
         $environment = $_ENV;
-        foreach ( $this->requiredEnvVariables as $var) {
-            try {
-                $this->env[$var] = $environment[$var];
-            } catch (Exception $e) {
-                $this->env[$var] = '';
-            }
+        $this->env['SHOP_SYSTEM'] = $environment['SHOP_SYSTEM'];
+        $this->env['SHOP_SYSTEM_CONTAINER_NAME'] = '';
+        if ($this->env['SHOP_SYSTEM'] === 'magento2')
+        {
+            $this->env['SHOP_SYSTEM_CONTAINER_NAME'] = $environment['SHOP_SYSTEM_CONTAINER_NAME'];
         }
     }
 

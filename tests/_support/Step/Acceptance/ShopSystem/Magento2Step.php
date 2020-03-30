@@ -86,22 +86,6 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
         ];
 
     /**
-     * GenericStep constructor.
-     * @param Scenario $scenario
-     * @param $gateway
-     * @param $shopContainerName
-     * @param $guestFileName
-     * @param $registeredFileName
-     */
-    public function __construct(Scenario $scenario, $gateway, $shopContainerName, $guestFileName, $registeredFileName)
-    {
-        parent::__construct($scenario, $gateway, $shopContainerName, $guestFileName, $registeredFileName);
-        if ($this->getContainerName() === '' ) {
-            throw new RuntimeException('Environment variable SHOP_SYSTEM_CONTAINER_NAME is not set');
-        }
-    }
-
-    /**
      * @param String $paymentMethod
      * @param String $paymentAction
      * @return mixed|void
