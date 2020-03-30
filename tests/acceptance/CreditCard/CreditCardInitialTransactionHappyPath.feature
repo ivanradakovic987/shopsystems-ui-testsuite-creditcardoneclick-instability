@@ -18,8 +18,8 @@ Feature: CreditCardInitialTransactionHappyPath
 
     Examples:
       | payment_action  | amount | transaction_type |
-      |    "reserve"    |  "10"  |  "authorization" |
-      |      "pay"      |  "10"  |    "purchase"    |
+      |    "reserve"    |  "20"  |  "authorization" |
+      |      "pay"      |  "20"  |    "purchase"    |
 
   @woocommerce @prestashop @magento2 @major @minor @patch
   Scenario Outline: initial transaction 3DS

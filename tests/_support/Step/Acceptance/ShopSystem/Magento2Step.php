@@ -48,34 +48,6 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
 
     const MAGENTO_CRON_RUN_COMMAND = ' /usr/local/bin/php /var/www/html/bin/magento cron:run';
 
-
-    /**
-     * @var array
-     */
-    private $mappedPaymentActions = [
-        'CreditCard' => [
-            'config' => [
-                'row' => 'payment_action',
-                'reserve' => 'authorize',
-                'pay' => 'authorize_capture'
-            ],
-            'tx_table' => [
-                'authorization' => 'authorization',
-                'purchase' => 'capture'
-            ]
-        ],
-        'PayPal' => [
-            'config' => [
-                'row' => 'payment_action',
-                'reserve' => 'authorize',
-                'pay' => 'authorize_capture'
-            ],
-            'tx_table' => [
-                'authorization' => 'authorization',
-                'purchase' => 'debit'
-            ]
-        ]
-    ];
     /**
      * @var array
      */
@@ -94,7 +66,7 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
     public function configurePaymentMethodCredentials($paymentMethod, $paymentAction)
     {
         $actingPaymentMethod = $this->getActingPaymentMethod($paymentMethod);
-        $db_config = $this->buildPaymentMethodConfig($actingPaymentMethod, $paymentAction, $this->mappedPaymentActions, $this->getGateway());
+        $db_config = $this->buildPaymentMethodConfig($actingPaymentMethod, $paymentAction, $this->getMappedPaymentActions(), $this->getGateway());
         if (strcasecmp($paymentMethod, static::CREDIT_CARD_ONE_CLICK) === 0) {
             //CreditCard One click is not a separate payment method but a configuration of CreditCard
             $db_config[self::CREDIT_CARD_ONE_CLICK_CONFIGURATION_OPTION] = '1';
@@ -210,13 +182,13 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
         return $guest !== false;
     }
 
-    /**
-     * @return array
-     */
-    public function getMappedPaymentActions(): array
-    {
-        return $this->mappedPaymentActions;
-    }
+//    /**
+//     * @return array
+//     */
+//    public function getMappedPaymentActions(): array
+//    {
+//        return $this->mappedPaymentActions;
+//    }
 
     /**
      */

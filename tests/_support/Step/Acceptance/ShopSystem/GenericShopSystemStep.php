@@ -29,33 +29,7 @@ class GenericShopSystemStep extends GenericStep
      */
     private $containerName;
 
-    /**
-     * @var array
-     */
-    private $mappedPaymentActions = [
-        'CreditCard' => [
-            'config' => [
-                'row' => 'payment_action',
-                'reserve' => 'reserve',
-                'pay' => 'pay'
-            ],
-            'tx_table' => [
-                'authorization' => 'authorization',
-                'purchase' => 'purchase'
-            ]
-        ],
-        'PayPal' => [
-            'config' => [
-                'row' => 'payment_action',
-                'reserve' => 'reserve',
-                'pay' => 'pay'
-            ],
-            'tx_table' => [
-                'authorization' => 'authorization',
-                'purchase' => 'debit'
-            ]
-        ]
-    ];
+    private $mappedPaymentActions;
 
     /**
      * @var array
@@ -74,6 +48,7 @@ class GenericShopSystemStep extends GenericStep
     {
         parent::__construct($scenario, $gateway);
         $this->setLocator($this->getDataFromDataFile($this->getFullPath(FileSytem::SHOP_SYSTEM_LOCATOR_FOLDER_PATH . static::STEP_NAME . DIRECTORY_SEPARATOR . static::STEP_NAME . 'Locators.json')));
+        $this->mappedPaymentActions = $this->getDataFromDataFile($this->getFullPath(FileSytem::MAPPED_PAYMENT_ACTIONS_FOLDER_PATH . static::STEP_NAME . DIRECTORY_SEPARATOR . static::STEP_NAME . 'MappedPaymentActions.json'));
         $this->createCustomerObjects($guestFileName, $registeredFileName);
         $this->containerName = $shopContainerName;
     }
@@ -183,9 +158,9 @@ class GenericShopSystemStep extends GenericStep
     }
 
     /**
-     * @return array
+     * @return mixed
      */
-    public function getMappedPaymentActions(): array
+    public function getMappedPaymentActions()
     {
         return $this->mappedPaymentActions;
     }
@@ -235,7 +210,8 @@ class GenericShopSystemStep extends GenericStep
      */
     public function getMappedTxTableValuesForPaymentMethod($paymentMethod)
     {
-        return $this->getMappedPaymentActions()[$paymentMethod]['tx_table'];
+        return $this->getMappedPaymentActions()->$paymentMethod->tx_table;
+
     }
 
 
@@ -245,7 +221,8 @@ class GenericShopSystemStep extends GenericStep
      */
     public function selectTxTypeFromMappedPaymentActions($paymentArgs)
     {
-        return $this->getMappedTxTableValuesForPaymentMethod($paymentArgs[0])[$paymentArgs[1]];
+        $txnType = $paymentArgs[1];
+        return $this->getMappedTxTableValuesForPaymentMethod($paymentArgs[0])->$txnType;
     }
 
     /**
