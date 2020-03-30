@@ -6,7 +6,6 @@ use AcceptanceTester;
 use Codeception\Scenario;
 use Exception;
 use PHPUnit\Framework\AssertionFailedError;
-use Helper\Config\Environment;
 
 /**
  * Class GenericStep
@@ -114,7 +113,7 @@ class GenericStep extends AcceptanceTester
     /**
      * @return mixed
      */
-    // we need this in both child classes (prestashop and woocommerce), when configuring shops
+    // we need this in child classes when configuring shops
     public function getGateway()
     {
         return $this->gateway;
