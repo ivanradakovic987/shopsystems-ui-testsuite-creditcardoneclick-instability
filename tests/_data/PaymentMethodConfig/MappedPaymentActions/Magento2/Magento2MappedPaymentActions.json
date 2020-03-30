@@ -1,0 +1,24 @@
+{
+  "CreditCard": {
+    "config": {
+      "row": "payment_action",
+      "reserve": "authorize",
+      "pay": "authorize_capture"
+    },
+    "tx_table": {
+      "authorization": "authorization",
+      "purchase": "capture"
+    }
+  },
+  "PayPal": {
+    "config": {
+      "row": "payment_action",
+      "reserve": "authorize",
+      "pay": "authorize_capture"
+    },
+    "tx_table": {
+      "authorization": "authorization",
+      "purchase": "debit"
+    }
+  }
+}

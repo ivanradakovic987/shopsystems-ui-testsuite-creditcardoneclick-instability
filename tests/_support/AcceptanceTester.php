@@ -2,11 +2,13 @@
 
 use Codeception\Actor;
 use Helper\Config\FileSytem;
+use Helper\Config\Environment;
 use Step\Acceptance\PaymentMethod\CreditCardStep;
 use Step\Acceptance\PaymentMethod\GenericPaymentMethodStep;
 use Step\Acceptance\ShopSystem\GenericShopSystemStep;
 use Step\Acceptance\ShopSystem\PrestashopStep;
 use Step\Acceptance\ShopSystem\WoocommerceStep;
+use Step\Acceptance\ShopSystem\Magento2Step;
 
 /**
  * Inherited Methods
@@ -42,7 +44,8 @@ class AcceptanceTester extends Actor
     //this is used to generate new class instance, so const doesn't work here
     private $shopInstanceMap = [
         'prestashop' => Step\Acceptance\ShopSystem\PrestashopStep::class,
-        'woocommerce' => Step\Acceptance\ShopSystem\WoocommerceStep::class
+        'woocommerce' => Step\Acceptance\ShopSystem\WoocommerceStep::class,
+        'magento2' => Step\Acceptance\ShopSystem\Magento2Step::class,
     ];
 
     private $paymentMethodInstanceMap = [
@@ -52,7 +55,12 @@ class AcceptanceTester extends Actor
     ];
 
     /**
-     * @var Actor|PrestashopStep|WoocommerceStep
+     * @var Environment
+     */
+    public $env;
+
+    /**
+     * @var Actor|PrestashopStep|WoocommerceStep|Magento2Step
      */
     private $shopInstance;
 
@@ -77,14 +85,13 @@ class AcceptanceTester extends Actor
      */
     public function iInitializeShopSystem(): void
     {
-        $usedShopEnvVariable = getenv('SHOP_SYSTEM');
-        if (!$usedShopEnvVariable) {
-            throw new RuntimeException('Environment variable SHOP_SYSTEM is not set');
-        }
+        $this->env = new Environment();
+        $usedShopEnvVariable = $this->env->getEnv()['SHOP_SYSTEM'];
+        $shopContainerName = $this->env->getEnv()['SHOP_SYSTEM_CONTAINER_NAME'];
         $this->configData = $this->getDataFromDataFile($this->getFullPath(FileSytem::CONFIG_FILE));
         $this->gateway = $this->configData->gateway;
         if (!$this->shopInstance) {
-            $this->shopInstance = $this->createShopSystemInstance($usedShopEnvVariable);
+            $this->shopInstance = $this->createShopSystemInstance($usedShopEnvVariable, $shopContainerName);
         }
     }
 
@@ -201,6 +208,14 @@ class AcceptanceTester extends Actor
     }
 
     /**
+     * @return mixed
+     */
+    public function getEnv()
+    {
+        return $this->env->getEnv();
+    }
+
+    /**
      * @param $paymentMethod
      * @return GenericPaymentMethodStep
      */
@@ -221,15 +236,20 @@ class AcceptanceTester extends Actor
 
     /**
      * @param $shopSystemName
+     * @param string $shopContainerName
      * @return GenericShopSystemStep
      */
-    private function createShopSystemInstance($shopSystemName): GenericShopSystemStep
+    private function createShopSystemInstance($shopSystemName, $shopContainerName = ''): GenericShopSystemStep
     {
         if (!$this->isShopSystemSupported($shopSystemName)) {
             throw new RuntimeException('Environment variable SHOP_SYSTEM is not set or requested shop system is not supported');
         }
         /** @var GenericShopSystemStep $shopInstance */
-        $shopInstance = new $this->shopInstanceMap[$shopSystemName]($this->getScenario(), $this->gateway, $this->configData->guest_customer_data, $this->configData->registered_customer_data);
+        $shopInstance = new $this->shopInstanceMap[$shopSystemName]($this->getScenario(),
+                                                                    $this->gateway,
+                                                                    $shopContainerName,
+                                                                    $this->configData->guest_customer_data,
+                                                                    $this->configData->registered_customer_data);
         $shopInstance->configureShopSystemCurrencyAndCountry($this->configData->currency, $this->configData->default_country);
         $shopInstance->registerCustomer();
         return $shopInstance;

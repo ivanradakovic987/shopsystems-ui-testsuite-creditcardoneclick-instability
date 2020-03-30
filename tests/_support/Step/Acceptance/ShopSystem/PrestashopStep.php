@@ -3,8 +3,6 @@
 namespace Step\Acceptance\ShopSystem;
 
 
-use Facebook\WebDriver\Exception\TimeOutException;
-use PHPUnit\Exception;
 use Step\Acceptance\iConfigurePaymentMethod;
 use Step\Acceptance\iPrepareCheckout;
 use Step\Acceptance\iValidateSuccess;
@@ -31,6 +29,8 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
 
     const TRANSACTION_TABLE_NAME = 'ps_wirecard_payment_gateway_tx';
 
+    const TRANSACTION_TYPE_COLUMN_NAME = 'transaction_type';
+
     const DEFAULT_COUNTRY_OPTION_NAME = 'PS_COUNTRY_DEFAULT';
 
     const CURRENCY_OPTION_NAME = 'PS_CURRENCY_DEFAULT';
@@ -46,7 +46,7 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
     /**
      * @var array
      */
-    private $paymentMethodConfigurationNameExceptions =
+    private $configNameDiffs =
         [
             'cc_vault_enabled' => 'ccvault_enabled'
         ];
@@ -66,8 +66,8 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
         }
         foreach ($db_config as $name => $value) {
             //some configuration options are different if different shops, this is handling the differences
-            if (array_key_exists($name, $this->getPaymentMethodConfigurationNameExceptions())) {
-                $name = $this->getPaymentMethodConfigurationNameExceptions()[$name];
+            if (array_key_exists($name, $this->configNameDiffs)) {
+                $name = $this->configNameDiffs[$name];
             }
             $fullName = self::PAYMENT_METHOD_PREFIX . strtoupper($actingPaymentMethod) . '_' . strtoupper($name);
             $this->putValueInDatabase($fullName, $value);
@@ -176,13 +176,10 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
      * @param $customerType
      * @throws ExceptionAlias
      */
-    public function fillBillingDetails($customerType)
+    public function fillBillingDetails($customerType) : void
     {
         try {
-            $this->preparedFillField($this->getLocator()->checkout->street_address, $this->getCustomer($customerType)->getStreetAddress());
-            $this->preparedFillField($this->getLocator()->checkout->town, $this->getCustomer($customerType)->getTown());
-            $this->preparedFillField($this->getLocator()->checkout->post_code, $this->getCustomer($customerType)->getPostCode());
-            $this->preparedFillField($this->getLocator()->checkout->phone, $this->getCustomer($customerType)->getPhone());
+            parent::fillBillingDetails($customerType);
             $this->selectOption($this->getLocator()->checkout->country, $this->getCustomer($customerType)->getCountry());
             $this->preparedClick($this->getLocator()->checkout->continue_confirm_address);
         } catch (NoSuchElementException $e) {
@@ -216,26 +213,6 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
             $this->preparedFillField($this->getLocator()->sign_in->password, $this->getCustomer(static::REGISTERED_CUSTOMER)->getPassword());
             $this->preparedClick($this->getLocator()->sign_in->sign_in, 60);
         }
-    }
-
-    /**
-     * @return array
-     */
-    public function getPaymentMethodConfigurationNameExceptions(): array
-    {
-        return $this->paymentMethodConfigurationNameExceptions;
-    }
-
-    /**
-     * @param $paymentMethod
-     * @return string
-     */
-    private function getActingPaymentMethod($paymentMethod): string
-    {
-        if (strcasecmp($paymentMethod, static::CREDIT_CARD_ONE_CLICK) === 0) {
-            return 'CreditCard';
-        }
-        return $paymentMethod;
     }
 
     /**

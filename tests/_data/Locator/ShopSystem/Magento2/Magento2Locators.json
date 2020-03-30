@@ -1,0 +1,54 @@
+{
+  "page": {
+    "product": "index.php/savvy-shoulder-tote.html",
+    "checkout": "index.php/checkout/",
+    "payment": "payment",
+    "order_received": "success",
+    "register": "index.php/customer/account/create",
+    "log_out": "index.php/customer/account/logout/"
+  },
+  "product": {
+    "price": "24.00",
+    "quantity": "//*[@id='qty']",
+    "add_to_cart": "//*[@id='product-addtocart-button']"
+  },
+  "checkout": {
+    "first_name": "//*[@name='firstname']",
+    "last_name": "//*[@name='lastname']",
+    "email_address": "//*[@id='customer-email']",
+    "country": "//*[@name='country_id']",
+    "street_address": "//*[@name='street[0]']",
+    "town": "//*[@name='city']",
+    "post_code": "//*[@name='postcode']",
+    "phone": "//*[@name='telephone']",
+    "next": "//*[@class='button action continue primary']",
+    "password": "//*[@name='password']"
+  },
+  "payment": {
+    "creditcard_name": "Wirecard Credit Card",
+    "paypal_name": "Wirecard PayPal",
+    "creditcard_form": "//*[@id='wirecard_elasticengine_creditcard']",
+    "paypal_form": "//input[@type='radio'][contains(@data-module-name, 'wd-paypal')]",
+    "place_order": "//*[@id='wirecard_elasticengine_creditcard_submit']"
+  },
+  "order_pay": {
+    "pay": "//*[@id='seamless-submit']"
+  },
+  "order_received": {
+    "order_confirmed_message": "Thank you for your purchase!"
+  },
+  "register": {
+    "first_name": "//*[@name='firstname']",
+    "last_name": "//*[@name='lastname']",
+    "email_address": "//*[@id='email_address']",
+    "password": "//*[@id='password']",
+    "confirm_password": "//*[@id='password-confirmation']",
+    "create_an_account": "//button[@type='submit'][contains(@title, 'Create an Account')]",
+    "log_out": "//*[@class='logout hidden-sm-down]']"
+  },
+  "sign_in": {
+    "email": "//*[@name='email']",
+    "password": "//*[@name='password']",
+    "sign_in": "//*[@id='submit-login']"
+  }
+}

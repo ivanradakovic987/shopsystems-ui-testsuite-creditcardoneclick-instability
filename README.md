@@ -9,6 +9,7 @@ Supported Shop Systems
 |---|---|:---:|
 | **Prestashop** | &#9989; | &#9989; |   
 | **Woocommerce** | &#9989; | &#9744; |
+| **Magento2** | &#9989; | &#9744; |
 
 
 To run tests locally:
@@ -31,7 +32,7 @@ To run tests locally:
 
 5. Export environment variables
     
-    `SHOP_SYSTEM = prestashop #(or woocommerce)`
+    `SHOP_SYSTEM = prestashop #(or woocommerce or magento2)`
         
      `DB_HOST`
         
@@ -43,7 +44,11 @@ To run tests locally:
              
      `DB_PASSWORD`
         
-     `SHOP_URL`           
+     `SHOP_URL`
+      
+      only for Magento2 testing (since tests need to execute cash flushing and cron commands in the container)
+      
+     `SHOP_SYSTEM_CONTAINER_NAME`           
 
 6. Start codeception   
     `vendor/bin/codecept run acceptance -g ${SHOP_SYSTEM} --debug --html`
@@ -133,6 +138,9 @@ Structure
     |    |  ├── Locator                 # Locators     
     |    |  |   ├──...       
     |    |  ├── PaymentMethodConfig     # Payment method configuration data (maid, user, password, etc...) 
+    |    |  |   ├──... 
+    |    |  |   ├──MappedPaymentActions # Payment action mapped names depending on shop system
+    |    |  |   |   ├──... 
     |    |  |   ├──... 
     |    |  ├── PaymentMethodData       # Payment method data (crecit card numbers, user, password, ...)
     |    |  |   ├──... 
