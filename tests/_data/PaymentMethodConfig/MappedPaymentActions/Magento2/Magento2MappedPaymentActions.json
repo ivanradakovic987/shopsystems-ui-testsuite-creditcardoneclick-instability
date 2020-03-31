@@ -18,7 +18,7 @@
     },
     "tx_table": {
       "authorization": "authorization",
-      "purchase": "debit"
+      "purchase": "capture"
     }
   }
 }
