@@ -89,8 +89,9 @@ networks:
 ```
 3. Run tests passing all required variables
 ```
-docker-compose run \
+docker-compose run \              
               -e SHOP_SYSTEM="${SHOP_SYSTEM}" \
+              -e SHOP_SYSTEM_CONTAINER_NAME="${SHOP_SYSTEM_CONTAINER_NAME}" \ #only for Magento2
               -e SHOP_URL="${SHOP_URL}" \
               -e SHOP_VERSION="${SHOP_VERSION}" \
               -e EXTENSION_VERSION="${EXTENSION_VERSION}" \
@@ -104,7 +105,7 @@ docker-compose run \
               -g "${TEST_GROUP}" -g "${SHOP_SYSTEM}"  \
               --env ci --html --xml
 ```
-
+Note: for PayPal tests - make sure that order number is not duplicated each time
 Configuring test data
 =====
 It is possible instead of specified test data (Customer information, payment method credentials (like credit card numbers, PayPal credentials, etc)) to use custom one.
