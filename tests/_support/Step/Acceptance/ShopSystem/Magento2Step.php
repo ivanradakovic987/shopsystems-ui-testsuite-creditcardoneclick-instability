@@ -2,8 +2,6 @@
 
 namespace Step\Acceptance\ShopSystem;
 
-use Codeception\Scenario;
-use RuntimeException;
 use Step\Acceptance\iConfigurePaymentMethod;
 use Step\Acceptance\iPrepareCheckout;
 use Step\Acceptance\iValidateSuccess;
@@ -112,9 +110,9 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
     {
         $paymentMethodName = strtolower($paymentMethod) . '_name';
         $paymentMethodForm = strtolower($paymentMethod) . '_form';
-        $this->selectOption($this->getLocator()->payment->$paymentMethodForm, $this->getLocator()->payment->$paymentMethodName);
+        $this->waitUntil(80, [$this, 'waitUntilOptionSelected'], [$this->getLocator()->payment->$paymentMethodForm, $this->getLocator()->payment->$paymentMethodName]);
         if ($this->isRedirectPaymentMethod($paymentMethod)) {
-            $this->proceedWithPayment($paymentMethod);
+            $this->preparedClick($this->getLocator()->payment->place_order);
         }
     }
 
@@ -125,9 +123,7 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
      */
     public function proceedWithPayment($paymentMethod): void
     {
-        if ($paymentMethod !== '') {
-            $this->preparedClick($this->getLocator()->payment->place_order);
-        }
+        $this->preparedClick($this->getLocator()->payment->credit_card_place_order);
     }
 
     /**
@@ -137,7 +133,7 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
     public function fillBasket($minPurchaseSum): void
     {
         parent::fillBasket($minPurchaseSum);
-        $this->waitForText('You added');
+        $this->waitForText('You added', 60);
     }
 
     /**
@@ -182,14 +178,6 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
         return $guest !== false;
     }
 
-//    /**
-//     * @return array
-//     */
-//    public function getMappedPaymentActions(): array
-//    {
-//        return $this->mappedPaymentActions;
-//    }
-
     /**
      */
     private function cleanAndFlushMagentoCache() : void
@@ -199,5 +187,4 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
         codecept_debug(DockerCommands::DOCKER_EXEC_COMMAND . $this->getContainerName() . self::MAGENTO_CACHE_FLUSH_COMMAND);
         exec(DockerCommands::DOCKER_EXEC_COMMAND . $this->getContainerName() . self::MAGENTO_CACHE_FLUSH_COMMAND);
     }
-
 }

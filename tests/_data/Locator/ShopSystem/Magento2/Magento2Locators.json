@@ -28,8 +28,9 @@
     "creditcard_name": "Wirecard Credit Card",
     "paypal_name": "Wirecard PayPal",
     "creditcard_form": "//*[@id='wirecard_elasticengine_creditcard']",
-    "paypal_form": "//input[@type='radio'][contains(@data-module-name, 'wd-paypal')]",
-    "place_order": "//*[@id='wirecard_elasticengine_creditcard_submit']"
+    "paypal_form": "//*[@id='wirecard_elasticengine_paypal']",
+    "credit_card_place_order": "//*[@id='wirecard_elasticengine_creditcard_submit']",
+    "place_order": "//*[@class='payment-method _active']//button[@class='action primary checkout']"
   },
   "order_pay": {
     "pay": "//*[@id='seamless-submit']"
