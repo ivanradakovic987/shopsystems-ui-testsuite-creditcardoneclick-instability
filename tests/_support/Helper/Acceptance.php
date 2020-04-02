@@ -102,4 +102,19 @@ class Acceptance extends Module
                 return $wordValue;
         }
     }
+
+    /**
+     * @param $countryName
+     * @return string
+     */
+    public static function convertCountryNameToCountryId($countryName):string
+    {
+        switch ($countryName) {
+            case 'Austria':
+                return 'AT';
+                break;
+            default:
+                return '$countryName';
+        }
+    }
 }
