@@ -103,18 +103,18 @@ class Acceptance extends Module
         }
     }
 
-    /**
-     * @param $countryName
-     * @return string
-     */
-    public static function convertCountryNameToCountryId($countryName):string
-    {
-        switch ($countryName) {
-            case 'Austria':
-                return 'AT';
-                break;
-            default:
-                return '$countryName';
-        }
-    }
+//    /**
+//     * @param $countryName
+//     * @return string
+//     */
+//    public static function convertCountryNameToCountryId($countryName):string
+//    {
+//        switch ($countryName) {
+//            case 'Austria':
+//                return 'AT';
+//                break;
+//            default:
+//                return '$countryName';
+//        }
+//    }
 }

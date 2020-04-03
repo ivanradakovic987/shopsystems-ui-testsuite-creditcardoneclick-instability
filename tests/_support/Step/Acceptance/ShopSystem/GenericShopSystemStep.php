@@ -232,7 +232,7 @@ class GenericShopSystemStep extends GenericStep
     {
         $guest = $this->grabFromDatabase(static::CUSTOMER_TABLE, static::CUSTOMER_EMAIL_COLUMN_NAME,
             [static::CUSTOMER_EMAIL_COLUMN_NAME => $this->getCustomer(static::REGISTERED_CUSTOMER)->getEmailAddress()]);
-        return $guest === '0';
+        return $guest ===  $this->getCustomer(static::REGISTERED_CUSTOMER)->getEmailAddress();
     }
 
     /**

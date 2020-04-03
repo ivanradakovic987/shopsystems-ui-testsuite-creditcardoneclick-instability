@@ -43,6 +43,8 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
 
     const CUSTOMER_EMAIL_COLUMN_NAME = 'email';
 
+    const CUSTOMER_ADDRESS_TABLE = 'ps_address';
+
     /**
      * @var array
      */
@@ -105,6 +107,7 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
             $this->checkOption($this->getLocator()->checkout->agree_to_terms_and_conditions_and_privacy_policy);
             $this->preparedClick($this->getLocator()->register->save);
             $this->amOnPage($this->getLocator()->page->log_out);
+            $this->configureRegisteredCustomerAddressInDataBase();
         }
     }
 
@@ -179,12 +182,10 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
      */
     public function fillBillingDetails($customerType) : void
     {
-        try {
+        if ($customerType !== static::REGISTERED_CUSTOMER) {
             parent::fillBillingDetails($customerType);
             $this->selectOption($this->getLocator()->checkout->country, $this->getCustomer($customerType)->getCountry());
             $this->preparedClick($this->getLocator()->checkout->continue_confirm_address);
-        } catch (NoSuchElementException $e) {
-            //this means the address has already been saved
         }
         //this button should appear on the next page, so wait till we see it
         $this->preparedClick($this->getLocator()->checkout->continue_confirm_delivery, 60);
@@ -227,4 +228,23 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
         return strpos($currentUrl, $this->getLocator()->page->my_account) !== false;
     }
 
+    private function configureRegisteredCustomerAddressInDataBase()
+    {
+        $customerId = $this->grabFromDatabase(static::CUSTOMER_TABLE, 'id_customer',
+            [static::CUSTOMER_EMAIL_COLUMN_NAME => $this->getCustomer(static::REGISTERED_CUSTOMER)->getEmailAddress()]);
+        $countryID = $this->grabFromDatabase('ps_country', 'id_country', ['iso_code' => $this->getCustomer(static::REGISTERED_CUSTOMER)->getCountryId()]);
+        $this->haveInDatabase(static::CUSTOMER_ADDRESS_TABLE,
+            ['id_customer' => $customerId,
+            'id_country' => $countryID,
+            'alias' => 'My Address',
+            'lastname' => $this->getCustomer(static::REGISTERED_CUSTOMER)->getLastName(),
+            'firstname' => $this->getCustomer(static::REGISTERED_CUSTOMER)->getFirstName(),
+            'address1' => $this->getCustomer(static::REGISTERED_CUSTOMER)->getStreetAddress(),
+            'postcode' => $this->getCustomer(static::REGISTERED_CUSTOMER)->getPostCode(),
+            'city' => $this->getCustomer(static::REGISTERED_CUSTOMER)->getTown(),
+            'phone' => $this->getCustomer(static::REGISTERED_CUSTOMER)->getPhone(),
+            'date_add' => date('Y-m-d h:i:s'),
+            'date_upd' => date('Y-m-d h:i:s'),
+            'active' => '1']);
+    }
 }
