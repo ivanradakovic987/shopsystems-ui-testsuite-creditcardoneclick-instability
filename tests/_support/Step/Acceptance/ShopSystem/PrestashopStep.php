@@ -115,6 +115,7 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
      */
     public function startPayment($paymentMethod): void
     {
+        $paymentMethod = $this->getActingPaymentMethod($paymentMethod);
         $paymentMethodName = strtolower($paymentMethod) . '_name';
         $paymentMethodForm = strtolower($paymentMethod) . '_form';
         $this->selectOption($this->getLocator()->checkout->$paymentMethodForm, $this->getLocator()->checkout->$paymentMethodName);

@@ -80,7 +80,6 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
             $this->putValueInDatabase(static::PAYMENT_METHOD_PREFIX . static::CREDIT_CARD_ONE_CLICK_CONFIGURATION_OPTION, '1');
         }
         $this->cleanAndFlushMagentoCache();
-        $this->pause();
     }
 
     /**
@@ -109,11 +108,14 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
      */
     public function startPayment($paymentMethod): void
     {
-        $paymentMethodName = strtolower($paymentMethod) . '_name';
-        $paymentMethodForm = strtolower($paymentMethod) . '_form';
-        $this->waitUntil(80, [$this, 'waitUntilOptionSelected'], [$this->getLocator()->payment->$paymentMethodForm, $this->getLocator()->payment->$paymentMethodName]);
-        if ($this->isRedirectPaymentMethod($paymentMethod)) {
-            $this->preparedClick($this->getLocator()->payment->place_order);
+        if (strpos($paymentMethod, 'OneClick') === false ) {
+            $paymentMethodName = strtolower($paymentMethod) . '_name';
+            $paymentMethodForm = strtolower($paymentMethod) . '_form';
+            $this->waitUntil(80, [$this, 'waitUntilOptionSelected'],
+                [$this->getLocator()->payment->$paymentMethodForm, $this->getLocator()->payment->$paymentMethodName]);
+            if ($this->isRedirectPaymentMethod($paymentMethod)) {
+                $this->preparedClick($this->getLocator()->payment->place_order);
+            }
         }
     }
 
@@ -124,7 +126,13 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
      */
     public function proceedWithPayment($paymentMethod): void
     {
-        $this->preparedClick($this->getLocator()->payment->credit_card_place_order);
+        if ($paymentMethod === 'CreditCard')
+        {
+            $this->preparedClick($this->getLocator()->payment->credit_card_place_order);
+        }
+        else {
+            $this->preparedClick($this->getLocator()->payment->place_order);
+        }
     }
 
     /**
@@ -149,10 +157,10 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
             $this->preparedFillField($this->getLocator()->checkout->last_name, $this->getCustomer($customerType)->getLastName());
             $this->fillBillingDetails($customerType);
             $this->selectOption($this->getLocator()->checkout->country, $this->getCustomer($customerType)->getCountry());
-            //this magento view is very flaky, after the address is filled the shop is loading the delivery options
-            // and the button is active or not active at random times, we have to wait to safely click the button
-            $this->wait(10);
         }
+        //this magento view is very flaky, after the address is filled the shop is loading the delivery options
+        // and the button is active or not active at random times, we have to wait to safely click the button
+        $this->wait(10);
         $this->preparedClick($this->getLocator()->checkout->next, 60);
         $this->waitUntil(60, [$this, 'waitUntilPageLoaded'], [$this->getLocator()->page->payment]);
         $this->wait(3);
