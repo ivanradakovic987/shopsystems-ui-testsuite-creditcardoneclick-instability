@@ -107,8 +107,8 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
             $this->checkOption($this->getLocator()->checkout->agree_to_terms_and_conditions_and_privacy_policy);
             $this->preparedClick($this->getLocator()->register->save);
             $this->amOnPage($this->getLocator()->page->log_out);
-            $this->configureRegisteredCustomerAddressInDataBase();
         }
+        $this->configureRegisteredCustomerAddressInDataBase();
     }
 
     /**

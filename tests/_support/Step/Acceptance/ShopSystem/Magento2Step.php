@@ -97,8 +97,8 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
             $this->preparedFillField($this->getLocator()->register->confirm_password, $this->getCustomer(static::REGISTERED_CUSTOMER)->getPassword());
             $this->preparedClick($this->getLocator()->register->create_an_account);
             $this->amOnPage($this->getLocator()->page->log_out);
-            $this->configureRegisteredCustomerAddressInDataBase();
      }
+        $this->configureRegisteredCustomerAddressInDataBase();
     }
 
     /**
