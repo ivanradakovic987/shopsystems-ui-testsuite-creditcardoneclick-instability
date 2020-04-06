@@ -126,13 +126,7 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
      */
     public function proceedWithPayment($paymentMethod): void
     {
-        if ($paymentMethod === 'CreditCard')
-        {
-            $this->preparedClick($this->getLocator()->payment->credit_card_place_order);
-        }
-        else {
-            $this->preparedClick($this->getLocator()->payment->place_order);
-        }
+        $this->preparedClick($this->getProceedWithPaymentLocator($paymentMethod));
     }
 
     /**
@@ -217,6 +211,9 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
         }
     }
 
+    /**
+     *
+     */
     private function configureRegisteredCustomerAddressInDataBase()
     {
         $entityId = $this->grabFromDatabase(static::CUSTOMER_TABLE, 'entity_id',
@@ -248,5 +245,18 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
         exec(DockerCommands::DOCKER_EXEC_COMMAND . $this->getContainerName() . self::MAGENTO_CACHE_CLEAN_COMMAND);
         codecept_debug(DockerCommands::DOCKER_EXEC_COMMAND . $this->getContainerName() . self::MAGENTO_CACHE_FLUSH_COMMAND);
         exec(DockerCommands::DOCKER_EXEC_COMMAND . $this->getContainerName() . self::MAGENTO_CACHE_FLUSH_COMMAND);
+    }
+
+    /**
+     * @param $paymentMethod
+     * @return mixed
+     */
+    private function getProceedWithPaymentLocator($paymentMethod)
+    {
+        if ($paymentMethod === 'CreditCard')
+        {
+            return $this->getLocator()->payment->credit_card_place_order;
+        }
+        return $this->getLocator()->payment->place_order;
     }
 }

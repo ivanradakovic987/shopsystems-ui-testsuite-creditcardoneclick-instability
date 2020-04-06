@@ -17,14 +17,7 @@ class CreditCardOneClickStep extends CreditCardStep
      */
     public function saveForLaterUse($shopSystem): void
     {
-        if (strpos($shopSystem, 'magento2') !== false)
-        {
-            $this->checkOption($this->getLocator()->save_for_later_use_magento2);
-        }
-        else
-        {
-            $this->checkOption($this->getLocator()->save_for_later_use);
-        }
+        $this->checkOption($this->getSaveForLaterUseLocator($shopSystem));
     }
 
     /**
@@ -63,5 +56,18 @@ class CreditCardOneClickStep extends CreditCardStep
                 $this->preparedClick($this->getLocator()->use_card);
                 break;
         }
+    }
+
+    /**
+     * @param $shopSystem
+     * @return String
+     */
+    private function getSaveForLaterUseLocator($shopSystem): String
+    {
+        if (strpos($shopSystem, 'magento2') !== false)
+        {
+            return $this->getLocator()->save_for_later_use_magento2;
+        }
+        return $this->getLocator()->save_for_later_use;
     }
 }
