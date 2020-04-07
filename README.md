@@ -8,7 +8,7 @@ Supported Shop Systems
 |  Shop system | Supported | This project used in CI |   
 |---|---|:---:|
 | **Prestashop** | &#9989; | &#9989; |   
-| **Woocommerce** | &#9989; | &#9744; |
+| **Woocommerce** | &#9989; | &#9989; |
 | **Magento2** | &#9989; | &#9744; |
 
 
