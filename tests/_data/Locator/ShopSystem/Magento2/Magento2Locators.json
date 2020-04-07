@@ -5,6 +5,7 @@
     "payment": "payment",
     "order_received": "success",
     "register": "index.php/customer/account/create",
+    "sign_in": "index.php/customer/account/login/",
     "log_out": "index.php/customer/account/logout/"
   },
   "product": {
@@ -48,8 +49,11 @@
     "log_out": "//*[@class='logout hidden-sm-down]']"
   },
   "sign_in": {
-    "email": "//*[@name='email']",
-    "password": "//*[@name='password']",
-    "sign_in": "//*[@id='submit-login']"
+    "email": "//*[@id='email']",
+    "password": "//*[@id='pass']",
+    "sign_in": "//*[@id='send2']"
+  },
+  "account": {
+    "my_account": "My Account"
   }
 }

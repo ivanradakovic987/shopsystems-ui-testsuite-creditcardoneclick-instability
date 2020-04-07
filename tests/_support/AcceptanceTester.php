@@ -60,6 +60,11 @@ class AcceptanceTester extends Actor
     public $env;
 
     /**
+     * @var string
+     */
+    public $shopInstanceName;
+
+    /**
      * @var Actor|PrestashopStep|WoocommerceStep|Magento2Step
      */
     private $shopInstance;
@@ -86,12 +91,12 @@ class AcceptanceTester extends Actor
     public function iInitializeShopSystem(): void
     {
         $this->env = new Environment();
-        $usedShopEnvVariable = $this->env->getEnv()['SHOP_SYSTEM'];
+        $this->shopInstanceName = $this->env->getEnv()['SHOP_SYSTEM'];
         $shopContainerName = $this->env->getEnv()['SHOP_SYSTEM_CONTAINER_NAME'];
         $this->configData = $this->getDataFromDataFile($this->getFullPath(FileSytem::CONFIG_FILE));
         $this->gateway = $this->configData->gateway;
         if (!$this->shopInstance) {
-            $this->shopInstance = $this->createShopSystemInstance($usedShopEnvVariable, $shopContainerName);
+            $this->shopInstance = $this->createShopSystemInstance($this->shopInstanceName, $shopContainerName);
         }
     }
 
@@ -163,7 +168,7 @@ class AcceptanceTester extends Actor
      */
     public function iSaveForLaterUse($paymentMethod): void
     {
-        $this->paymentMethod->saveForLaterUse();
+        $this->paymentMethod->saveForLaterUse($this->shopInstanceName);
         $this->shopInstance->proceedWithPayment($paymentMethod);
     }
 
@@ -174,7 +179,7 @@ class AcceptanceTester extends Actor
      */
     public function iChooseFromSavedCardsList($paymentMethod): void
     {
-        $this->paymentMethod->chooseCardFromSavedCardsList();
+        $this->paymentMethod->chooseCardFromSavedCardsList($this->shopInstanceName);
         $this->shopInstance->proceedWithPayment($paymentMethod);
     }
 

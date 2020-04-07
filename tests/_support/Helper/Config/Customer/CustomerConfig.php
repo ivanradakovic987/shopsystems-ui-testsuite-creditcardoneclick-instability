@@ -13,6 +13,8 @@ class CustomerConfig
 
     private $country;
 
+    private $countryId;
+
     private $streetAddress;
 
     private $town;
@@ -25,6 +27,14 @@ class CustomerConfig
 
     private $password;
 
+    /**
+     * @return mixed
+     */
+    public function getCountryId()
+    {
+        return $this->countryId;
+    }
+
     private $loginUsername;
 
     /**
@@ -36,6 +46,7 @@ class CustomerConfig
         $this->firstName = $customerData->first_name;
         $this->lastName = $customerData->last_name;
         $this->country = $customerData->country;
+        $this->countryId = $customerData->country_id;
         $this->streetAddress = $customerData->street_address;
         $this->town = $customerData->town;
         $this->postCode = $customerData->post_code;

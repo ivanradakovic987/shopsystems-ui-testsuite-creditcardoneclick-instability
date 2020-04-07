@@ -2,11 +2,12 @@
 
 namespace Step\Acceptance\ShopSystem;
 
+use Facebook\WebDriver\Exception\TimeOutException;
 use Step\Acceptance\iConfigurePaymentMethod;
 use Step\Acceptance\iPrepareCheckout;
 use Step\Acceptance\iValidateSuccess;
 use Helper\Config\DockerCommands;
-use Exception as ExceptionAlias;
+use Exception;
 
 /**
  * Class PrestashopStep
@@ -40,6 +41,8 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
 
     const CUSTOMER_EMAIL_COLUMN_NAME = 'email';
 
+    const CUSTOMER_ADDRESS_TABLE = 'customer_address_entity';
+
     const MAGENTO_CACHE_CLEAN_COMMAND = ' php bin/magento cache:clean';
 
     const MAGENTO_CACHE_FLUSH_COMMAND = ' php bin/magento cache:flush';
@@ -59,16 +62,12 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
      * @param String $paymentMethod
      * @param String $paymentAction
      * @return mixed|void
-     * @throws ExceptionAlias
+     * @throws Exception
      */
     public function configurePaymentMethodCredentials($paymentMethod, $paymentAction)
     {
         $actingPaymentMethod = $this->getActingPaymentMethod($paymentMethod);
         $db_config = $this->buildPaymentMethodConfig($actingPaymentMethod, $paymentAction, $this->getMappedPaymentActions(), $this->getGateway());
-        if (strcasecmp($paymentMethod, static::CREDIT_CARD_ONE_CLICK) === 0) {
-            //CreditCard One click is not a separate payment method but a configuration of CreditCard
-            $db_config[self::CREDIT_CARD_ONE_CLICK_CONFIGURATION_OPTION] = '1';
-        }
         foreach ($db_config as $name => $value) {
             //some configuration options are different if different shops, this is handling the differences
             if (array_key_exists($name, $this->configNameDiffs)) {
@@ -76,16 +75,16 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
             }
             $fullName = self::PAYMENT_METHOD_PREFIX . strtolower($actingPaymentMethod) . static::DB_SEPARATOR . strtolower($name);
             $this->putValueInDatabase($fullName, $this->convertWordValueToBinaryString($value));
-
-            if (strpos($fullName, 'payment_action') !== false) {    //to make changes in database to come in place
-                $this->cleanAndFlushMagentoCache();
-            }
         }
+        if (strcasecmp($paymentMethod, static::CREDIT_CARD_ONE_CLICK) === 0) {
+            $this->putValueInDatabase(static::PAYMENT_METHOD_PREFIX . static::CREDIT_CARD_ONE_CLICK_CONFIGURATION_OPTION, '1');
+        }
+        $this->cleanAndFlushMagentoCache();
     }
 
     /**
      * @return mixed
-     * @throws ExceptionAlias
+     * @throws Exception
      */
     public function registerCustomer(): void
     {
@@ -98,37 +97,41 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
             $this->preparedFillField($this->getLocator()->register->confirm_password, $this->getCustomer(static::REGISTERED_CUSTOMER)->getPassword());
             $this->preparedClick($this->getLocator()->register->create_an_account);
             $this->amOnPage($this->getLocator()->page->log_out);
-        }
+     }
+        $this->configureRegisteredCustomerAddressInDataBase();
     }
 
     /**
      * @param String $paymentMethod
      * @return mixed
-     * @throws ExceptionAlias
+     * @throws Exception
      */
     public function startPayment($paymentMethod): void
     {
-        $paymentMethodName = strtolower($paymentMethod) . '_name';
-        $paymentMethodForm = strtolower($paymentMethod) . '_form';
-        $this->waitUntil(80, [$this, 'waitUntilOptionSelected'], [$this->getLocator()->payment->$paymentMethodForm, $this->getLocator()->payment->$paymentMethodName]);
-        if ($this->isRedirectPaymentMethod($paymentMethod)) {
-            $this->preparedClick($this->getLocator()->payment->place_order);
+        if (strpos($paymentMethod, 'OneClick') === false ) {
+            $paymentMethodName = strtolower($paymentMethod) . '_name';
+            $paymentMethodForm = strtolower($paymentMethod) . '_form';
+            $this->waitUntil(80, [$this, 'waitUntilOptionSelected'],
+                [$this->getLocator()->payment->$paymentMethodForm, $this->getLocator()->payment->$paymentMethodName]);
+            if ($this->isRedirectPaymentMethod($paymentMethod)) {
+                $this->preparedClick($this->getLocator()->payment->place_order);
+            }
         }
     }
 
     /**
      * @param String $paymentMethod
      * @return mixed
-     * @throws ExceptionAlias
+     * @throws Exception
      */
     public function proceedWithPayment($paymentMethod): void
     {
-        $this->preparedClick($this->getLocator()->payment->credit_card_place_order);
+        $this->preparedClick($this->getProceedWithPaymentLocator($paymentMethod));
     }
 
     /**
      * @param String $minPurchaseSum
-     * @throws ExceptionAlias
+     * @throws Exception
      */
     public function fillBasket($minPurchaseSum): void
     {
@@ -138,15 +141,17 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
 
     /**
      * @param string $customerType
-     * @throws ExceptionAlias
+     * @throws Exception
      */
     public function fillCustomerDetails($customerType): void
     {
-        $this->preparedFillField($this->getLocator()->checkout->email_address, $this->getCustomer($customerType)->getEmailAddress());
-        $this->preparedFillField($this->getLocator()->checkout->first_name, $this->getCustomer($customerType)->getFirstName());
-        $this->preparedFillField($this->getLocator()->checkout->last_name, $this->getCustomer($customerType)->getLastName());
-        $this->fillBillingDetails($customerType);
-        $this->selectOption($this->getLocator()->checkout->country, $this->getCustomer($customerType)->getCountry());
+        if ($customerType !== static::REGISTERED_CUSTOMER) {
+            $this->preparedFillField($this->getLocator()->checkout->email_address, $this->getCustomer($customerType)->getEmailAddress());
+            $this->preparedFillField($this->getLocator()->checkout->first_name, $this->getCustomer($customerType)->getFirstName());
+            $this->preparedFillField($this->getLocator()->checkout->last_name, $this->getCustomer($customerType)->getLastName());
+            $this->fillBillingDetails($customerType);
+            $this->selectOption($this->getLocator()->checkout->country, $this->getCustomer($customerType)->getCountry());
+        }
         //this magento view is very flaky, after the address is filled the shop is loading the delivery options
         // and the button is active or not active at random times, we have to wait to safely click the button
         $this->wait(10);
@@ -155,6 +160,18 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
         $this->wait(3);
     }
 
+    /**
+     * @throws Exception
+     */
+    public function logIn()
+    {
+        $this->amOnPage($this->getLocator()->page->sign_in);
+        if (!$this->isCustomerSignedIn()) {
+            $this->preparedFillField($this->getLocator()->sign_in->email, $this->getCustomer(static::REGISTERED_CUSTOMER)->getEmailAddress());
+            $this->preparedFillField($this->getLocator()->sign_in->password, $this->getCustomer(static::REGISTERED_CUSTOMER)->getPassword());
+            $this->preparedClick($this->getLocator()->sign_in->sign_in, 60);
+        }
+    }
 
     /**
      * @param $paymentMethod
@@ -179,6 +196,48 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
     }
 
     /**
+     * @return bool
+     * @throws Exception
+     */
+    private function isCustomerSignedIn(): bool
+    {
+        try {
+            $this->waitForText($this->getLocator()->account->my_account,2);
+            return true;
+        }
+        catch (TimeOutException $e)
+        {
+           return false;
+        }
+    }
+
+    /**
+     *
+     */
+    private function configureRegisteredCustomerAddressInDataBase()
+    {
+        $entityId = $this->grabFromDatabase(static::CUSTOMER_TABLE, 'entity_id',
+            [static::CUSTOMER_EMAIL_COLUMN_NAME => $this->getCustomer(static::REGISTERED_CUSTOMER)->getEmailAddress()]);
+        $this->updateInDatabase(static::CUSTOMER_TABLE,
+            ['default_shipping' => $entityId, 'default_billing' => $entityId],
+            [static::CUSTOMER_EMAIL_COLUMN_NAME => $this->getCustomer(static::REGISTERED_CUSTOMER)->getEmailAddress()]);
+        $this->haveInDatabase(static::CUSTOMER_ADDRESS_TABLE,
+            ['entity_id' => $entityId,
+            'parent_id' => $entityId,
+            'created_at' => date('Y-m-d h:i:s'),
+            'updated_at' => date('Y-m-d h:i:s'),
+            'is_active' => '1',
+            'city' => $this->getCustomer(static::REGISTERED_CUSTOMER)->getTown(),
+            'country_id' => $this->getCustomer(static::REGISTERED_CUSTOMER)->getCountryId(),
+            'firstname' => $this->getCustomer(static::REGISTERED_CUSTOMER)->getFirstName(),
+            'lastname' => $this->getCustomer(static::REGISTERED_CUSTOMER)->getLastName(),
+            'postcode' => $this->getCustomer(static::REGISTERED_CUSTOMER)->getPostCode(),
+            'region_id' => '0',
+            'street' => $this->getCustomer(static::REGISTERED_CUSTOMER)->getStreetAddress(),
+            'telephone' => $this->getCustomer(static::REGISTERED_CUSTOMER)->getPhone()]);
+    }
+
+    /**
      */
     private function cleanAndFlushMagentoCache() : void
     {
@@ -186,5 +245,18 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
         exec(DockerCommands::DOCKER_EXEC_COMMAND . $this->getContainerName() . self::MAGENTO_CACHE_CLEAN_COMMAND);
         codecept_debug(DockerCommands::DOCKER_EXEC_COMMAND . $this->getContainerName() . self::MAGENTO_CACHE_FLUSH_COMMAND);
         exec(DockerCommands::DOCKER_EXEC_COMMAND . $this->getContainerName() . self::MAGENTO_CACHE_FLUSH_COMMAND);
+    }
+
+    /**
+     * @param $paymentMethod
+     * @return mixed
+     */
+    private function getProceedWithPaymentLocator($paymentMethod)
+    {
+        if ($paymentMethod === 'CreditCard')
+        {
+            return $this->getLocator()->payment->credit_card_place_order;
+        }
+        return $this->getLocator()->payment->place_order;
     }
 }

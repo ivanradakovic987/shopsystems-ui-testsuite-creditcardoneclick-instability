@@ -13,26 +13,19 @@ class CreditCardOneClickStep extends CreditCardStep
     const STEP_NAME = 'CreditCard';
 
     /**
-     * @throws Exception
+     * @param $shopSystem
      */
-    public function saveForLaterUse(): void
+    public function saveForLaterUse($shopSystem): void
     {
-        $this->checkOption($this->getLocator()->save_for_later_use);
+        $this->checkOption($this->getSaveForLaterUseLocator($shopSystem));
     }
 
     /**
      * @throws Exception
      */
-    public function chooseCardFromSavedCardsList() : void
+    public function chooseCardFromSavedCardsList($shopSystem) : void
     {
-        try {
-            $this->preparedClick($this->getLocator()->cc_token_woocommerce, 10);
-        } catch (NoSuchElementException $e) {
-            $this->preparedClick($this->getLocator()->use_saved_card);
-            $this->waitUntil(80, [$this, 'waitUntilOptionSelected'], [$this->getLocator()->cc_token_generic, $this->grabTextFrom($this->getLocator()->cc_token_generic_text)]);
-            $this->preparedClick($this->getLocator()->use_card);
-        }
-
+        $this->performChoosingCard($shopSystem);
         //make sure that credit card form is loaded again and we're ready to proceed
         $this->switchToCreditCardUIFrame();
         $this->waitForText($this->getLocator()->use_different_card);
@@ -42,5 +35,39 @@ class CreditCardOneClickStep extends CreditCardStep
         } catch (TimeOutException $e) {
         }
         $this->switchToIFrame();
+    }
+
+    /**
+     * @param $shopSystem
+     * @throws Exception
+     */
+    public function performChoosingCard($shopSystem): void
+    {
+        switch ($shopSystem) {
+            case 'magento2':
+                $this->selectOption($this->getLocator()->cc_token_magento2, "ending");
+                break;
+            case 'woocommerce':
+                $this->preparedClick($this->getLocator()->cc_token_woocommerce, 10);
+                break;
+            case 'prestashop':
+                $this->preparedClick($this->getLocator()->use_saved_card);
+                $this->waitUntil(80, [$this, 'waitUntilOptionSelected'], [$this->getLocator()->cc_token_generic, $this->grabTextFrom($this->getLocator()->cc_token_generic_text)]);
+                $this->preparedClick($this->getLocator()->use_card);
+                break;
+        }
+    }
+
+    /**
+     * @param $shopSystem
+     * @return String
+     */
+    private function getSaveForLaterUseLocator($shopSystem): String
+    {
+        if (strpos($shopSystem, 'magento2') !== false)
+        {
+            return $this->getLocator()->save_for_later_use_magento2;
+        }
+        return $this->getLocator()->save_for_later_use;
     }
 }

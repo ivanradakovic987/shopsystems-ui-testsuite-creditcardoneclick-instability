@@ -2,6 +2,7 @@
   "last_name": "Guest Test",
   "first_name": "Test",
   "country": "Austria",
+  "country_id": "AT",
   "street_address": "Some Street",
   "town": "Graz",
   "post_code": "8010",
