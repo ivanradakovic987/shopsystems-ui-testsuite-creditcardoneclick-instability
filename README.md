@@ -105,7 +105,8 @@ docker-compose run \
               -g "${TEST_GROUP}" -g "${SHOP_SYSTEM}"  \
               --env ci --html --xml
 ```
-Note: for PayPal tests - make sure that order number is not duplicated each time
+*Note: for PayPal tests - make sure that order number is not duplicated each time
+
 Configuring test data
 =====
 It is possible instead of specified test data (Customer information, payment method credentials (like credit card numbers, PayPal credentials, etc)) to use custom one.
