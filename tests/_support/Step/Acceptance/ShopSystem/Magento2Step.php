@@ -79,7 +79,7 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
         if (strcasecmp($paymentMethod, static::CREDIT_CARD_ONE_CLICK) === 0) {
             $this->putValueInDatabase(static::PAYMENT_METHOD_PREFIX . static::CREDIT_CARD_ONE_CLICK_CONFIGURATION_OPTION, '1');
         }
-        $this->cleanAndFlushMagentoCache();
+//        $this->cleanAndFlushMagentoCache();
     }
 
     /**
@@ -180,8 +180,8 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
     public function validateTransactionInDatabase($paymentMethod, $paymentAction): void
     {
         //run cron command so that transaction state updates
-        codecept_debug(DockerCommands::DOCKER_EXEC_COMMAND . $this->getContainerName() . self::MAGENTO_CRON_RUN_COMMAND);
-        exec(DockerCommands::DOCKER_EXEC_COMMAND . $this->getContainerName() . self::MAGENTO_CRON_RUN_COMMAND);
+//        codecept_debug(DockerCommands::DOCKER_EXEC_COMMAND . $this->getContainerName() . self::MAGENTO_CRON_RUN_COMMAND);
+//        exec(DockerCommands::DOCKER_EXEC_COMMAND . $this->getContainerName() . self::MAGENTO_CRON_RUN_COMMAND);
         parent::validateTransactionInDatabase($paymentMethod, $paymentAction);
     }
 
