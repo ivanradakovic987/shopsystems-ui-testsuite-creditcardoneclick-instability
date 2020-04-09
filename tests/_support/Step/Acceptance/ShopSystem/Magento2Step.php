@@ -6,7 +6,6 @@ use Facebook\WebDriver\Exception\TimeOutException;
 use Step\Acceptance\iConfigurePaymentMethod;
 use Step\Acceptance\iPrepareCheckout;
 use Step\Acceptance\iValidateSuccess;
-use Helper\Config\DockerCommands;
 use Exception;
 
 /**
@@ -79,7 +78,6 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
         if (strcasecmp($paymentMethod, static::CREDIT_CARD_ONE_CLICK) === 0) {
             $this->putValueInDatabase(static::PAYMENT_METHOD_PREFIX . static::CREDIT_CARD_ONE_CLICK_CONFIGURATION_OPTION, '1');
         }
-//        $this->cleanAndFlushMagentoCache();
     }
 
     /**
@@ -114,6 +112,7 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
             $this->waitUntil(80, [$this, 'waitUntilOptionSelected'],
                 [$this->getLocator()->payment->$paymentMethodForm, $this->getLocator()->payment->$paymentMethodName]);
             if ($this->isRedirectPaymentMethod($paymentMethod)) {
+                $this->wait(2);
                 $this->preparedClick($this->getLocator()->payment->place_order);
             }
         }
@@ -146,7 +145,7 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
     public function fillCustomerDetails($customerType): void
     {
         if ($customerType !== static::REGISTERED_CUSTOMER) {
-            $this->preparedFillField($this->getLocator()->checkout->email_address, $this->getCustomer($customerType)->getEmailAddress());
+            $this->preparedFillField($this->getLocator()->checkout->email_address, $this->getCustomer($customerType)->getEmailAddress(),60);
             $this->preparedFillField($this->getLocator()->checkout->first_name, $this->getCustomer($customerType)->getFirstName());
             $this->preparedFillField($this->getLocator()->checkout->last_name, $this->getCustomer($customerType)->getLastName());
             $this->fillBillingDetails($customerType);
@@ -157,7 +156,7 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
         $this->wait(10);
         $this->preparedClick($this->getLocator()->checkout->next, 60);
         $this->waitUntil(60, [$this, 'waitUntilPageLoaded'], [$this->getLocator()->page->payment]);
-        $this->wait(3);
+        $this->wait(5);
     }
 
     /**
@@ -171,18 +170,6 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
             $this->preparedFillField($this->getLocator()->sign_in->password, $this->getCustomer(static::REGISTERED_CUSTOMER)->getPassword());
             $this->preparedClick($this->getLocator()->sign_in->sign_in, 60);
         }
-    }
-
-    /**
-     * @param $paymentMethod
-     * @param $paymentAction
-     */
-    public function validateTransactionInDatabase($paymentMethod, $paymentAction): void
-    {
-        //run cron command so that transaction state updates
-//        codecept_debug(DockerCommands::DOCKER_EXEC_COMMAND . $this->getContainerName() . self::MAGENTO_CRON_RUN_COMMAND);
-//        exec(DockerCommands::DOCKER_EXEC_COMMAND . $this->getContainerName() . self::MAGENTO_CRON_RUN_COMMAND);
-        parent::validateTransactionInDatabase($paymentMethod, $paymentAction);
     }
 
     /**
@@ -235,16 +222,6 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
             'region_id' => '0',
             'street' => $this->getCustomer(static::REGISTERED_CUSTOMER)->getStreetAddress(),
             'telephone' => $this->getCustomer(static::REGISTERED_CUSTOMER)->getPhone()]);
-    }
-
-    /**
-     */
-    private function cleanAndFlushMagentoCache() : void
-    {
-        codecept_debug(DockerCommands::DOCKER_EXEC_COMMAND . $this->getContainerName() . self::MAGENTO_CACHE_CLEAN_COMMAND);
-        exec(DockerCommands::DOCKER_EXEC_COMMAND . $this->getContainerName() . self::MAGENTO_CACHE_CLEAN_COMMAND);
-        codecept_debug(DockerCommands::DOCKER_EXEC_COMMAND . $this->getContainerName() . self::MAGENTO_CACHE_FLUSH_COMMAND);
-        exec(DockerCommands::DOCKER_EXEC_COMMAND . $this->getContainerName() . self::MAGENTO_CACHE_FLUSH_COMMAND);
     }
 
     /**

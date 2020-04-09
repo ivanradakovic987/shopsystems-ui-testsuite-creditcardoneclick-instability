@@ -16,6 +16,12 @@ To run tests locally:
 ========
 
 1. Start the shop system with wirecard-ee extension installed
+    - Note for Magento2: 
+        - make sure that cache is disabled for database and configuration, this can be done by running
+    `magento cache:disable db_ddl collections config`
+        - Make sure that cron job in magento2 is configured to run with a minute or less interval (check file vendor/wirecard/magento2-ee/etc/crontab.xml)
+    
+    
 2. Start chrome driver and selenium driver on port 4444
 3. Clone 
     ```
@@ -44,11 +50,7 @@ To run tests locally:
              
      `DB_PASSWORD`
         
-     `SHOP_URL`
-      
-      only for Magento2 testing (since tests need to execute cash flushing and cron commands in the container)
-      
-     `SHOP_SYSTEM_CONTAINER_NAME`           
+     `SHOP_URL`         
 
 6. Start codeception   
     `vendor/bin/codecept run acceptance -g ${SHOP_SYSTEM} --debug --html`
@@ -91,7 +93,6 @@ networks:
 ```
 docker-compose run \              
               -e SHOP_SYSTEM="${SHOP_SYSTEM}" \
-              -e SHOP_SYSTEM_CONTAINER_NAME="${SHOP_SYSTEM_CONTAINER_NAME}" \ #only for Magento2
               -e SHOP_URL="${SHOP_URL}" \
               -e SHOP_VERSION="${SHOP_VERSION}" \
               -e EXTENSION_VERSION="${EXTENSION_VERSION}" \

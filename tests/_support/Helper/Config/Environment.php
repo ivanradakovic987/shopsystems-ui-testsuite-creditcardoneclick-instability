@@ -27,11 +27,6 @@ class Environment
         $environment = $_ENV;
         // phpcs:enable
         $this->env['SHOP_SYSTEM'] = $environment['SHOP_SYSTEM'];
-        $this->env['SHOP_SYSTEM_CONTAINER_NAME'] = '';
-        if ($this->env['SHOP_SYSTEM'] === 'magento2')
-        {
-            $this->env['SHOP_SYSTEM_CONTAINER_NAME'] = $environment['SHOP_SYSTEM_CONTAINER_NAME'];
-        }
     }
 
     /**
