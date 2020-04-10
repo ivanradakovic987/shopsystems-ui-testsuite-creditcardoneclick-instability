@@ -4,6 +4,7 @@ namespace Step\Acceptance\PaymentMethod;
 
 use Facebook\WebDriver\Exception\TimeOutException;
 use Facebook\WebDriver\Exception\WebDriverException;
+use Facebook\WebDriver\Exception\NoSuchElementException;
 use Step\Acceptance\iPerformPayment;
 use Exception;
 
@@ -23,15 +24,12 @@ class PayPalStep extends GenericPaymentMethodStep implements iPerformPayment
         $this->performPaypalLogin();
 
         try {
-            $this->preparedClick($this->getLocator()->continue, 80);
-        } catch (WebDriverException $e) {
-            //sometimes we need to accept cookies first
-            $this->waitForText($this->getLocator()->payment_page_text, 60);
-            $this->preparedClick($this->getLocator()->accept_cookies, 80);
-            $this->preparedClick($this->getLocator()->continue, 80);
+            $this->preparedClick($this->getLocator()->pay_now_start, 60);
+        } catch (NoSuchElementException $e) {
+            $this->tryLongPayPalCheckoutProcess();
+            $this->wait(1);
+            $this->preparedClick($this->getLocator()->pay_now, 60);
         }
-        $this->wait(1);
-        $this->preparedClick($this->getLocator()->pay_now, 60);
     }
 
     /**
@@ -52,7 +50,26 @@ class PayPalStep extends GenericPaymentMethodStep implements iPerformPayment
     }
 
     // we need to define this method for consistency, because it will be called in every scenario, empty method just means do nothing here
+
+    /**
+     * @return mixed|void
+     */
     public function fillFieldsInTheShop()
     {
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function tryLongPayPalCheckoutProcess()
+    {
+        try {
+            $this->preparedClick($this->getLocator()->continue, 80);
+        } catch (WebDriverException $e) {
+            //sometimes we need to accept cookies first
+            $this->waitForText($this->getLocator()->payment_page_text, 60);
+            $this->preparedClick($this->getLocator()->accept_cookies, 80);
+            $this->preparedClick($this->getLocator()->continue, 80);
+        }
     }
 }
