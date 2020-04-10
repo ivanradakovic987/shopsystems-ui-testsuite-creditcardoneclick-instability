@@ -19,10 +19,9 @@ class PayPalStep extends GenericPaymentMethodStep implements iPerformPayment
     /**
      * @throws Exception
      */
-    public function performPaymentMethodActionsOutsideShop() : void
+    public function performPaymentMethodActionsOutsideShop(): void
     {
         $this->performPaypalLogin();
-
         try {
             $this->preparedClick($this->getLocator()->pay_now_start, 60);
         } catch (NoSuchElementException $e) {
@@ -36,7 +35,7 @@ class PayPalStep extends GenericPaymentMethodStep implements iPerformPayment
      * Method performPaypalLogin
      * @throws Exception
      */
-    public function performPaypalLogin()
+    public function performPaypalLogin(): void
     {
         $this->preparedFillField($this->getLocator()->email, $this->getPaymentMethod()->getUserName());
         //sometimes we can enter password in the same page with username and sometimes we have to click "Next"
@@ -49,19 +48,10 @@ class PayPalStep extends GenericPaymentMethodStep implements iPerformPayment
         $this->preparedClick($this->getLocator()->login);
     }
 
-    // we need to define this method for consistency, because it will be called in every scenario, empty method just means do nothing here
-
-    /**
-     * @return mixed|void
-     */
-    public function fillFieldsInTheShop()
-    {
-    }
-
     /**
      * @throws Exception
      */
-    public function tryLongPayPalCheckoutProcess()
+    public function tryLongPayPalCheckoutProcess(): void
     {
         try {
             $this->preparedClick($this->getLocator()->continue, 80);
