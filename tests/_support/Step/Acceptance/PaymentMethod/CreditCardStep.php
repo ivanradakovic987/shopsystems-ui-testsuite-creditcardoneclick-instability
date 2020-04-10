@@ -3,6 +3,7 @@
 namespace Step\Acceptance\PaymentMethod;
 
 use Facebook\WebDriver\Exception\TimeOutException;
+use Step\Acceptance\iPerformFillPaymentFields;
 use Step\Acceptance\iPerformPayment;
 use Exception;
 
@@ -10,7 +11,7 @@ use Exception;
  * Class CreditCardStep
  * @package Step\Acceptance\PaymentMethod
  */
-class CreditCardStep extends GenericPaymentMethodStep implements iPerformPayment
+class CreditCardStep extends GenericPaymentMethodStep implements iPerformPayment, iPerformFillPaymentFields
 {
     const STEP_NAME = 'CreditCard';
 
