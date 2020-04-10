@@ -112,7 +112,7 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
             $this->waitUntil(80, [$this, 'waitUntilOptionSelected'],
                 [$this->getLocator()->payment->$paymentMethodForm, $this->getLocator()->payment->$paymentMethodName]);
             if ($this->isRedirectPaymentMethod($paymentMethod)) {
-                $this->wait(2);
+                $this->wait(5);
                 $this->preparedClick($this->getLocator()->payment->place_order);
             }
         }
@@ -144,8 +144,9 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
      */
     public function fillCustomerDetails($customerType): void
     {
+        $this->waitUntil(60, [$this, 'waitUntilPageLoaded'], [$this->getLocator()->page->checkout]);
         if ($customerType !== static::REGISTERED_CUSTOMER) {
-            $this->preparedFillField($this->getLocator()->checkout->email_address, $this->getCustomer($customerType)->getEmailAddress(),60);
+            $this->preparedFillField($this->getLocator()->checkout->email_address, $this->getCustomer($customerType)->getEmailAddress(),80);
             $this->preparedFillField($this->getLocator()->checkout->first_name, $this->getCustomer($customerType)->getFirstName());
             $this->preparedFillField($this->getLocator()->checkout->last_name, $this->getCustomer($customerType)->getLastName());
             $this->fillBillingDetails($customerType);
@@ -154,9 +155,9 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
         //this magento view is very flaky, after the address is filled the shop is loading the delivery options
         // and the button is active or not active at random times, we have to wait to safely click the button
         $this->wait(10);
-        $this->preparedClick($this->getLocator()->checkout->next, 60);
+        $this->preparedClick($this->getLocator()->checkout->next, 80);
         $this->waitUntil(60, [$this, 'waitUntilPageLoaded'], [$this->getLocator()->page->payment]);
-        $this->wait(5);
+        $this->wait(15);
     }
 
     /**

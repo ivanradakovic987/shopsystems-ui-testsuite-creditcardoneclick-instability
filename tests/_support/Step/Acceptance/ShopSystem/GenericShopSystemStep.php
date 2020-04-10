@@ -96,7 +96,7 @@ class GenericShopSystemStep extends GenericStep
         $amount = intdiv((int)$minPurchaseSum, (int)$this->getLocator()->product->price) + 1;
         //add to basket goods to fulfill desired purchase amount
         $this->fillField($this->getLocator()->product->quantity, $amount);
-        $this->preparedClick($this->getLocator()->product->add_to_cart);
+        $this->preparedClick($this->getLocator()->product->add_to_cart,80);
     }
 
     /**
