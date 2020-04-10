@@ -3,7 +3,7 @@
     "description": "Shop System UI Test Suite",
     "license": "MIT",
     "require": {
-        "php": ">=5.6",
+        "php": ">=7.1",
         "ext-json": "*"
     },
     "require-dev": {
