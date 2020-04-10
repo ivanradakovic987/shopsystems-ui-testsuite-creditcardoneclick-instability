@@ -37,6 +37,7 @@ class PayPalStep extends GenericPaymentMethodStep implements iPerformPayment
      */
     public function performPaypalLogin(): void
     {
+        $this->waitUntil(60, [$this, 'waitUntilPageLoaded'], [$this->getLocator()->page]);
         $this->preparedFillField($this->getLocator()->email, $this->getPaymentMethod()->getUserName());
         //sometimes we can enter password in the same page with username and sometimes we have to click "Next"
         try {

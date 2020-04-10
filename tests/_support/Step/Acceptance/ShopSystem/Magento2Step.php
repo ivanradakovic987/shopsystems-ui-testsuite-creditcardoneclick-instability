@@ -3,6 +3,7 @@
 namespace Step\Acceptance\ShopSystem;
 
 use Facebook\WebDriver\Exception\TimeOutException;
+use NoSuchElementException as NoSuchElementExceptionAlias;
 use Step\Acceptance\iConfigurePaymentMethod;
 use Step\Acceptance\iPrepareCheckout;
 use Step\Acceptance\iValidateSuccess;
@@ -146,7 +147,14 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
     {
         $this->waitUntil(60, [$this, 'waitUntilPageLoaded'], [$this->getLocator()->page->checkout]);
         if ($customerType !== static::REGISTERED_CUSTOMER) {
-            $this->preparedFillField($this->getLocator()->checkout->email_address, $this->getCustomer($customerType)->getEmailAddress(),80);
+            try {
+                $this->preparedFillField($this->getLocator()->checkout->email_address, $this->getCustomer($customerType)->getEmailAddress(),80);
+            }
+            catch (NoSuchElementExceptionAlias $e)
+            {
+                $this->wait(5);
+                $this->preparedFillField($this->getLocator()->checkout->email_address, $this->getCustomer($customerType)->getEmailAddress(),80);
+            }
             $this->preparedFillField($this->getLocator()->checkout->first_name, $this->getCustomer($customerType)->getFirstName());
             $this->preparedFillField($this->getLocator()->checkout->last_name, $this->getCustomer($customerType)->getLastName());
             $this->fillBillingDetails($customerType);
