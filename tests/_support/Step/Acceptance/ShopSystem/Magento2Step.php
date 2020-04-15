@@ -113,7 +113,6 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
             $this->waitUntil(80, [$this, 'waitUntilOptionSelected'],
                 [$this->getLocator()->payment->$paymentMethodForm, $this->getLocator()->payment->$paymentMethodName]);
             if ($this->isRedirectPaymentMethod($paymentMethod)) {
-                $this->wait(5);
                 $this->preparedClick($this->getLocator()->payment->place_order);
             }
         }
@@ -147,14 +146,7 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
     {
         $this->waitUntil(60, [$this, 'waitUntilPageLoaded'], [$this->getLocator()->page->checkout]);
         if ($customerType !== static::REGISTERED_CUSTOMER) {
-            try {
-                $this->preparedFillField($this->getLocator()->checkout->email_address, $this->getCustomer($customerType)->getEmailAddress(),80);
-            }
-            catch (NoSuchElementExceptionAlias $e)
-            {
-                $this->wait(5);
-                $this->preparedFillField($this->getLocator()->checkout->email_address, $this->getCustomer($customerType)->getEmailAddress(),80);
-            }
+            $this->preparedFillField($this->getLocator()->checkout->email_address, $this->getCustomer($customerType)->getEmailAddress(),80);
             $this->preparedFillField($this->getLocator()->checkout->first_name, $this->getCustomer($customerType)->getFirstName());
             $this->preparedFillField($this->getLocator()->checkout->last_name, $this->getCustomer($customerType)->getLastName());
             $this->fillBillingDetails($customerType);
@@ -165,7 +157,7 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
         $this->wait(10);
         $this->preparedClick($this->getLocator()->checkout->next, 80);
         $this->waitUntil(60, [$this, 'waitUntilPageLoaded'], [$this->getLocator()->page->payment]);
-        $this->wait(15);
+        $this->wait(3);
     }
 
     /**

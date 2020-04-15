@@ -25,7 +25,7 @@ class CreditCardStep extends GenericPaymentMethodStep implements iPerformPayment
             $this->preparedFillField($this->getLocator()->last_name, $this->getPaymentMethod()->getLastName(), 60);
         } catch (TimeOutException $e) {
             $this->switchToIFrame();
-            $this->wait(10);
+            $this->wait(5);
             $this->switchToCreditCardUIFrame();
             $this->preparedFillField($this->getLocator()->last_name, $this->getPaymentMethod()->getLastName(), 60);
         }
