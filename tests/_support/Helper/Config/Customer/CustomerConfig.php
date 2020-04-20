@@ -15,6 +15,8 @@ class CustomerConfig
 
     private $countryId;
 
+    private $state;
+
     private $streetAddress;
 
     private $town;
@@ -37,6 +39,7 @@ class CustomerConfig
 
     private $loginUsername;
 
+
     /**
      * CustomerConfig constructor.
      * @param $customerData
@@ -47,6 +50,7 @@ class CustomerConfig
         $this->lastName = $customerData->last_name;
         $this->country = $customerData->country;
         $this->countryId = $customerData->country_id;
+        $this->state = $customerData->state;
         $this->streetAddress = $customerData->street_address;
         $this->town = $customerData->town;
         $this->postCode = $customerData->post_code;
@@ -78,6 +82,14 @@ class CustomerConfig
     public function getCountry()
     {
         return $this->country;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getState()
+    {
+        return $this->state;
     }
 
     /**

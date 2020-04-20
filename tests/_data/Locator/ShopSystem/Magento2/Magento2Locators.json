@@ -18,6 +18,7 @@
     "last_name": "//*[@name='lastname']",
     "email_address": "//*[@id='customer-email']",
     "country": "//*[@name='country_id']",
+    "state": "//*[@name='region_id']",
     "street_address": "//*[@name='street[0]']",
     "town": "//*[@name='city']",
     "post_code": "//*[@name='postcode']",

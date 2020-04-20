@@ -52,6 +52,18 @@ class GenericStep extends AcceptanceTester
     }
 
     /**
+     * @param $element
+     * @param $option
+     * @param int $timeout
+     * @throws Exception
+     */
+    public function preparedSelectOption($element, $option, $timeout = 30): void
+    {
+        $this->waitForElementClickable($element, $timeout);
+        $this->selectOption($element, $option);
+    }
+
+    /**
      * @param int $maxTimeout
      * @param array|null $function
      * @param array|null $functionArgs
