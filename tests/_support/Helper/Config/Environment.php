@@ -25,6 +25,7 @@ class Environment
     {
         // phpcs:disable
         $environment = $_ENV;
+        print_r($environment);
         // phpcs:enable
         $this->env['SHOP_SYSTEM'] = $environment['SHOP_SYSTEM'];
     }
