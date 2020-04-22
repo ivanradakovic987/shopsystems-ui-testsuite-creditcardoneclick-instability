@@ -92,7 +92,6 @@ class AcceptanceTester extends Actor
     {
         $this->env = new Environment();
         $this->shopInstanceName = $this->env->getEnv()['SHOP_SYSTEM'];
-//        $shopContainerName = $this->env->getEnv()['SHOP_SYSTEM_CONTAINER_NAME'];
         $this->configData = $this->getDataFromDataFile($this->getFullPath(FileSytem::CONFIG_FILE));
         $this->gateway = $this->configData->gateway;
         if (!$this->shopInstance) {
