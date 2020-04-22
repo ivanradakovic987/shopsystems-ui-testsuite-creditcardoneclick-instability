@@ -24,12 +24,8 @@ class Environment
     public function __construct()
     {
         // phpcs:disable
-        $environment = $_ENV;
-        print_r($environment);
-        // phpcs:enable
-     //   $this->env['SHOP_SYSTEM'] = $environment['SHOP_SYSTEM'];
         $this->env['SHOP_SYSTEM'] = getenv('SHOP_SYSTEM');
-
+        // phpcs:enable
     }
 
     /**
