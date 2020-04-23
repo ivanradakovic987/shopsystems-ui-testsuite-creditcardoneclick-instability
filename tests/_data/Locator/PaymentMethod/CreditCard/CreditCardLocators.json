@@ -11,7 +11,7 @@
   "save_for_later_use_magento2": "//*[@id='wirecard_elasticengine_creditcard_enable_vault']",
   "use_saved_card": "//*[@id='stored-card']",
   "cc_token_generic" : "//input[@type='radio'][contains(@name, 'cc-reuse')]",
-  "cc_token_magento2": "//*[@id='wirecard_elasticengine_cc_vault_2']",
+  "cc_token_magento2": "//*[@id='wirecard_elasticengine_cc_vault_1']",
   "cc_token_woocommerce" : "//input[@type='radio'][contains(@name, 'token')]",
   "cc_token_generic_text": "//*[@id='cc-reuse-mask']",
   "use_card": "//*[@id='use-new-card']",

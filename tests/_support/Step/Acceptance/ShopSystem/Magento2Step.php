@@ -224,10 +224,11 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
             'is_active' => '1',
             'city' => $this->getCustomer(static::REGISTERED_CUSTOMER)->getTown(),
             'country_id' => $this->getCustomer(static::REGISTERED_CUSTOMER)->getCountryId(),
+            'region' => $this->getCustomer(static::REGISTERED_CUSTOMER)->getState(),
+            'region_id' => '100',
             'firstname' => $this->getCustomer(static::REGISTERED_CUSTOMER)->getFirstName(),
             'lastname' => $this->getCustomer(static::REGISTERED_CUSTOMER)->getLastName(),
             'postcode' => $this->getCustomer(static::REGISTERED_CUSTOMER)->getPostCode(),
-            'region_id' => '0',
             'street' => $this->getCustomer(static::REGISTERED_CUSTOMER)->getStreetAddress(),
             'telephone' => $this->getCustomer(static::REGISTERED_CUSTOMER)->getPhone()]);
     }
