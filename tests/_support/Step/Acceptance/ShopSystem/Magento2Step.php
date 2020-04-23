@@ -150,21 +150,31 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
             $this->preparedFillField($this->getLocator()->checkout->email_address, $this->getCustomer($customerType)->getEmailAddress(),80);
             $this->preparedFillField($this->getLocator()->checkout->first_name, $this->getCustomer($customerType)->getFirstName());
             $this->preparedFillField($this->getLocator()->checkout->last_name, $this->getCustomer($customerType)->getLastName());
-            $this->fillBillingDetails($customerType);
             $this->selectOption($this->getLocator()->checkout->country, $this->getCustomer($customerType)->getCountry());
             $this->preparedSelectOption($this->getLocator()->checkout->state, $this->getCustomer($customerType)->getState());
+            $this->wait(5);
+            $this->fillBillingDetails($customerType);
+
+//            try {
+//                $this->seeOptionIsSelected($this->getLocator()->checkout->state, $this->getCustomer($customerType)->getState());
+//            }
+//            catch (\PHPUnit\Exception $e)
+//            {
+//                $this->wait(5);
+//            }
         }
+//        $this->pause();
         //this magento view is very flaky, after the address is filled the shop is loading the delivery options
         // and the button is active or not active at random times, we have to wait to safely click the button
-        $this->wait(5);
-        try {
+//        $this->wait(5);
+//        try {
             $this->preparedClick($this->getLocator()->checkout->next, 80);
-        }
-        catch (UnknownServerException $e)
-        {
-            $this->wait(10);
-            $this->preparedClick($this->getLocator()->checkout->next, 80);
-        }
+//        }
+//        catch (UnknownServerException $e)
+//        {
+//            $this->wait(10);
+//            $this->preparedClick($this->getLocator()->checkout->next, 80);
+//        }
         $this->waitUntil(60, [$this, 'waitUntilPageLoaded'], [$this->getLocator()->page->payment]);
         $this->wait(3);
     }
