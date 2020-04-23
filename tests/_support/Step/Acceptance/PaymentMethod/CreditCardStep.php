@@ -57,7 +57,7 @@ class CreditCardStep extends GenericPaymentMethodStep implements iPerformPayment
             $wirecardFrameName = $this->executeJS('return document.querySelector("#' . $this->getLocator()->frame . '").getAttribute("name")');
         } catch (Exception $e)
         {
-            $this->wait(5);
+            $this->wait(10);
             $wirecardFrameName = $this->executeJS('return document.querySelector("#' . $this->getLocator()->frame . '").getAttribute("name")');
         }
 
