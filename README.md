@@ -9,7 +9,7 @@ Supported Shop Systems
 |---|---|:---:|
 | **Prestashop** | &#9989; | &#9989; |   
 | **Woocommerce** | &#9989; | &#9989; |
-| **Magento2** | &#9989; | &#9744; |
+| **Magento2** | &#9989; | &#9989; |
 
 
 To run tests locally:
