@@ -3,6 +3,7 @@
 namespace Step\Acceptance\ShopSystem;
 
 use Facebook\WebDriver\Exception\TimeOutException;
+use Facebook\WebDriver\Exception\UnknownServerException;
 use NoSuchElementException as NoSuchElementExceptionAlias;
 use Step\Acceptance\iConfigurePaymentMethod;
 use Step\Acceptance\iPrepareCheckout;
@@ -155,8 +156,15 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
         }
         //this magento view is very flaky, after the address is filled the shop is loading the delivery options
         // and the button is active or not active at random times, we have to wait to safely click the button
-        $this->wait(10);
-        $this->preparedClick($this->getLocator()->checkout->next, 80);
+        $this->wait(5);
+        try {
+            $this->preparedClick($this->getLocator()->checkout->next, 80);
+        }
+        catch (UnknownServerException $e)
+        {
+            $this->wait(10);
+            $this->preparedClick($this->getLocator()->checkout->next, 80);
+        }
         $this->waitUntil(60, [$this, 'waitUntilPageLoaded'], [$this->getLocator()->page->payment]);
         $this->wait(3);
     }
