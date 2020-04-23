@@ -154,19 +154,7 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
             $this->preparedSelectOption($this->getLocator()->checkout->state, $this->getCustomer($customerType)->getState());
             $this->wait(10);
             $this->fillBillingDetails($customerType);
-
-//            try {
-//                $this->seeOptionIsSelected($this->getLocator()->checkout->state, $this->getCustomer($customerType)->getState());
-//            }
-//            catch (\PHPUnit\Exception $e)
-//            {
-//                $this->wait(5);
-//            }
         }
-//        $this->pause();
-        //this magento view is very flaky, after the address is filled the shop is loading the delivery options
-        // and the button is active or not active at random times, we have to wait to safely click the button
-//        $this->wait(5);
         try {
             $this->preparedClick($this->getLocator()->checkout->next, 80);
         }
