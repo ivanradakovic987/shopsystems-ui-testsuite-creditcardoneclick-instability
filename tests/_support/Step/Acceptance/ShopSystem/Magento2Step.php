@@ -153,6 +153,13 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
             $this->selectOption($this->getLocator()->checkout->country, $this->getCustomer($customerType)->getCountry());
             $this->preparedSelectOption($this->getLocator()->checkout->state, $this->getCustomer($customerType)->getState());
             $this->wait(10);
+            try {
+                $this->seeOptionIsSelected($this->getLocator()->checkout->state, $this->getCustomer($customerType)->getState());
+            }
+            catch (Exception $e)
+            {
+                $this->wait(10);
+            }
             $this->fillBillingDetails($customerType);
         }
         try {
