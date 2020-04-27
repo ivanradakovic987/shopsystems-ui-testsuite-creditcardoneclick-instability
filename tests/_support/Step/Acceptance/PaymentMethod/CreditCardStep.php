@@ -3,6 +3,7 @@
 namespace Step\Acceptance\PaymentMethod;
 
 use Facebook\WebDriver\Exception\TimeOutException;
+use Facebook\WebDriver\Exception\UnknownServerException;
 use Step\Acceptance\iPerformFillPaymentFields;
 use Step\Acceptance\iPerformPayment;
 use Exception;
@@ -51,8 +52,15 @@ class CreditCardStep extends GenericPaymentMethodStep implements iPerformPayment
     {
         //wait for Javascript to load iframe and it's contents
         $this->wait(5);
-        //get wirecard seemless frame name
-        $wirecardFrameName = $this->executeJS('return document.querySelector("#' . $this->getLocator()->frame . '").getAttribute("name")');
-        $this->switchToIFrame($wirecardFrameName);
+        try {
+            //get wirecard seemless frame name
+            $wirecardFrameName = $this->executeJS('return document.querySelector("#' . $this->getLocator()->frame . '").getAttribute("name")');
+        } catch (Exception $e)
+        {
+            $this->wait(10);
+            $wirecardFrameName = $this->executeJS('return document.querySelector("#' . $this->getLocator()->frame . '").getAttribute("name")');
+        }
+
+         $this->switchToIFrame($wirecardFrameName);
     }
 }

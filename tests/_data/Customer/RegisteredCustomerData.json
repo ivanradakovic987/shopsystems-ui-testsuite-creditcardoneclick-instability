@@ -3,6 +3,7 @@
   "first_name": "Test",
   "country": "Austria",
   "country_id": "AT",
+  "state": "Steiermark",
   "street_address": "Some Another Street",
   "town": "Graz",
   "post_code": "8010",

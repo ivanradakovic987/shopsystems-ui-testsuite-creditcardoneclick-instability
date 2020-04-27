@@ -24,11 +24,6 @@ class GenericShopSystemStep extends GenericStep
      */
     private $registeredCustomer;
 
-    /**
-     * @var
-     */
-    private $containerName;
-
     private $mappedPaymentActions;
 
     /**
@@ -40,17 +35,15 @@ class GenericShopSystemStep extends GenericStep
      * GenericStep constructor.
      * @param Scenario $scenario
      * @param $gateway
-     * @param $shopContainerName
      * @param $guestFileName
      * @param $registeredFileName
      */
-    public function __construct(Scenario $scenario, $gateway, $shopContainerName, $guestFileName, $registeredFileName)
+    public function __construct(Scenario $scenario, $gateway, $guestFileName, $registeredFileName)
     {
         parent::__construct($scenario, $gateway);
         $this->setLocator($this->getDataFromDataFile($this->getFullPath(FileSytem::SHOP_SYSTEM_LOCATOR_FOLDER_PATH . static::STEP_NAME . DIRECTORY_SEPARATOR . static::STEP_NAME . 'Locators.json')));
         $this->mappedPaymentActions = $this->getDataFromDataFile($this->getFullPath(FileSytem::MAPPED_PAYMENT_ACTIONS_FOLDER_PATH . static::STEP_NAME . DIRECTORY_SEPARATOR . static::STEP_NAME . 'MappedPaymentActions.json'));
         $this->createCustomerObjects($guestFileName, $registeredFileName);
-        $this->containerName = $shopContainerName;
     }
 
     /**
@@ -103,7 +96,7 @@ class GenericShopSystemStep extends GenericStep
         $amount = intdiv((int)$minPurchaseSum, (int)$this->getLocator()->product->price) + 1;
         //add to basket goods to fulfill desired purchase amount
         $this->fillField($this->getLocator()->product->quantity, $amount);
-        $this->preparedClick($this->getLocator()->product->add_to_cart);
+        $this->preparedClick($this->getLocator()->product->add_to_cart,80);
     }
 
     /**
@@ -245,13 +238,5 @@ class GenericShopSystemStep extends GenericStep
             return 'CreditCard';
         }
         return $paymentMethod;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getContainerName()
-    {
-        return $this->containerName;
     }
 }

@@ -3,10 +3,11 @@
 namespace Step\Acceptance\ShopSystem;
 
 use Facebook\WebDriver\Exception\TimeOutException;
+use Facebook\WebDriver\Exception\UnknownServerException;
+use NoSuchElementException as NoSuchElementExceptionAlias;
 use Step\Acceptance\iConfigurePaymentMethod;
 use Step\Acceptance\iPrepareCheckout;
 use Step\Acceptance\iValidateSuccess;
-use Helper\Config\DockerCommands;
 use Exception;
 
 /**
@@ -79,7 +80,6 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
         if (strcasecmp($paymentMethod, static::CREDIT_CARD_ONE_CLICK) === 0) {
             $this->putValueInDatabase(static::PAYMENT_METHOD_PREFIX . static::CREDIT_CARD_ONE_CLICK_CONFIGURATION_OPTION, '1');
         }
-        $this->cleanAndFlushMagentoCache();
     }
 
     /**
@@ -145,17 +145,31 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
      */
     public function fillCustomerDetails($customerType): void
     {
+        $this->waitUntil(60, [$this, 'waitUntilPageLoaded'], [$this->getLocator()->page->checkout]);
         if ($customerType !== static::REGISTERED_CUSTOMER) {
-            $this->preparedFillField($this->getLocator()->checkout->email_address, $this->getCustomer($customerType)->getEmailAddress());
+            $this->preparedFillField($this->getLocator()->checkout->email_address, $this->getCustomer($customerType)->getEmailAddress(),80);
             $this->preparedFillField($this->getLocator()->checkout->first_name, $this->getCustomer($customerType)->getFirstName());
             $this->preparedFillField($this->getLocator()->checkout->last_name, $this->getCustomer($customerType)->getLastName());
-            $this->fillBillingDetails($customerType);
             $this->selectOption($this->getLocator()->checkout->country, $this->getCustomer($customerType)->getCountry());
+            $this->preparedSelectOption($this->getLocator()->checkout->state, $this->getCustomer($customerType)->getState());
+            $this->wait(10);
+            try {
+                $this->seeOptionIsSelected($this->getLocator()->checkout->state, $this->getCustomer($customerType)->getState());
+            }
+            catch (Exception $e)
+            {
+                $this->wait(10);
+            }
+            $this->fillBillingDetails($customerType);
         }
-        //this magento view is very flaky, after the address is filled the shop is loading the delivery options
-        // and the button is active or not active at random times, we have to wait to safely click the button
-        $this->wait(10);
-        $this->preparedClick($this->getLocator()->checkout->next, 60);
+        try {
+            $this->preparedClick($this->getLocator()->checkout->next, 80);
+        }
+        catch (UnknownServerException $e)
+        {
+            $this->wait(10);
+            $this->preparedClick($this->getLocator()->checkout->next, 80);
+        }
         $this->waitUntil(60, [$this, 'waitUntilPageLoaded'], [$this->getLocator()->page->payment]);
         $this->wait(3);
     }
@@ -171,18 +185,6 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
             $this->preparedFillField($this->getLocator()->sign_in->password, $this->getCustomer(static::REGISTERED_CUSTOMER)->getPassword());
             $this->preparedClick($this->getLocator()->sign_in->sign_in, 60);
         }
-    }
-
-    /**
-     * @param $paymentMethod
-     * @param $paymentAction
-     */
-    public function validateTransactionInDatabase($paymentMethod, $paymentAction): void
-    {
-        //run cron command so that transaction state updates
-        codecept_debug(DockerCommands::DOCKER_EXEC_COMMAND . $this->getContainerName() . self::MAGENTO_CRON_RUN_COMMAND);
-        exec(DockerCommands::DOCKER_EXEC_COMMAND . $this->getContainerName() . self::MAGENTO_CRON_RUN_COMMAND);
-        parent::validateTransactionInDatabase($paymentMethod, $paymentAction);
     }
 
     /**
@@ -229,22 +231,13 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
             'is_active' => '1',
             'city' => $this->getCustomer(static::REGISTERED_CUSTOMER)->getTown(),
             'country_id' => $this->getCustomer(static::REGISTERED_CUSTOMER)->getCountryId(),
+            'region' => $this->getCustomer(static::REGISTERED_CUSTOMER)->getState(),
+            'region_id' => '100',
             'firstname' => $this->getCustomer(static::REGISTERED_CUSTOMER)->getFirstName(),
             'lastname' => $this->getCustomer(static::REGISTERED_CUSTOMER)->getLastName(),
             'postcode' => $this->getCustomer(static::REGISTERED_CUSTOMER)->getPostCode(),
-            'region_id' => '0',
             'street' => $this->getCustomer(static::REGISTERED_CUSTOMER)->getStreetAddress(),
             'telephone' => $this->getCustomer(static::REGISTERED_CUSTOMER)->getPhone()]);
-    }
-
-    /**
-     */
-    private function cleanAndFlushMagentoCache() : void
-    {
-        codecept_debug(DockerCommands::DOCKER_EXEC_COMMAND . $this->getContainerName() . self::MAGENTO_CACHE_CLEAN_COMMAND);
-        exec(DockerCommands::DOCKER_EXEC_COMMAND . $this->getContainerName() . self::MAGENTO_CACHE_CLEAN_COMMAND);
-        codecept_debug(DockerCommands::DOCKER_EXEC_COMMAND . $this->getContainerName() . self::MAGENTO_CACHE_FLUSH_COMMAND);
-        exec(DockerCommands::DOCKER_EXEC_COMMAND . $this->getContainerName() . self::MAGENTO_CACHE_FLUSH_COMMAND);
     }
 
     /**
