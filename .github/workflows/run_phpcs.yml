@@ -1,4 +1,4 @@
-name: Run Stylw Check
+name: Run Style Check
 
 on: [push]
 
