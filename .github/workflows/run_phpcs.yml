@@ -1,4 +1,4 @@
-name: CS, Unit Tests, Coverage
+name: Run Stylw Check
 
 on: [push]
 
