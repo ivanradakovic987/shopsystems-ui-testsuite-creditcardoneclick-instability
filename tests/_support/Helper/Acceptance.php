@@ -61,13 +61,13 @@ class Acceptance extends Module
         $gateway
     ): array {
         $array = [];
-        $gatewayConfigurationFile = self::getFullPath(
+        $gatewayConfiguFile = self::getFullPath(
             FileSytem::PAYMENT_METHOD_CONFIG_FOLDER_PATH . $paymentMethod . 'Config.json'
         );
         $paymentActionConfRow = $mappedPaymentActions->$paymentMethod->config->row;
         $paymentActionInDb = $mappedPaymentActions->$paymentMethod->config->$paymentAction;
         //process data in payment configuration file
-        $jsonData = self::getDataFromDataFile($gatewayConfigurationFile);
+        $jsonData = self::getDataFromDataFile($gatewayConfiguFile);
         if (self::paymentMethodGatewayConfigExists($jsonData, $gateway)) {
             //convert json object to array
             $array = get_object_vars($jsonData->$gateway);
