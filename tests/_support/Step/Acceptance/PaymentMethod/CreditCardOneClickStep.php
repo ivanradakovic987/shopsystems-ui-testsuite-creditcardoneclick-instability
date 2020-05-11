@@ -3,7 +3,6 @@
 
 namespace Step\Acceptance\PaymentMethod;
 
-
 use Exception;
 use Facebook\WebDriver\Exception\NoSuchElementException;
 use Facebook\WebDriver\Exception\TimeOutException;
@@ -52,7 +51,12 @@ class CreditCardOneClickStep extends CreditCardStep
                 break;
             case 'prestashop':
                 $this->preparedClick($this->getLocator()->use_saved_card);
-                $this->waitUntil(80, [$this, 'waitUntilOptionSelected'], [$this->getLocator()->cc_token_generic, $this->grabTextFrom($this->getLocator()->cc_token_generic_text)]);
+                $this->waitUntil(
+                    80,
+                    [$this, 'waitUntilOptionSelected'],
+                    [$this->getLocator()->cc_token_generic,
+                        $this->grabTextFrom($this->getLocator()->cc_token_generic_text)]
+                );
                 $this->preparedClick($this->getLocator()->use_card);
                 break;
         }
@@ -64,8 +68,7 @@ class CreditCardOneClickStep extends CreditCardStep
      */
     private function getSaveForLaterUseLocator($shopSystem): String
     {
-        if (strpos($shopSystem, 'magento2') !== false)
-        {
+        if (strpos($shopSystem, 'magento2') !== false) {
             return $this->getLocator()->save_for_later_use_magento2;
         }
         return $this->getLocator()->save_for_later_use;

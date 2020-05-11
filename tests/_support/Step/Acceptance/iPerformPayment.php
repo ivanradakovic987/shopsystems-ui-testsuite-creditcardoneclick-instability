@@ -5,7 +5,8 @@ namespace Step\Acceptance;
 /**
  * Interface iPerformPayment
  */
-interface iPerformPayment {
+interface iPerformPayment
+{
 
     /**
      * @return mixed

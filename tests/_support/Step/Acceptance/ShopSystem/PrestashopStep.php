@@ -2,7 +2,6 @@
 
 namespace Step\Acceptance\ShopSystem;
 
-
 use Step\Acceptance\iConfigurePaymentMethod;
 use Step\Acceptance\iPrepareCheckout;
 use Step\Acceptance\iValidateSuccess;
@@ -15,7 +14,10 @@ use Exception as ExceptionAlias;
  * Class PrestashopStep
  * @package Step\Acceptance|ShopSystem
  */
-class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentMethod, iPrepareCheckout, iValidateSuccess
+class PrestashopStep extends GenericShopSystemStep implements
+    iConfigurePaymentMethod,
+    iPrepareCheckout,
+    iValidateSuccess
 {
     const STEP_NAME = 'Prestashop';
 
@@ -61,7 +63,12 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
     public function configurePaymentMethodCredentials($paymentMethod, $paymentAction)
     {
         $actingPaymentMethod = $this->getActingPaymentMethod($paymentMethod);
-        $db_config = $this->buildPaymentMethodConfig($actingPaymentMethod, $paymentAction, $this->getMappedPaymentActions(), $this->getGateway());
+        $db_config = $this->buildPaymentMethodConfig(
+            $actingPaymentMethod,
+            $paymentAction,
+            $this->getMappedPaymentActions(),
+            $this->getGateway()
+        );
         if (strcasecmp($paymentMethod, static::CREDIT_CARD_ONE_CLICK) === 0) {
             //CreditCard One click is not a separate payment method but a configuration of CreditCard
             $db_config[self::CREDIT_CARD_ONE_CLICK_CONFIGURATION_OPTION] = '1';
@@ -103,7 +110,10 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
         if (!$this->isCustomerRegistered()) {
             $this->amOnPage($this->getLocator()->page->register);
             $this->fillMandatoryCustomerData(static::REGISTERED_CUSTOMER);
-            $this->preparedFillField($this->getLocator()->checkout->password, $this->getCustomer(static::REGISTERED_CUSTOMER)->getPassword());
+            $this->preparedFillField(
+                $this->getLocator()->checkout->password,
+                $this->getCustomer(static::REGISTERED_CUSTOMER)->getPassword()
+            );
             $this->checkOption($this->getLocator()->checkout->agree_to_terms_and_conditions_and_privacy_policy);
             $this->preparedClick($this->getLocator()->register->save);
             $this->amOnPage($this->getLocator()->page->log_out);
@@ -121,7 +131,10 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
         $paymentMethod = $this->getActingPaymentMethod($paymentMethod);
         $paymentMethodName = strtolower($paymentMethod) . '_name';
         $paymentMethodForm = strtolower($paymentMethod) . '_form';
-        $this->selectOption($this->getLocator()->checkout->$paymentMethodForm, $this->getLocator()->checkout->$paymentMethodName);
+        $this->selectOption(
+            $this->getLocator()->checkout->$paymentMethodForm,
+            $this->getLocator()->checkout->$paymentMethodName
+        );
         if ($this->isRedirectPaymentMethod($paymentMethod)) {
             $this->proceedWithPayment($paymentMethod);
         }
@@ -170,9 +183,18 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
     public function fillMandatoryCustomerData($customerType)
     {
         $this->selectOption($this->getLocator()->checkout->social_title, '1');
-        $this->preparedFillField($this->getLocator()->checkout->first_name, $this->getCustomer($customerType)->getFirstName());
-        $this->preparedFillField($this->getLocator()->checkout->last_name, $this->getCustomer($customerType)->getLastName());
-        $this->preparedFillField($this->getLocator()->checkout->email_address, $this->getCustomer($customerType)->getEmailAddress());
+        $this->preparedFillField(
+            $this->getLocator()->checkout->first_name,
+            $this->getCustomer($customerType)->getFirstName()
+        );
+        $this->preparedFillField(
+            $this->getLocator()->checkout->last_name,
+            $this->getCustomer($customerType)->getLastName()
+        );
+        $this->preparedFillField(
+            $this->getLocator()->checkout->email_address,
+            $this->getCustomer($customerType)->getEmailAddress()
+        );
     }
 
     /**
@@ -184,7 +206,10 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
     {
         if ($customerType !== static::REGISTERED_CUSTOMER) {
             parent::fillBillingDetails($customerType);
-            $this->selectOption($this->getLocator()->checkout->country, $this->getCustomer($customerType)->getCountry());
+            $this->selectOption(
+                $this->getLocator()->checkout->country,
+                $this->getCustomer($customerType)->getCountry()
+            );
             $this->preparedClick($this->getLocator()->checkout->continue_confirm_address);
         }
         //this button should appear on the next page, so wait till we see it
@@ -211,8 +236,14 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
     {
         $this->amOnPage($this->getLocator()->page->sign_in);
         if (!$this->isCustomerSignedIn()) {
-            $this->preparedFillField($this->getLocator()->sign_in->email, $this->getCustomer(static::REGISTERED_CUSTOMER)->getEmailAddress());
-            $this->preparedFillField($this->getLocator()->sign_in->password, $this->getCustomer(static::REGISTERED_CUSTOMER)->getPassword());
+            $this->preparedFillField(
+                $this->getLocator()->sign_in->email,
+                $this->getCustomer(static::REGISTERED_CUSTOMER)->getEmailAddress()
+            );
+            $this->preparedFillField(
+                $this->getLocator()->sign_in->password,
+                $this->getCustomer(static::REGISTERED_CUSTOMER)->getPassword()
+            );
             $this->preparedClick($this->getLocator()->sign_in->sign_in, 60);
         }
     }
@@ -230,10 +261,18 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
 
     private function configureRegisteredCustomerAddressInDataBase()
     {
-        $customerId = $this->grabFromDatabase(static::CUSTOMER_TABLE, 'id_customer',
-            [static::CUSTOMER_EMAIL_COLUMN_NAME => $this->getCustomer(static::REGISTERED_CUSTOMER)->getEmailAddress()]);
-        $countryID = $this->grabFromDatabase('ps_country', 'id_country', ['iso_code' => $this->getCustomer(static::REGISTERED_CUSTOMER)->getCountryId()]);
-        $this->haveInDatabase(static::CUSTOMER_ADDRESS_TABLE,
+        $customerId = $this->grabFromDatabase(
+            static::CUSTOMER_TABLE,
+            'id_customer',
+            [static::CUSTOMER_EMAIL_COLUMN_NAME => $this->getCustomer(static::REGISTERED_CUSTOMER)->getEmailAddress()]
+        );
+        $countryID = $this->grabFromDatabase(
+            'ps_country',
+            'id_country',
+            ['iso_code' => $this->getCustomer(static::REGISTERED_CUSTOMER)->getCountryId()]
+        );
+        $this->haveInDatabase(
+            static::CUSTOMER_ADDRESS_TABLE,
             ['id_customer' => $customerId,
             'id_country' => $countryID,
             'alias' => 'My Address',
@@ -245,6 +284,7 @@ class PrestashopStep extends GenericShopSystemStep implements iConfigurePaymentM
             'phone' => $this->getCustomer(static::REGISTERED_CUSTOMER)->getPhone(),
             'date_add' => date('Y-m-d h:i:s'),
             'date_upd' => date('Y-m-d h:i:s'),
-            'active' => '1']);
+            'active' => '1']
+        );
     }
 }

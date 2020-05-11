@@ -7,7 +7,6 @@ namespace Helper;
 use Codeception\Module;
 use Helper\Config\FileSytem;
 
-
 class Acceptance extends Module
 {
 
@@ -55,14 +54,20 @@ class Acceptance extends Module
      * @param $gateway
      * @return array
      */
-    public static function buildPaymentMethodConfig($paymentMethod, $paymentAction, $mappedPaymentActions, $gateway): array
-    {
+    public static function buildPaymentMethodConfig(
+        $paymentMethod,
+        $paymentAction,
+        $mappedPaymentActions,
+        $gateway
+    ): array {
         $array = [];
-        $gatewayConfigurationFile = self::getFullPath(FileSytem::PAYMENT_METHOD_CONFIG_FOLDER_PATH . $paymentMethod . 'Config.json');
+        $gatewayConfigFile = self::getFullPath(
+            FileSytem::PAYMENT_METHOD_CONFIG_FOLDER_PATH . $paymentMethod . 'Config.json'
+        );
         $paymentActionConfRow = $mappedPaymentActions->$paymentMethod->config->row;
         $paymentActionInDb = $mappedPaymentActions->$paymentMethod->config->$paymentAction;
         //process data in payment configuration file
-        $jsonData = self::getDataFromDataFile($gatewayConfigurationFile);
+        $jsonData = self::getDataFromDataFile($gatewayConfigFile);
         if (self::paymentMethodGatewayConfigExists($jsonData, $gateway)) {
             //convert json object to array
             $array = get_object_vars($jsonData->$gateway);

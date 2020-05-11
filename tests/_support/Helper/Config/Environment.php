@@ -3,7 +3,6 @@
 
 namespace Helper\Config;
 
-
 use PHPUnit\Exception;
 
 /**

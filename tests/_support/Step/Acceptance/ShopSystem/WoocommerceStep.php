@@ -12,7 +12,10 @@ use Exception;
  * Class WoocommerceStep
  * @package Step\Acceptance|ShopSystem
  */
-class WoocommerceStep extends GenericShopSystemStep implements iConfigurePaymentMethod, iPrepareCheckout, iValidateSuccess
+class WoocommerceStep extends GenericShopSystemStep implements
+    iConfigurePaymentMethod,
+    iPrepareCheckout,
+    iValidateSuccess
 {
     const STEP_NAME = 'Woocommerce';
 
@@ -71,14 +74,12 @@ class WoocommerceStep extends GenericShopSystemStep implements iConfigurePayment
      * @param String $optionName
      * @param $optionValue
      */
-    public function configurePaymentMethodCreditCardOneClick($paymentMethod, $optionName, $optionValue) {
-        if (strcasecmp($paymentMethod, static::CREDIT_CARD_ONE_CLICK) === 0)
-        {
+    public function configurePaymentMethodCreditCardOneClick($paymentMethod, $optionName, $optionValue)
+    {
+        if (strcasecmp($paymentMethod, static::CREDIT_CARD_ONE_CLICK) === 0) {
             $serializedValues = unserialize($optionValue);
-            foreach (array_keys($serializedValues) as $key)
-            {
-                if ($key === self::CREDIT_CARD_ONE_CLICK_CONFIGURATION_VALUE)
-                {
+            foreach (array_keys($serializedValues) as $key) {
+                if ($key === self::CREDIT_CARD_ONE_CLICK_CONFIGURATION_VALUE) {
                     $serializedValues[$key] = 'yes';
                 }
             }
@@ -92,12 +93,20 @@ class WoocommerceStep extends GenericShopSystemStep implements iConfigurePayment
     public function registerCustomer()
     {
         if ($this->isCustomerRegistered() !== true) {
-            $this->haveInDatabase(static::CUSTOMER_TABLE,
-                [static::CUSTOMER_EMAIL_COLUMN_NAME => $this->getCustomer(static::REGISTERED_CUSTOMER)->getEmailAddress(),
-                    static::CUSTOMER_PASSWORD_COLUMN_NAME => md5($this->getCustomer(static::REGISTERED_CUSTOMER)->getPassword()),
-                    static::CUSTOMER_LOGIN_COLUMN_NAME => $this->getCustomer(static::REGISTERED_CUSTOMER)->getLoginUserName(),
+            $this->haveInDatabase(
+                static::CUSTOMER_TABLE,
+                [static::CUSTOMER_EMAIL_COLUMN_NAME => $this->getCustomer(
+                    static::REGISTERED_CUSTOMER
+                )->getEmailAddress(),
+                    static::CUSTOMER_PASSWORD_COLUMN_NAME => md5($this->getCustomer(
+                        static::REGISTERED_CUSTOMER
+                    )->getPassword()),
+                    static::CUSTOMER_LOGIN_COLUMN_NAME => $this->getCustomer(
+                        static::REGISTERED_CUSTOMER
+                    )->getLoginUserName(),
                     static::CUSTOMER_DATE_COLUMN_NAME => date('Y-m-d h:i:s')
-                    ]);
+                ]
+            );
         }
     }
 
@@ -134,14 +143,29 @@ class WoocommerceStep extends GenericShopSystemStep implements iConfigurePayment
      */
     public function fillCustomerDetails($customerType): void
     {
-        //woocommerce is dynamically loading possible payment methods while filling form, so we need to make sure all elements are fillable or clickable
-        $this->preparedFillField($this->getLocator()->checkout->first_name, $this->getCustomer($customerType)->getFirstName());
-        $this->preparedFillField($this->getLocator()->checkout->last_name, $this->getCustomer($customerType)->getLastName());
-        $this->preparedClick($this->getLocator()->checkout->country);
-        $this->preparedFillField($this->getLocator()->checkout->country_entry, $this->getCustomer($customerType)->getCountry());
+        //woocommerce is dynamically loading possible payment methods
+        // while filling form, so we need to make sure all elements are fillable or clickable
+        $this->preparedFillField(
+            $this->getLocator()->checkout->first_name,
+            $this->getCustomer($customerType)->getFirstName()
+        );
+        $this->preparedFillField(
+            $this->getLocator()->checkout->last_name,
+            $this->getCustomer($customerType)->getLastName()
+        );
+        $this->preparedClick(
+            $this->getLocator()->checkout->country
+        );
+        $this->preparedFillField(
+            $this->getLocator()->checkout->country_entry,
+            $this->getCustomer($customerType)->getCountry()
+        );
         $this->preparedClick($this->getLocator()->checkout->country_entry_selected);
         $this->fillBillingDetails($customerType);
-        $this->preparedFillField($this->getLocator()->checkout->email_address, $this->getCustomer($customerType)->getEmailAddress());
+        $this->preparedFillField(
+            $this->getLocator()->checkout->email_address,
+            $this->getCustomer($customerType)->getEmailAddress()
+        );
     }
 
     /**
@@ -161,10 +185,16 @@ class WoocommerceStep extends GenericShopSystemStep implements iConfigurePayment
     public function logIn()
     {
         $this->amOnPage($this->getLocator()->page->sign_in);
-        try
-        {
-            $this->preparedFillField($this->getLocator()->sign_in->email, $this->getCustomer(static::REGISTERED_CUSTOMER)->getEmailAddress(),10);
-            $this->preparedFillField($this->getLocator()->sign_in->password, $this->getCustomer(static::REGISTERED_CUSTOMER)->getPassword());
+        try {
+            $this->preparedFillField(
+                $this->getLocator()->sign_in->email,
+                $this->getCustomer(static::REGISTERED_CUSTOMER)->getEmailAddress(),
+                10
+            );
+            $this->preparedFillField(
+                $this->getLocator()->sign_in->password,
+                $this->getCustomer(static::REGISTERED_CUSTOMER)->getPassword()
+            );
             $this->preparedClick($this->getLocator()->sign_in->sign_in, 60);
         } catch (NoSuchElementException $e) {
             $this->amOnPage($this->getLocator()->page->sign_in);
