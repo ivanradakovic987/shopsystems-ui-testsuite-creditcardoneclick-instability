@@ -20,5 +20,6 @@ class FileSytem
 
     const PAYMENT_METHOD_CONFIG_FOLDER_PATH = self::DATA_FOLDER_PATH . 'PaymentMethodConfig' . DIRECTORY_SEPARATOR;
 
-    const MAPPED_PAYMENT_ACTIONS_FOLDER_PATH = self::DATA_FOLDER_PATH . 'PaymentMethodConfig' . DIRECTORY_SEPARATOR . 'MappedPaymentActions' . DIRECTORY_SEPARATOR;
+    const MAPPED_PAYMENT_ACTIONS_FOLDER_PATH = self::DATA_FOLDER_PATH .
+    'PaymentMethodConfig' . DIRECTORY_SEPARATOR . 'MappedPaymentActions' . DIRECTORY_SEPARATOR;
 }

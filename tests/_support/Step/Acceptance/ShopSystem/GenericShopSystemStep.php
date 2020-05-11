@@ -41,8 +41,16 @@ class GenericShopSystemStep extends GenericStep
     public function __construct(Scenario $scenario, $gateway, $guestFileName, $registeredFileName)
     {
         parent::__construct($scenario, $gateway);
-        $this->setLocator($this->getDataFromDataFile($this->getFullPath(FileSytem::SHOP_SYSTEM_LOCATOR_FOLDER_PATH . static::STEP_NAME . DIRECTORY_SEPARATOR . static::STEP_NAME . 'Locators.json')));
-        $this->mappedPaymentActions = $this->getDataFromDataFile($this->getFullPath(FileSytem::MAPPED_PAYMENT_ACTIONS_FOLDER_PATH . static::STEP_NAME . DIRECTORY_SEPARATOR . static::STEP_NAME . 'MappedPaymentActions.json'));
+        $this->setLocator($this->getDataFromDataFile($this->getFullPath(
+            FileSytem::SHOP_SYSTEM_LOCATOR_FOLDER_PATH .
+            static::STEP_NAME . DIRECTORY_SEPARATOR .
+            static::STEP_NAME . 'Locators.json'
+        )));
+        /** @var TYPE_NAME $this */
+        $this->mappedPaymentActions = $this->getDataFromDataFile(
+            $this->getFullPath(FileSytem::MAPPED_PAYMENT_ACTIONS_FOLDER_PATH
+                . static::STEP_NAME . DIRECTORY_SEPARATOR . static::STEP_NAME . 'MappedPaymentActions.json')
+        );
         $this->createCustomerObjects($guestFileName, $registeredFileName);
     }
 
@@ -54,7 +62,19 @@ class GenericShopSystemStep extends GenericStep
     {
         $dataFolderPath = $this->getFullPath(FileSytem::CUSTOMER_DATA_FOLDER_PATH);
         $this->guestCustomer = new CustomerConfig($this->getDataFromDataFile($dataFolderPath . $guestFileName));
-        $this->registeredCustomer = new CustomerConfig($this->getDataFromDataFile($dataFolderPath . $registeredFileName));
+        $this->registeredCustomer = new CustomerConfig($this->getDataFromDataFile(
+            $dataFolderPath . $registeredFileName
+        ));
+    }
+
+    /**
+     * @param String $currency
+     * @param String $defaultCountry
+     */
+    public function configureShopSystemCurrencyAndCountry($currency, $defaultCountry): void
+    {
+        $this->putValueInDatabase(static::CURRENCY_OPTION_NAME, $currency);
+        $this->putValueInDatabase(static::DEFAULT_COUNTRY_OPTION_NAME, $defaultCountry);
     }
 
     /**
@@ -67,7 +87,7 @@ class GenericShopSystemStep extends GenericStep
             $this->haveInDatabase(
                 static::SETTINGS_TABLE_NAME,
                 [static::NAME_COLUMN_NAME => $name,
-                static::VALUE_COLUMN_NAME => $value]
+                    static::VALUE_COLUMN_NAME => $value]
             );
         } else {
             $this->updateInDatabase(
@@ -79,13 +99,16 @@ class GenericShopSystemStep extends GenericStep
     }
 
     /**
-     * @param String $currency
-     * @param String $defaultCountry
+     * @param String $name
+     * @return mixed
      */
-    public function configureShopSystemCurrencyAndCountry($currency, $defaultCountry): void
+    public function existsInDatabase($name)
     {
-        $this->putValueInDatabase(static::CURRENCY_OPTION_NAME, $currency);
-        $this->putValueInDatabase(static::DEFAULT_COUNTRY_OPTION_NAME, $defaultCountry);
+        return $this->grabFromDatabase(
+            static::SETTINGS_TABLE_NAME,
+            static::NAME_COLUMN_NAME,
+            [static::NAME_COLUMN_NAME => $name]
+        );
     }
 
     /**
@@ -107,18 +130,36 @@ class GenericShopSystemStep extends GenericStep
      * @param $customerType
      * @throws Exception
      */
-    public function fillBillingDetails($customerType) : void
+    public function fillBillingDetails($customerType): void
     {
-        $this->preparedFillField($this->getLocator()->checkout->street_address, $this->getCustomer($customerType)->getStreetAddress());
+        $this->preparedFillField(
+            $this->getLocator()->checkout->street_address,
+            $this->getCustomer($customerType)->getStreetAddress()
+        );
         $this->preparedFillField($this->getLocator()->checkout->town, $this->getCustomer($customerType)->getTown());
-        $this->preparedFillField($this->getLocator()->checkout->post_code, $this->getCustomer($customerType)->getPostCode());
+        $this->preparedFillField(
+            $this->getLocator()->checkout->post_code,
+            $this->getCustomer($customerType)->getPostCode()
+        );
         $this->preparedFillField($this->getLocator()->checkout->phone, $this->getCustomer($customerType)->getPhone());
+    }
+
+    /**
+     * @param $customerType
+     * @return mixed
+     */
+    public function getCustomer($customerType)
+    {
+        if ($customerType === static::REGISTERED_CUSTOMER) {
+            return $this->registeredCustomer;
+        }
+        return $this->guestCustomer;
     }
 
     /**
      * @return mixed
      */
-    public function goToCheckout() : void
+    public function goToCheckout(): void
     {
         $this->amOnPage($this->getLocator()->page->checkout);
     }
@@ -148,66 +189,13 @@ class GenericShopSystemStep extends GenericStep
      */
     public function checkPaymentActionInTransactionTable($paymentArgs): bool
     {
-        $transactionTypes = $this->getColumnFromDatabaseNoCriteria(static::TRANSACTION_TABLE_NAME, static::TRANSACTION_TYPE_COLUMN_NAME);
+        $transactionTypes = $this->getColumnFromDatabaseNoCriteria(
+            static::TRANSACTION_TABLE_NAME,
+            static::TRANSACTION_TYPE_COLUMN_NAME
+        );
         $tempTxType = $this->selectTxTypeFromMappedPaymentActions($paymentArgs);
         return end($transactionTypes) === $tempTxType;
     }
-
-    /**
-     * @return mixed
-     */
-    public function getMappedPaymentActions()
-    {
-        return $this->mappedPaymentActions;
-    }
-
-    /**
-     * @return array
-     */
-    public function getRedirectPaymentMethods(): array
-    {
-        return $this->redirectPaymentMethods;
-    }
-
-    /**
-     * @param String $name
-     * @return mixed
-     */
-    public function existsInDatabase($name)
-    {
-        return $this->grabFromDatabase(static::SETTINGS_TABLE_NAME, static::NAME_COLUMN_NAME, [static::NAME_COLUMN_NAME => $name]);
-    }
-
-    /**
-     * @param String $paymentMethod
-     * @return bool
-     */
-    public function isRedirectPaymentMethod($paymentMethod): bool
-    {
-        return in_array($paymentMethod, $this->getRedirectPaymentMethods(), false);
-    }
-
-    /**
-     * @param $customerType
-     * @return mixed
-     */
-    public function getCustomer($customerType)
-    {
-        if ($customerType === static::REGISTERED_CUSTOMER) {
-            return $this->registeredCustomer;
-        }
-        return $this->guestCustomer;
-    }
-
-    /**
-     * @param string $paymentMethod
-     * @return mixed
-     */
-    public function getMappedTxTableValuesForPaymentMethod($paymentMethod)
-    {
-        return $this->getMappedPaymentActions()->$paymentMethod->tx_table;
-    }
-
 
     /**
      * @param array $paymentArgs
@@ -220,6 +208,40 @@ class GenericShopSystemStep extends GenericStep
     }
 
     /**
+     * @param string $paymentMethod
+     * @return mixed
+     */
+    public function getMappedTxTableValuesForPaymentMethod($paymentMethod)
+    {
+        return $this->getMappedPaymentActions()->$paymentMethod->tx_table;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMappedPaymentActions()
+    {
+        return $this->mappedPaymentActions;
+    }
+
+    /**
+     * @param String $paymentMethod
+     * @return bool
+     */
+    public function isRedirectPaymentMethod($paymentMethod): bool
+    {
+        return in_array($paymentMethod, $this->getRedirectPaymentMethods(), false);
+    }
+
+    /**
+     * @return array
+     */
+    public function getRedirectPaymentMethods(): array
+    {
+        return $this->redirectPaymentMethods;
+    }
+
+    /**
      * @return bool
      */
     public function isCustomerRegistered(): bool
@@ -229,7 +251,7 @@ class GenericShopSystemStep extends GenericStep
             static::CUSTOMER_EMAIL_COLUMN_NAME,
             [static::CUSTOMER_EMAIL_COLUMN_NAME => $this->getCustomer(static::REGISTERED_CUSTOMER)->getEmailAddress()]
         );
-        return $guest ===  $this->getCustomer(static::REGISTERED_CUSTOMER)->getEmailAddress();
+        return $guest === $this->getCustomer(static::REGISTERED_CUSTOMER)->getEmailAddress();
     }
 
     /**

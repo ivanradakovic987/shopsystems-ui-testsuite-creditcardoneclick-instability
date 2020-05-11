@@ -54,10 +54,16 @@ class Acceptance extends Module
      * @param $gateway
      * @return array
      */
-    public static function buildPaymentMethodConfig($paymentMethod, $paymentAction, $mappedPaymentActions, $gateway): array
-    {
+    public static function buildPaymentMethodConfig(
+        $paymentMethod,
+        $paymentAction,
+        $mappedPaymentActions,
+        $gateway
+    ): array {
         $array = [];
-        $gatewayConfigurationFile = self::getFullPath(FileSytem::PAYMENT_METHOD_CONFIG_FOLDER_PATH . $paymentMethod . 'Config.json');
+        $gatewayConfigurationFile = self::getFullPath(
+            FileSytem::PAYMENT_METHOD_CONFIG_FOLDER_PATH . $paymentMethod . 'Config.json'
+        );
         $paymentActionConfRow = $mappedPaymentActions->$paymentMethod->config->row;
         $paymentActionInDb = $mappedPaymentActions->$paymentMethod->config->$paymentAction;
         //process data in payment configuration file

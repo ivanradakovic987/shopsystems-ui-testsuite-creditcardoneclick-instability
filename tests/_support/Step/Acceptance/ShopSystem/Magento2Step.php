@@ -68,17 +68,29 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
     public function configurePaymentMethodCredentials($paymentMethod, $paymentAction)
     {
         $actingPaymentMethod = $this->getActingPaymentMethod($paymentMethod);
-        $db_config = $this->buildPaymentMethodConfig($actingPaymentMethod, $paymentAction, $this->getMappedPaymentActions(), $this->getGateway());
+        $db_config = $this->buildPaymentMethodConfig(
+            $actingPaymentMethod,
+            $paymentAction,
+            $this->getMappedPaymentActions(),
+            $this->getGateway()
+        );
         foreach ($db_config as $name => $value) {
             //some configuration options are different if different shops, this is handling the differences
             if (array_key_exists($name, $this->configNameDiffs)) {
                 $name = $this->configNameDiffs[$name];
             }
-            $fullName = self::PAYMENT_METHOD_PREFIX . strtolower($actingPaymentMethod) . static::DB_SEPARATOR . strtolower($name);
-            $this->putValueInDatabase($fullName, $this->convertWordValueToBinaryString($value));
+            $fullName = self::PAYMENT_METHOD_PREFIX
+                . strtolower($actingPaymentMethod) . static::DB_SEPARATOR . strtolower($name);
+            $this->putValueInDatabase(
+                $fullName,
+                $this->convertWordValueToBinaryString($value)
+            );
         }
         if (strcasecmp($paymentMethod, static::CREDIT_CARD_ONE_CLICK) === 0) {
-            $this->putValueInDatabase(static::PAYMENT_METHOD_PREFIX . static::CREDIT_CARD_ONE_CLICK_CONFIGURATION_OPTION, '1');
+            $this->putValueInDatabase(
+                static::PAYMENT_METHOD_PREFIX . static::CREDIT_CARD_ONE_CLICK_CONFIGURATION_OPTION,
+                '1'
+            );
         }
     }
 
@@ -90,11 +102,26 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
     {
         if (!$this->isCustomerRegistered()) {
             $this->amOnPage($this->getLocator()->page->register);
-            $this->preparedFillField($this->getLocator()->register->first_name, $this->getCustomer(static::REGISTERED_CUSTOMER)->getFirstName());
-            $this->preparedFillField($this->getLocator()->register->last_name, $this->getCustomer(static::REGISTERED_CUSTOMER)->getLastName());
-            $this->preparedFillField($this->getLocator()->register->email_address, $this->getCustomer(static::REGISTERED_CUSTOMER)->getEmailAddress());
-            $this->preparedFillField($this->getLocator()->register->password, $this->getCustomer(static::REGISTERED_CUSTOMER)->getPassword());
-            $this->preparedFillField($this->getLocator()->register->confirm_password, $this->getCustomer(static::REGISTERED_CUSTOMER)->getPassword());
+            $this->preparedFillField(
+                $this->getLocator()->register->first_name,
+                $this->getCustomer(static::REGISTERED_CUSTOMER)->getFirstName()
+            );
+            $this->preparedFillField(
+                $this->getLocator()->register->last_name,
+                $this->getCustomer(static::REGISTERED_CUSTOMER)->getLastName()
+            );
+            $this->preparedFillField(
+                $this->getLocator()->register->email_address,
+                $this->getCustomer(static::REGISTERED_CUSTOMER)->getEmailAddress()
+            );
+            $this->preparedFillField(
+                $this->getLocator()->register->password,
+                $this->getCustomer(static::REGISTERED_CUSTOMER)->getPassword()
+            );
+            $this->preparedFillField(
+                $this->getLocator()->register->confirm_password,
+                $this->getCustomer(static::REGISTERED_CUSTOMER)->getPassword()
+            );
             $this->preparedClick($this->getLocator()->register->create_an_account);
             $this->amOnPage($this->getLocator()->page->log_out);
         }
@@ -150,14 +177,33 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
     {
         $this->waitUntil(60, [$this, 'waitUntilPageLoaded'], [$this->getLocator()->page->checkout]);
         if ($customerType !== static::REGISTERED_CUSTOMER) {
-            $this->preparedFillField($this->getLocator()->checkout->email_address, $this->getCustomer($customerType)->getEmailAddress(), 80);
-            $this->preparedFillField($this->getLocator()->checkout->first_name, $this->getCustomer($customerType)->getFirstName());
-            $this->preparedFillField($this->getLocator()->checkout->last_name, $this->getCustomer($customerType)->getLastName());
-            $this->selectOption($this->getLocator()->checkout->country, $this->getCustomer($customerType)->getCountry());
-            $this->preparedSelectOption($this->getLocator()->checkout->state, $this->getCustomer($customerType)->getState());
+            $this->preparedFillField(
+                $this->getLocator()->checkout->email_address,
+                $this->getCustomer($customerType)->getEmailAddress(),
+                80
+            );
+            $this->preparedFillField(
+                $this->getLocator()->checkout->first_name,
+                $this->getCustomer($customerType)->getFirstName()
+            );
+            $this->preparedFillField(
+                $this->getLocator()->checkout->last_name,
+                $this->getCustomer($customerType)->getLastName()
+            );
+            $this->selectOption(
+                $this->getLocator()->checkout->country,
+                $this->getCustomer($customerType)->getCountry()
+            );
+            $this->preparedSelectOption(
+                $this->getLocator()->checkout->state,
+                $this->getCustomer($customerType)->getState()
+            );
             $this->wait(10);
             try {
-                $this->seeOptionIsSelected($this->getLocator()->checkout->state, $this->getCustomer($customerType)->getState());
+                $this->seeOptionIsSelected(
+                    $this->getLocator()->checkout->state,
+                    $this->getCustomer($customerType)->getState()
+                );
             } catch (Exception $e) {
                 $this->wait(10);
             }
@@ -180,8 +226,14 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
     {
         $this->amOnPage($this->getLocator()->page->sign_in);
         if (!$this->isCustomerSignedIn()) {
-            $this->preparedFillField($this->getLocator()->sign_in->email, $this->getCustomer(static::REGISTERED_CUSTOMER)->getEmailAddress());
-            $this->preparedFillField($this->getLocator()->sign_in->password, $this->getCustomer(static::REGISTERED_CUSTOMER)->getPassword());
+            $this->preparedFillField(
+                $this->getLocator()->sign_in->email,
+                $this->getCustomer(static::REGISTERED_CUSTOMER)->getEmailAddress()
+            );
+            $this->preparedFillField(
+                $this->getLocator()->sign_in->password,
+                $this->getCustomer(static::REGISTERED_CUSTOMER)->getPassword()
+            );
             $this->preparedClick($this->getLocator()->sign_in->sign_in, 60);
         }
     }

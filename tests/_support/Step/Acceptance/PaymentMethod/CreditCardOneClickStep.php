@@ -51,7 +51,12 @@ class CreditCardOneClickStep extends CreditCardStep
                 break;
             case 'prestashop':
                 $this->preparedClick($this->getLocator()->use_saved_card);
-                $this->waitUntil(80, [$this, 'waitUntilOptionSelected'], [$this->getLocator()->cc_token_generic, $this->grabTextFrom($this->getLocator()->cc_token_generic_text)]);
+                $this->waitUntil(
+                    80,
+                    [$this, 'waitUntilOptionSelected'],
+                    [$this->getLocator()->cc_token_generic,
+                        $this->grabTextFrom($this->getLocator()->cc_token_generic_text)]
+                );
                 $this->preparedClick($this->getLocator()->use_card);
                 break;
         }
