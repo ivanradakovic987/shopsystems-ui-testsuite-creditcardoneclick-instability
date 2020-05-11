@@ -71,14 +71,12 @@ class WoocommerceStep extends GenericShopSystemStep implements iConfigurePayment
      * @param String $optionName
      * @param $optionValue
      */
-    public function configurePaymentMethodCreditCardOneClick($paymentMethod, $optionName, $optionValue) {
-        if (strcasecmp($paymentMethod, static::CREDIT_CARD_ONE_CLICK) === 0)
-        {
+    public function configurePaymentMethodCreditCardOneClick($paymentMethod, $optionName, $optionValue)
+    {
+        if (strcasecmp($paymentMethod, static::CREDIT_CARD_ONE_CLICK) === 0) {
             $serializedValues = unserialize($optionValue);
-            foreach (array_keys($serializedValues) as $key)
-            {
-                if ($key === self::CREDIT_CARD_ONE_CLICK_CONFIGURATION_VALUE)
-                {
+            foreach (array_keys($serializedValues) as $key) {
+                if ($key === self::CREDIT_CARD_ONE_CLICK_CONFIGURATION_VALUE) {
                     $serializedValues[$key] = 'yes';
                 }
             }
@@ -92,12 +90,14 @@ class WoocommerceStep extends GenericShopSystemStep implements iConfigurePayment
     public function registerCustomer()
     {
         if ($this->isCustomerRegistered() !== true) {
-            $this->haveInDatabase(static::CUSTOMER_TABLE,
+            $this->haveInDatabase(
+                static::CUSTOMER_TABLE,
                 [static::CUSTOMER_EMAIL_COLUMN_NAME => $this->getCustomer(static::REGISTERED_CUSTOMER)->getEmailAddress(),
                     static::CUSTOMER_PASSWORD_COLUMN_NAME => md5($this->getCustomer(static::REGISTERED_CUSTOMER)->getPassword()),
                     static::CUSTOMER_LOGIN_COLUMN_NAME => $this->getCustomer(static::REGISTERED_CUSTOMER)->getLoginUserName(),
                     static::CUSTOMER_DATE_COLUMN_NAME => date('Y-m-d h:i:s')
-                    ]);
+                ]
+            );
         }
     }
 
@@ -161,9 +161,8 @@ class WoocommerceStep extends GenericShopSystemStep implements iConfigurePayment
     public function logIn()
     {
         $this->amOnPage($this->getLocator()->page->sign_in);
-        try
-        {
-            $this->preparedFillField($this->getLocator()->sign_in->email, $this->getCustomer(static::REGISTERED_CUSTOMER)->getEmailAddress(),10);
+        try {
+            $this->preparedFillField($this->getLocator()->sign_in->email, $this->getCustomer(static::REGISTERED_CUSTOMER)->getEmailAddress(), 10);
             $this->preparedFillField($this->getLocator()->sign_in->password, $this->getCustomer(static::REGISTERED_CUSTOMER)->getPassword());
             $this->preparedClick($this->getLocator()->sign_in->sign_in, 60);
         } catch (NoSuchElementException $e) {

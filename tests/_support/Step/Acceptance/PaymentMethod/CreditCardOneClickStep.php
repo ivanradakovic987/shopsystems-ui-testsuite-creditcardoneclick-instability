@@ -3,7 +3,6 @@
 
 namespace Step\Acceptance\PaymentMethod;
 
-
 use Exception;
 use Facebook\WebDriver\Exception\NoSuchElementException;
 use Facebook\WebDriver\Exception\TimeOutException;
@@ -64,8 +63,7 @@ class CreditCardOneClickStep extends CreditCardStep
      */
     private function getSaveForLaterUseLocator($shopSystem): String
     {
-        if (strpos($shopSystem, 'magento2') !== false)
-        {
+        if (strpos($shopSystem, 'magento2') !== false) {
             return $this->getLocator()->save_for_later_use_magento2;
         }
         return $this->getLocator()->save_for_later_use;

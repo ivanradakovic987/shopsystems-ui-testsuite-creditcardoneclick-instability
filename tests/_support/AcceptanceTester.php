@@ -154,8 +154,7 @@ class AcceptanceTester extends Actor
     {
         $this->createPaymentMethodIfNeeded($paymentMethod);
         $this->paymentMethod->fillFieldsInTheShop();
-        if(strcasecmp($paymentMethod, static::CREDIT_CARD_ONE_CLICK) !== 0)
-        {
+        if (strcasecmp($paymentMethod, static::CREDIT_CARD_ONE_CLICK) !== 0) {
             $this->shopInstance->proceedWithPayment($paymentMethod);
         }
     }

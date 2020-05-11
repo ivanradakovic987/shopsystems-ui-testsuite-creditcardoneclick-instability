@@ -108,7 +108,7 @@ class GenericStep extends AcceptanceTester
         try {
             $this->seeOptionIsSelected($selectorDetails[0], $selectorDetails[1]);
             return true;
-        } catch ( AssertionFailedError $e) {
+        } catch (AssertionFailedError $e) {
             $this->selectOption($selectorDetails[0], $selectorDetails[1]);
             return false;
         }
@@ -138,5 +138,4 @@ class GenericStep extends AcceptanceTester
     {
         return $this->locator;
     }
-
 }

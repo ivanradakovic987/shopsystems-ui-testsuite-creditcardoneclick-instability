@@ -64,11 +64,14 @@ class GenericShopSystemStep extends GenericStep
     public function putValueInDatabase($name, $value): void
     {
         if (!$this->existsInDatabase($name)) {
-            $this->haveInDatabase(static::SETTINGS_TABLE_NAME,
+            $this->haveInDatabase(
+                static::SETTINGS_TABLE_NAME,
                 [static::NAME_COLUMN_NAME => $name,
-                    static::VALUE_COLUMN_NAME => $value]);
+                static::VALUE_COLUMN_NAME => $value]
+            );
         } else {
-            $this->updateInDatabase(static::SETTINGS_TABLE_NAME,
+            $this->updateInDatabase(
+                static::SETTINGS_TABLE_NAME,
                 [static::VALUE_COLUMN_NAME => $value],
                 [static::NAME_COLUMN_NAME => $name]
             );
@@ -96,7 +99,7 @@ class GenericShopSystemStep extends GenericStep
         $amount = intdiv((int)$minPurchaseSum, (int)$this->getLocator()->product->price) + 1;
         //add to basket goods to fulfill desired purchase amount
         $this->fillField($this->getLocator()->product->quantity, $amount);
-        $this->preparedClick($this->getLocator()->product->add_to_cart,80);
+        $this->preparedClick($this->getLocator()->product->add_to_cart, 80);
     }
 
     /**
@@ -104,7 +107,7 @@ class GenericShopSystemStep extends GenericStep
      * @param $customerType
      * @throws Exception
      */
-        public function fillBillingDetails($customerType) : void
+    public function fillBillingDetails($customerType) : void
     {
         $this->preparedFillField($this->getLocator()->checkout->street_address, $this->getCustomer($customerType)->getStreetAddress());
         $this->preparedFillField($this->getLocator()->checkout->town, $this->getCustomer($customerType)->getTown());
@@ -190,8 +193,7 @@ class GenericShopSystemStep extends GenericStep
      */
     public function getCustomer($customerType)
     {
-        if ($customerType === static::REGISTERED_CUSTOMER)
-        {
+        if ($customerType === static::REGISTERED_CUSTOMER) {
             return $this->registeredCustomer;
         }
         return $this->guestCustomer;
@@ -204,7 +206,6 @@ class GenericShopSystemStep extends GenericStep
     public function getMappedTxTableValuesForPaymentMethod($paymentMethod)
     {
         return $this->getMappedPaymentActions()->$paymentMethod->tx_table;
-
     }
 
 
@@ -223,8 +224,11 @@ class GenericShopSystemStep extends GenericStep
      */
     public function isCustomerRegistered(): bool
     {
-        $guest = $this->grabFromDatabase(static::CUSTOMER_TABLE, static::CUSTOMER_EMAIL_COLUMN_NAME,
-            [static::CUSTOMER_EMAIL_COLUMN_NAME => $this->getCustomer(static::REGISTERED_CUSTOMER)->getEmailAddress()]);
+        $guest = $this->grabFromDatabase(
+            static::CUSTOMER_TABLE,
+            static::CUSTOMER_EMAIL_COLUMN_NAME,
+            [static::CUSTOMER_EMAIL_COLUMN_NAME => $this->getCustomer(static::REGISTERED_CUSTOMER)->getEmailAddress()]
+        );
         return $guest ===  $this->getCustomer(static::REGISTERED_CUSTOMER)->getEmailAddress();
     }
 

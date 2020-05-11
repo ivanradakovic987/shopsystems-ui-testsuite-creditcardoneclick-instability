@@ -7,7 +7,6 @@ namespace Helper;
 use Codeception\Module;
 use Helper\Config\FileSytem;
 
-
 class Acceptance extends Module
 {
 
