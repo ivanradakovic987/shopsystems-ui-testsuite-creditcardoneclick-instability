@@ -4,6 +4,7 @@ namespace Step\Acceptance\PaymentMethod;
 
 use Codeception\Scenario;
 use Helper\Config\GenericConfig;
+use Helper\Config\PaymentMethod\AlipayCrossBorderConfig;
 use Helper\Config\PaymentMethod\CreditCardConfig;
 use Helper\Config\PaymentMethod\PayPalConfig;
 use Step\Acceptance\GenericStep;
@@ -26,7 +27,8 @@ class GenericPaymentMethodStep extends GenericStep
     private $configObjectMap = [
         self::CREDIT_CARD => CreditCardConfig::class,
         self::CREDIT_CARD_ONE_CLICK => CreditCardConfig::class,
-        self::PAY_PAL => PayPalConfig::class
+        self::PAY_PAL => PayPalConfig::class,
+        self::ALIPAY_CROSS_BORDER => AlipayCrossBorderConfig::class
     ];
 
     /**
