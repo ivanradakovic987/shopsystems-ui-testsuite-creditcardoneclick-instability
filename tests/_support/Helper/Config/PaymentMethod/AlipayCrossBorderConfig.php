@@ -2,7 +2,6 @@
 
 namespace Helper\Config\PaymentMethod;
 
-
 /**
  * Class AlipayCrossBorderConfig
  * @package Helper\Config\PaymentMethod
