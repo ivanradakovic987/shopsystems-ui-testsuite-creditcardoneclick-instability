@@ -83,33 +83,18 @@ class GenericStep extends AcceptanceTester
     }
 
     /**
-     * @param String $pageKeyWord
+     * Function checks if page is loaded by searching for $pageKeyWord in current url
+     * @param $pageKeyWord
      * @return bool
      */
     public function waitUntilPageLoaded($pageKeyWord): bool
     {
-        $currentUrl = $this->grabFromCurrentUrl();
+        $currentUrl = $this->executeJS("return location.href");
         if (empty($currentUrl) || empty($pageKeyWord)) {
                 return false;
         }
         if (strpos($currentUrl, $pageKeyWord[0]) !== false) {
             $this->wait(3);
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * @param $pageKeyWord
-     * @return bool
-     */
-    public function waitUntilRedirectedPageLoaded($pageKeyWord): bool
-    {
-        $currentUrl = $this->executeJS("return location.href");
-        if (empty($currentUrl)) {
-            return false;
-        }
-        if (strpos($currentUrl, $pageKeyWord[0]) !== false) {
             return true;
         }
         return false;
