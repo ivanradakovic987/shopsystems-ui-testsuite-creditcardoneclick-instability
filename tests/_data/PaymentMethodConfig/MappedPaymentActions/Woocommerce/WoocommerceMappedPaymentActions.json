@@ -20,5 +20,14 @@
       "authorization": "authorization",
       "purchase": "debit"
     }
+  },
+  "iDeal": {
+    "config": {
+      "row": "payment_action",
+      "debit": "debit"
+    },
+    "tx_table": {
+      "debit": "debit"
+    }
   }
 }

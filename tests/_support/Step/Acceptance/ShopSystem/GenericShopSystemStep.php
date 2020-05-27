@@ -29,7 +29,7 @@ class GenericShopSystemStep extends GenericStep
     /**
      * @var array
      */
-    private $redirectPaymentMethods = ['PayPal'];
+    private $redirectPaymentMethods = ['PayPal', 'iDeal'];
 
     /**
      * GenericStep constructor.
@@ -264,5 +264,21 @@ class GenericShopSystemStep extends GenericStep
             return 'CreditCard';
         }
         return $paymentMethod;
+    }
+
+    /**
+     * @param $paymentMethod
+     * @param $bank
+     * @throws Exception
+     */
+    public function selectBank($paymentMethod, $bank): void
+    {
+        if (strcasecmp($paymentMethod, static::IDEAL) === 0) {
+            //select bank from combobox
+            $this->preparedSelectOption(
+                $this->getLocator()->checkout->ideal_bank_select,
+                $bank
+            );
+        }
     }
 }

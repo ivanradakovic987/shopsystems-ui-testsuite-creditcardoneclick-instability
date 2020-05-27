@@ -200,4 +200,25 @@ class WoocommerceStep extends GenericShopSystemStep implements
             $this->amOnPage($this->getLocator()->page->sign_in);
         }
     }
+
+    /**
+     * @param $paymentMethod
+     * @param $bank
+     * @throws Exception
+     */
+    public function startPaymentOverBank($paymentMethod, $bank): void
+    {
+        $paymentMethod = $this->getActingPaymentMethod($paymentMethod);
+        $this->wait(2);
+        $paymentMethodRadioButtonLocator  = 'wirecard_' . strtolower($paymentMethod);
+        $this->preparedClick($this->getLocator()->checkout->$paymentMethodRadioButtonLocator);
+
+        $this->selectBank($paymentMethod, $bank);
+
+        $this->preparedClick($this->getLocator()->checkout->place_order);
+
+        if (!$this->isRedirectPaymentMethod($paymentMethod)) {
+            $this->startCreditCardPayment($paymentMethod);
+        }
+    }
 }

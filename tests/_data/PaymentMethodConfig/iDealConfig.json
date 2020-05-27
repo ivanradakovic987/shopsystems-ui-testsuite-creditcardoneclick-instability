@@ -1,0 +1,20 @@
+{
+  "API-TEST": {
+    "base_url": "https://api-test.wirecard.com",
+    "wpp_url": "https://wpp-test.wirecard.com",
+    "http_user": "16390-testing",
+    "http_pass": "3!3013=D3fD8X7",
+    "three_d_merchant_account_id": "508b8896-b37d-4614-845c-26bf8bf2c948",
+    "three_d_secret": "dbc5a498-9a66-43b9-bf1d-a618dd399684",
+    "merchant_account_id": "4aeccf39-0d47-47f6-a399-c05c1f2fc819",
+    "secret": "7a353766-23b5-4992-ae96-cb4232998954",
+    "ssl_max_limit": 100,
+    "three_d_min_limit": 50,
+    "enabled": "yes",
+    "title": "Wirecard iDEAL",
+    "payment_action": "debit",
+    "descriptor": "no",
+    "send_additional": "yes",
+    "cc_vault_enabled": "no"
+  }
+}

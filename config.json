@@ -6,5 +6,6 @@
   "default_country": "AT",
   "creditcard_data": "CreditCardData.json",
   "creditcardoneclick_data": "CreditCardOneClickData.json",
-  "paypal_data": "PayPalData.json"
+  "paypal_data": "PayPalData.json",
+  "ideal_data": "PayPalData.json"
 }

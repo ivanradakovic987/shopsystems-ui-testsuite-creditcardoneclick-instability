@@ -39,6 +39,8 @@ class AcceptanceTester extends Actor
 
     const PAY_PAL = 'payPal';
 
+    const IDEAL = 'iDeal';
+
     const REGISTERED_CUSTOMER = 'registered customer';
 
     //this is used to generate new class instance, so const doesn't work here
@@ -51,7 +53,8 @@ class AcceptanceTester extends Actor
     private $paymentMethodInstanceMap = [
         'CreditCard' => Step\Acceptance\PaymentMethod\CreditCardStep::class,
         'CreditCardOneClick' => Step\Acceptance\PaymentMethod\CreditCardOneClickStep::class,
-        'PayPal' => Step\Acceptance\PaymentMethod\PayPalStep::class
+        'PayPal' => Step\Acceptance\PaymentMethod\PayPalStep::class,
+        'iDeal' => Step\Acceptance\PaymentMethod\IdealStep::class
     ];
 
     /**
@@ -290,5 +293,16 @@ class AcceptanceTester extends Actor
         if (!$this->paymentMethodCreated($paymentMethod)) {
             $this->paymentMethod = $this->createPaymentMethod($paymentMethod);
         }
+    }
+
+    /**
+     * @Given I start :paymentMethod payment over bank :bank
+     * @param $paymentMethod
+     * @param $bank
+     * @throws Exception
+     */
+    public function iStartPaymentOverBank($paymentMethod, $bank): void
+    {
+        $this->shopInstance->startPaymentOverBank($paymentMethod, $bank);
     }
 }
