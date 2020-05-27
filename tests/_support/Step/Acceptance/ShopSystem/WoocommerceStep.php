@@ -47,6 +47,28 @@ class WoocommerceStep extends GenericShopSystemStep implements
 
     const CUSTOMER_DATE_COLUMN_NAME = 'user_registered';
 
+    const SHIPPING_ZONES_TABLE_NAME = 'wp_woocommerce_shipping_zones';
+
+    const SHIPPING_ZONES_COLUMN_NAME = 'zone_name';
+
+    const SHIPPING_ZONE_ID_COLUMN_NAME = 'zone_id';
+
+    const SHIPPING_ZONES_ORDER_COLUMN_NAME = 'zone_order';
+
+    const SHIPPING_ZONE_METHODS_TABLE_NAME = 'wp_woocommerce_shipping_zone_methods';
+
+    const SHIPPING_ZONE_METHODS_METHOD_ID_COLUMN_NAME = 'method_id';
+
+    const SHIPPING_ZONE_METHODS_ORDER_COLUMN_NAME = 'method_order';
+
+    const SHIPPING_ZONE_METHODS_ENABLED_COLUMN_NAME = 'is_enabled';
+
+    const SHIPPING_ZONE_LOCATIONS_TABLE_NAME = 'wp_woocommerce_shipping_zone_locations';
+
+    const SHIPPING_ZONE_LOCATIONS_CODE_COLUMN_NAME = 'location_code';
+
+    const SHIPPING_ZONE_LOCATIONS_TYPE_COLUMN_NAME = 'location_type';
+
     /**
      * @param String $paymentMethod
      * @param String  $paymentAction

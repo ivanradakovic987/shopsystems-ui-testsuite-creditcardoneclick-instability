@@ -6,5 +6,9 @@
   "default_country": "AT",
   "creditcard_data": "CreditCardData.json",
   "creditcardoneclick_data": "CreditCardOneClickData.json",
-  "paypal_data": "PayPalData.json"
+  "paypal_data": "PayPalData.json",
+  "shipping_zone_name": "AUT",
+  "shipping_zone_region": "AT",
+  "shipping_zone_method": "flat_rate",
+  "shipping_zone_location_type": "country"
 }

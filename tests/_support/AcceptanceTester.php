@@ -258,6 +258,12 @@ class AcceptanceTester extends Actor
             $this->configData->default_country
         );
         $shopInstance->registerCustomer();
+        $shopInstance->configureShippingZone(
+            $this->configData->shipping_zone_name,
+            $this->configData->shipping_zone_region,
+            $this->configData->shipping_zone_method,
+            $this->configData->shipping_zone_location_type
+        );
         return $shopInstance;
     }
 
