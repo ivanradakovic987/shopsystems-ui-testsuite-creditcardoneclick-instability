@@ -11,7 +11,7 @@ Feature: iDealInitialTransaction
     And I activate "iDeal" payment action <payment_action> in configuration
     And I prepare checkout with purchase sum "100" in shop system as "guest customer"
     And I see "Wirecard iDeal"
-    And I start "iDeal" payment over bank "ING"
+    And I start "iDeal" payment
     When I perform "iDeal" actions outside of the shop
     Then I see successful payment
     And I see "iDeal" transaction type <transaction_type> in transaction table

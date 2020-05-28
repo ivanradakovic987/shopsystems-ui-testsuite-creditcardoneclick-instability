@@ -5,6 +5,7 @@ namespace Step\Acceptance\PaymentMethod;
 use Codeception\Scenario;
 use Helper\Config\GenericConfig;
 use Helper\Config\PaymentMethod\CreditCardConfig;
+use Helper\Config\PaymentMethod\IdealConfig;
 use Helper\Config\PaymentMethod\PayPalConfig;
 use Step\Acceptance\GenericStep;
 use Helper\Config\FileSytem;
@@ -27,7 +28,7 @@ class GenericPaymentMethodStep extends GenericStep
         self::CREDIT_CARD => CreditCardConfig::class,
         self::CREDIT_CARD_ONE_CLICK => CreditCardConfig::class,
         self::PAY_PAL => PayPalConfig::class,
-        self::IDEAL => PayPalConfig::class
+        self::IDEAL => IdealConfig::class
     ];
 
     /**
@@ -57,7 +58,7 @@ class GenericPaymentMethodStep extends GenericStep
     }
 
     /**
-     * @return GenericConfig| CreditCardConfig| PayPalConfig
+     * @return GenericConfig| CreditCardConfig| PayPalConfig| IdealConfig
      */
     public function getPaymentMethod()
     {

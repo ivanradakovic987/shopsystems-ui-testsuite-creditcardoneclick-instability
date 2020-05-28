@@ -120,6 +120,13 @@ class WoocommerceStep extends GenericShopSystemStep implements
         $this->wait(2);
         $paymentMethodRadioButtonLocator  = 'wirecard_' . strtolower($paymentMethod);
         $this->preparedClick($this->getLocator()->checkout->$paymentMethodRadioButtonLocator);
+        if (strcasecmp($paymentMethod, static::IDEAL) === 0) {
+            //select bank from combobox
+            $this->preparedSelectOption(
+                $this->getLocator()->checkout->ideal_bank_select,
+                $this->getLocator()->checkout->ideal_bank_option
+            );
+        }
         $this->preparedClick($this->getLocator()->checkout->place_order);
         if (!$this->isRedirectPaymentMethod($paymentMethod)) {
             $this->startCreditCardPayment($paymentMethod);

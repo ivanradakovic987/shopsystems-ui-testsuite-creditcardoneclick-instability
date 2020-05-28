@@ -29,7 +29,8 @@
     "wirecard_creditcard":  "//*[@id='payment']/ul/li[contains(@class, 'creditcard')]",
     "wirecard_paypal":  "//*[@id='payment']/ul/li[contains(@class, 'paypal')]",
     "wirecard_ideal": "//*[@id='payment']/ul/li[contains(@class, 'ideal')]",
-    "ideal_bank_select": "//*[@name='ideal_bank_bic']"
+    "ideal_bank_select": "//*[@name='ideal_bank_bic']",
+    "ideal_bank_option": "ING"
   },
   "order_pay": {
     "pay": "//*[@id='seamless-submit']"
