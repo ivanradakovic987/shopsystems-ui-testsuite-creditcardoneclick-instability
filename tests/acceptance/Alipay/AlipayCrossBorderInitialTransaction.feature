@@ -6,7 +6,7 @@ Feature: AlipayCrossBorderInitialTransaction
   Background:
     Given I initialize shop system
 
-  @woocommerce @test
+  @woocommerce
   Scenario Outline: initial transaction
     And I activate "Alipay-Xborder" payment action <payment_action> in configuration
     And I prepare checkout with purchase sum "100" in shop system as "guest customer"
@@ -17,53 +17,4 @@ Feature: AlipayCrossBorderInitialTransaction
 
     Examples:
       | payment_action |
-      | "debit"        |
-      | "debit"        |
-      | "debit"        |
-      | "debit"        |
-      | "debit"        |
-      | "debit"        |
-      | "debit"        |
-      | "debit"        |
-      | "debit"        |
-      | "debit"        |
-      | "debit"        |
-      | "debit"        |
-      | "debit"        |
-      | "debit"        |
-      | "debit"        |
-      | "debit"        |
-      | "debit"        |
-      | "debit"        |
-      | "debit"        |
-      | "debit"        |
-      | "debit"        |
-      | "debit"        |
-      | "debit"        |
-      | "debit"        |
-      | "debit"        |
-      | "debit"        |
-      | "debit"        |
-      | "debit"        |
-      | "debit"        |
-      | "debit"        |
-      | "debit"        |
-      | "debit"        |
-      | "debit"        |
-      | "debit"        |
-      | "debit"        |
-      | "debit"        |
-      | "debit"        |
-      | "debit"        |
-      | "debit"        |
-      | "debit"        |
-      | "debit"        |
-      | "debit"        |
-      | "debit"        |
-      | "debit"        |
-      | "debit"        |
-      | "debit"        |
-      | "debit"        |
-      | "debit"        |
-      | "debit"        |
       | "debit"        |
