@@ -21,7 +21,7 @@
       "purchase": "debit"
     }
   },
-  "AlipayCrossBorder": {
+  "Alipay-Xborder": {
     "config": {
       "row": "payment_action",
       "debit": "debit"
