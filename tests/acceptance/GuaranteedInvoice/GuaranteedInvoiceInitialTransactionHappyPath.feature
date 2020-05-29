@@ -10,8 +10,6 @@ Feature: GuaranteedInvoiceInitialTransactionHappyPath
   @woocommerce @test
   Scenario Outline: initial transaction
     And I activate "Invoice" payment action <payment_action> in configuration
-#    make sure you are NOT buying virtual product
-#   Make sure you are using AT,DE or CH address for the checkout
     And I prepare checkout with purchase sum "100" in shop system as "registered customer"
     And I see "Wirecard Guaranteed Invoice by Wirecard"
     And I start "GuaranteedInvoice" payment
