@@ -69,6 +69,22 @@ class WoocommerceStep extends GenericShopSystemStep implements
 
     const SHIPPING_ZONE_LOCATIONS_TYPE_COLUMN_NAME = 'location_type';
 
+    const CUSTOMER_META_TABLE = 'wp_usermeta';
+
+    const CUSTOMER_META_USER_ID_COLUMN_NAME = 'user_id';
+
+    const CUSTOMER_META_KEY_COLUMN_NAME = 'meta_key';
+
+    const CUSTOMER_META_VALUE_COLUMN_NAME = 'meta_value';
+
+    const CUSTOMER_META_KEY_BILLING_ADDRESS_VALUE = 'billing_address_1';
+
+    const CUSTOMER_META_KEY_SHIPPING_ADDRESS_VALUE = 'shipping_address_1';
+
+    const CUSTOMER_META_KEY_BILLING_COUNTRY_VALUE = 'billing_country';
+
+    const CUSTOMER_META_KEY_SHIPPING_COUNTRY_VALUE = 'shipping_country';
+
     /**
      * @param String $paymentMethod
      * @param String  $paymentAction
@@ -115,7 +131,7 @@ class WoocommerceStep extends GenericShopSystemStep implements
     public function registerCustomer()
     {
         if ($this->isCustomerRegistered() !== true) {
-            $this->haveInDatabase(
+            $userId = $this->haveInDatabase(
                 static::CUSTOMER_TABLE,
                 [static::CUSTOMER_EMAIL_COLUMN_NAME => $this->getCustomer(
                     static::REGISTERED_CUSTOMER
@@ -127,6 +143,42 @@ class WoocommerceStep extends GenericShopSystemStep implements
                         static::REGISTERED_CUSTOMER
                     )->getLoginUserName(),
                     static::CUSTOMER_DATE_COLUMN_NAME => date('Y-m-d h:i:s')
+                ]
+            );
+            $this->haveInDatabase(
+                static::CUSTOMER_META_TABLE,
+                [static::CUSTOMER_META_USER_ID_COLUMN_NAME => $userId,
+                    static::CUSTOMER_META_KEY_COLUMN_NAME => self::CUSTOMER_META_KEY_BILLING_ADDRESS_VALUE,
+                    static::CUSTOMER_META_VALUE_COLUMN_NAME => $this->getCustomer(
+                        static::REGISTERED_CUSTOMER
+                    )->getStreetAddress()
+                ]
+            );
+            $this->haveInDatabase(
+                static::CUSTOMER_META_TABLE,
+                [static::CUSTOMER_META_USER_ID_COLUMN_NAME => $userId,
+                    static::CUSTOMER_META_KEY_COLUMN_NAME => self::CUSTOMER_META_KEY_SHIPPING_ADDRESS_VALUE,
+                    static::CUSTOMER_META_VALUE_COLUMN_NAME => $this->getCustomer(
+                        static::REGISTERED_CUSTOMER
+                    )->getStreetAddress()
+                ]
+            );
+            $this->haveInDatabase(
+                static::CUSTOMER_META_TABLE,
+                [static::CUSTOMER_META_USER_ID_COLUMN_NAME => $userId,
+                    static::CUSTOMER_META_KEY_COLUMN_NAME => self::CUSTOMER_META_KEY_BILLING_COUNTRY_VALUE,
+                    static::CUSTOMER_META_VALUE_COLUMN_NAME => $this->getCustomer(
+                        static::REGISTERED_CUSTOMER
+                    )->getCountryId()
+                ]
+            );
+            $this->haveInDatabase(
+                static::CUSTOMER_META_TABLE,
+                [static::CUSTOMER_META_USER_ID_COLUMN_NAME => $userId,
+                    static::CUSTOMER_META_KEY_COLUMN_NAME => self::CUSTOMER_META_KEY_SHIPPING_COUNTRY_VALUE,
+                    static::CUSTOMER_META_VALUE_COLUMN_NAME => $this->getCustomer(
+                        static::REGISTERED_CUSTOMER
+                    )->getCountryId()
                 ]
             );
         }
