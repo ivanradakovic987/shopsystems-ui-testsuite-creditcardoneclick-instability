@@ -20,5 +20,14 @@
       "authorization": "authorization",
       "purchase": "debit"
     }
+  },
+  "Invoice": {
+    "config": {
+      "row": "payment_action",
+      "reserve": "reserve"
+    },
+    "tx_table": {
+      "authorization": "authorization"
+    }
   }
 }

@@ -1,0 +1,19 @@
+{
+"API-TEST": {
+    "base_url": "https://api-test.wirecard.com",
+    "http_user": "16390-testing",
+    "http_pass": "3!3013=D3fD8X7",
+    "merchant_account_id" : "7d7edecb-b008-4f05-9103-308c81cf2ea2",
+    "secret" : "555d998b-15db-46a9-8f1f-d9bc3ec66b19",
+    "enabled": "yes",
+    "title": "Wirecard Guaranteed Invoice by Wirecard",
+    "descriptor": "0",
+    "send_additional": "1",
+    "billing_shipping_same": "yes",
+    "billing_countries": "AT",
+    "shipping_countries": "AT",
+    "allowed_currencies": "EUR",
+    "min_amount": "20",
+    "max_amount": "3500"
+  }
+}
