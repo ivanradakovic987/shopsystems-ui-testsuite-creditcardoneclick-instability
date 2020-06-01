@@ -7,6 +7,7 @@
   "creditcard_data": "CreditCardData.json",
   "creditcardoneclick_data": "CreditCardOneClickData.json",
   "paypal_data": "PayPalData.json",
+  "guaranteedinvoice_data": "GuaranteedInvoiceData.json",
   "shipping_zone_name": "AUT",
   "shipping_zone_region": "AT",
   "shipping_zone_method": "flat_rate",

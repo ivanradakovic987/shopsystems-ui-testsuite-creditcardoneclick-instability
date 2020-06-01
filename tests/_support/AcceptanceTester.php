@@ -39,6 +39,8 @@ class AcceptanceTester extends Actor
 
     const PAY_PAL = 'payPal';
 
+    const GUARANTEED_INVOICE = 'guaranteedInvoice';
+
     const REGISTERED_CUSTOMER = 'registered customer';
 
     //this is used to generate new class instance, so const doesn't work here
@@ -51,7 +53,8 @@ class AcceptanceTester extends Actor
     private $paymentMethodInstanceMap = [
         'CreditCard' => Step\Acceptance\PaymentMethod\CreditCardStep::class,
         'CreditCardOneClick' => Step\Acceptance\PaymentMethod\CreditCardOneClickStep::class,
-        'PayPal' => Step\Acceptance\PaymentMethod\PayPalStep::class
+        'PayPal' => Step\Acceptance\PaymentMethod\PayPalStep::class,
+        'GuaranteedInvoice' => Step\Acceptance\PaymentMethod\GuaranteedInvoiceStep::class
     ];
 
     /**
@@ -77,7 +80,7 @@ class AcceptanceTester extends Actor
     /**
      * @var Actor|CreditCardStep|
      */
-    private $paymentMethod;
+    protected $paymentMethod;
 
     /**
      * @var
@@ -291,7 +294,7 @@ class AcceptanceTester extends Actor
     /**
      * @param $paymentMethod
      */
-    private function createPaymentMethodIfNeeded($paymentMethod): void
+    protected function createPaymentMethodIfNeeded($paymentMethod): void
     {
         if (!$this->paymentMethodCreated($paymentMethod)) {
             $this->paymentMethod = $this->createPaymentMethod($paymentMethod);

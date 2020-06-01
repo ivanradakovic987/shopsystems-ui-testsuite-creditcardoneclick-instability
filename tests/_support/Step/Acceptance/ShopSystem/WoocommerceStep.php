@@ -127,6 +127,7 @@ class WoocommerceStep extends GenericShopSystemStep implements
     }
 
     /**
+     * Method registers new user into User table and adds Billing and Shipping country and address into UsersMeta table
      */
     public function registerCustomer()
     {
@@ -194,6 +195,10 @@ class WoocommerceStep extends GenericShopSystemStep implements
         $this->wait(2);
         $paymentMethodRadioButtonLocator  = 'wirecard_' . strtolower($paymentMethod);
         $this->preparedClick($this->getLocator()->checkout->$paymentMethodRadioButtonLocator);
+
+        $this->createPaymentMethodIfNeeded($paymentMethod);
+        $this->paymentMethod->performPaymentMethodActionsOutsideShop();//performAdditionalCheckoutActions();
+
         $this->preparedClick($this->getLocator()->checkout->place_order);
         if (!$this->isRedirectPaymentMethod($paymentMethod)) {
             $this->startCreditCardPayment($paymentMethod);
