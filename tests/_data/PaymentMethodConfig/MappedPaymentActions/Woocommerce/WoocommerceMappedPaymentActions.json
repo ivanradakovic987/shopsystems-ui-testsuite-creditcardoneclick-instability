@@ -21,7 +21,7 @@
       "purchase": "debit"
     }
   },
-  "Invoice": {
+  "GuaranteedInvoice": {
     "config": {
       "row": "payment_action",
       "reserve": "reserve"

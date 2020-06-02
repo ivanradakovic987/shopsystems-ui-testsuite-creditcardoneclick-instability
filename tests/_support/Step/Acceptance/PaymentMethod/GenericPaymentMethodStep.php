@@ -19,7 +19,7 @@ class GenericPaymentMethodStep extends GenericStep
     /**
      * @var CreditCardConfig|PayPalConfig|GuaranteedInvoiceConfig;
      */
-    protected $paymentMethod;
+    private $paymentMethod;
 
     /**
      * @var array

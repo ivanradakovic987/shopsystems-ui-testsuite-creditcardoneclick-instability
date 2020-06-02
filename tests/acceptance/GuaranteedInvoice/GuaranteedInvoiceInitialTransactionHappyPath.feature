@@ -9,11 +9,12 @@ Feature: GuaranteedInvoiceInitialTransactionHappyPath
 
   @woocommerce @test
   Scenario Outline: initial transaction
-    And I activate "Invoice" payment action <payment_action> in configuration
+    And I activate "GuaranteedInvoice" payment action <payment_action> in configuration
     And I prepare checkout with purchase sum "100" in shop system as "registered customer"
     And I see "Wirecard Guaranteed Invoice by Wirecard"
     And I start "GuaranteedInvoice" payment
     When I fill "GuaranteedInvoice" fields in the shop
+    And I place the order and continue "GuaranteedInvoice" payment
     Then I see successful payment
     And I see "GuaranteedInvoice" transaction type <transaction_type> in transaction table
 

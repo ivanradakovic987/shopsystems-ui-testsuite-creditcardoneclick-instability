@@ -80,7 +80,7 @@ class AcceptanceTester extends Actor
     /**
      * @var Actor|CreditCardStep|
      */
-    protected $paymentMethod;
+    private $paymentMethod;
 
     /**
      * @var
@@ -157,7 +157,8 @@ class AcceptanceTester extends Actor
     {
         $this->createPaymentMethodIfNeeded($paymentMethod);
         $this->paymentMethod->fillFieldsInTheShop();
-        if (strcasecmp($paymentMethod, static::CREDIT_CARD_ONE_CLICK) !== 0) {
+        if (strcasecmp($paymentMethod, static::CREDIT_CARD_ONE_CLICK) !== 0 &&
+            strcasecmp($paymentMethod, static::GUARANTEED_INVOICE) !== 0) {
             $this->shopInstance->proceedWithPayment($paymentMethod);
         }
     }
@@ -294,10 +295,19 @@ class AcceptanceTester extends Actor
     /**
      * @param $paymentMethod
      */
-    protected function createPaymentMethodIfNeeded($paymentMethod): void
+    private function createPaymentMethodIfNeeded($paymentMethod): void
     {
         if (!$this->paymentMethodCreated($paymentMethod)) {
             $this->paymentMethod = $this->createPaymentMethod($paymentMethod);
         }
+    }
+
+    /**
+     * @When I place the order and continue :paymentMethod payment
+     * @param $paymentMethod
+     */
+    public function iPlaceTheOrderAndContinuePayment($paymentMethod) :void
+    {
+        $this->shopInstance->placeTheOrder($paymentMethod);
     }
 }

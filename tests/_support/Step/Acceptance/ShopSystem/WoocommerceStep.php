@@ -195,14 +195,6 @@ class WoocommerceStep extends GenericShopSystemStep implements
         $this->wait(2);
         $paymentMethodRadioButtonLocator  = 'wirecard_' . strtolower($paymentMethod);
         $this->preparedClick($this->getLocator()->checkout->$paymentMethodRadioButtonLocator);
-
-        $this->createPaymentMethodIfNeeded($paymentMethod);
-        $this->paymentMethod->performPaymentMethodActionsOutsideShop();//performAdditionalCheckoutActions();
-
-        $this->preparedClick($this->getLocator()->checkout->place_order);
-        if (!$this->isRedirectPaymentMethod($paymentMethod)) {
-            $this->startCreditCardPayment($paymentMethod);
-        }
     }
 
     /**
@@ -277,6 +269,18 @@ class WoocommerceStep extends GenericShopSystemStep implements
             $this->preparedClick($this->getLocator()->sign_in->sign_in, 60);
         } catch (NoSuchElementException $e) {
             $this->amOnPage($this->getLocator()->page->sign_in);
+        }
+    }
+
+    /**
+     * @param $paymentMethod
+     * @throws Exception
+     */
+    public function placeTheOrder($paymentMethod)
+    {
+        $this->preparedClick($this->getLocator()->checkout->place_order);
+        if (!$this->isRedirectPaymentMethod($paymentMethod)) {
+            $this->startCreditCardPayment($paymentMethod);
         }
     }
 }
