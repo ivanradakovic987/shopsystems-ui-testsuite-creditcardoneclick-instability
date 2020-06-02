@@ -143,9 +143,6 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
                 [$this, 'waitUntilOptionSelected'],
                 [$this->getLocator()->payment->$paymentMethodForm, $this->getLocator()->payment->$paymentMethodName]
             );
-            if ($this->isRedirectPaymentMethod($paymentMethod)) {
-                $this->preparedClick($this->getLocator()->payment->place_order);
-            }
         }
     }
 
@@ -309,5 +306,18 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
             return $this->getLocator()->payment->credit_card_place_order;
         }
         return $this->getLocator()->payment->place_order;
+    }
+
+    /**
+     * @param $paymentMethod
+     * @throws Exception
+     */
+    public function placeTheOrder($paymentMethod)
+    {
+        if (strpos($paymentMethod, 'OneClick') === false) {
+            if ($this->isRedirectPaymentMethod($paymentMethod)) {
+                $this->preparedClick($this->getLocator()->payment->place_order);
+            }
+        }
     }
 }
