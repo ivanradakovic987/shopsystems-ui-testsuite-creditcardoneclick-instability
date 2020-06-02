@@ -279,7 +279,8 @@ class WoocommerceStep extends GenericShopSystemStep implements
     public function placeTheOrder($paymentMethod)
     {
         $this->preparedClick($this->getLocator()->checkout->place_order);
-        if (!$this->isRedirectPaymentMethod($paymentMethod)) {
+
+        if (strcasecmp($paymentMethod, static::CREDIT_CARD) === 0) {
             $this->startCreditCardPayment($paymentMethod);
         }
     }
