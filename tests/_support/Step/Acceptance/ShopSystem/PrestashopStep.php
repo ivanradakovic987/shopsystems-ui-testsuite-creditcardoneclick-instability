@@ -135,9 +135,6 @@ class PrestashopStep extends GenericShopSystemStep implements
             $this->getLocator()->checkout->$paymentMethodForm,
             $this->getLocator()->checkout->$paymentMethodName
         );
-        if ($this->isRedirectPaymentMethod($paymentMethod)) {
-            $this->proceedWithPayment($paymentMethod);
-        }
     }
 
     /**
@@ -286,5 +283,16 @@ class PrestashopStep extends GenericShopSystemStep implements
             'date_upd' => date('Y-m-d h:i:s'),
             'active' => '1']
         );
+    }
+
+    /**
+     * @param $paymentMethod
+     * @throws ExceptionAlias
+     */
+    public function placeTheOrder($paymentMethod)
+    {
+        if ($this->isRedirectPaymentMethod($paymentMethod)) {
+            $this->proceedWithPayment($paymentMethod);
+        }
     }
 }
