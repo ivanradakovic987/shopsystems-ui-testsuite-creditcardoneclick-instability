@@ -21,7 +21,7 @@
       "purchase": "debit"
     }
   },
-  "iDeal": {
+  "iDEAL": {
     "config": {
       "row": "payment_action",
       "debit": "debit"

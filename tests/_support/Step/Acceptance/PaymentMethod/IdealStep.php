@@ -7,7 +7,7 @@ use Exception;
 
 class IdealStep extends GenericPaymentMethodStep implements iPerformPayment
 {
-    const STEP_NAME = 'iDeal';
+    const STEP_NAME = 'iDEAL';
 
     /**
      * @throws Exception
