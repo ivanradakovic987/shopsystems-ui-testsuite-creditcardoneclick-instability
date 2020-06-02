@@ -191,7 +191,9 @@ class WoocommerceStep extends GenericShopSystemStep implements
      */
     public function startPayment($paymentMethod): void
     {
-        $paymentMethod = $this->getActingPaymentMethod($paymentMethod);
+        if (strcasecmp($paymentMethod, static::GUARANTEED_INVOICE) !== 0) {
+            $paymentMethod = $this->getActingPaymentMethod($paymentMethod);
+        }
         $this->wait(2);
         $paymentMethodRadioButtonLocator  = 'wirecard_' . strtolower($paymentMethod);
         $this->preparedClick($this->getLocator()->checkout->$paymentMethodRadioButtonLocator);
