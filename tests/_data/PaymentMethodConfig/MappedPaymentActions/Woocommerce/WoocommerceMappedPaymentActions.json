@@ -20,5 +20,14 @@
       "authorization": "authorization",
       "purchase": "debit"
     }
+  },
+  "GuaranteedInvoice": {
+    "config": {
+      "row": "payment_action",
+      "reserve": "reserve"
+    },
+    "tx_table": {
+      "authorization": "authorization"
+    }
   }
 }
