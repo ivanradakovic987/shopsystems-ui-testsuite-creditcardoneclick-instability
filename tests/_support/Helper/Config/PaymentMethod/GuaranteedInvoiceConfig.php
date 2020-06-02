@@ -12,11 +12,11 @@ class GuaranteedInvoiceConfig
 
     /**
      * GuaranteedInvoiceConfig constructor.
-     * @param $guaranteedInvoiceData
+     * @param $invoiceData
      */
-    public function __construct($guaranteedInvoiceData)
+    public function __construct($invoiceData)
     {
-        $this->dateOfBirth = $guaranteedInvoiceData->date_of_birth;
+        $this->dateOfBirth = $invoiceData->date_of_birth;
     }
 
     /**
