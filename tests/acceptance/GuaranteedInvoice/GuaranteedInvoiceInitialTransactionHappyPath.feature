@@ -5,9 +5,8 @@ Feature: GuaranteedInvoiceInitialTransactionHappyPath
 
   Background:
     Given I initialize shop system
-#    make sure that customer has billing and shipping address defined and they are the same
 
-  @woocommerce @test
+  @woocommerce
   Scenario Outline: initial transaction
     And I activate "GuaranteedInvoice" payment action <payment_action> in configuration
     And I prepare checkout with purchase sum "100" in shop system as "registered customer"

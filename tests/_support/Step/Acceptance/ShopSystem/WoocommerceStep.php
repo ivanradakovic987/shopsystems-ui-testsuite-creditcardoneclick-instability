@@ -286,4 +286,67 @@ class WoocommerceStep extends GenericShopSystemStep implements
             $this->startCreditCardPayment($paymentMethod);
         }
     }
+
+    /**
+     * @param $zoneName
+     * @param $zoneRegions
+     * @param $shippingMethods
+     * @param $locationType
+     */
+    public function configureShippingZone($zoneName, $zoneRegions, $shippingMethods, $locationType)
+    {
+        $this->putShippingZoneInDatabase($zoneName, $zoneRegions, $shippingMethods, $locationType);
+    }
+
+    /**
+     * @param $zoneName
+     * @param $zoneRegions
+     * @param $shippingMethods
+     * @param $locationType
+     */
+    public function putShippingZoneInDatabase($zoneName, $zoneRegions, $shippingMethods, $locationType)
+    {
+        // check if zone already exists in database
+        if (!$this->grabFromDatabase(
+            static::SHIPPING_ZONES_TABLE_NAME,
+            static::SHIPPING_ZONES_COLUMN_NAME,
+            [static::SHIPPING_ZONES_COLUMN_NAME => $zoneName]
+        )) {
+            $zoneId = $this->haveInDatabase(
+                static::SHIPPING_ZONES_TABLE_NAME,
+                [static::SHIPPING_ZONES_COLUMN_NAME => $zoneName,
+                    static::SHIPPING_ZONES_ORDER_COLUMN_NAME => 0]
+            );
+            $this->haveInDatabase(
+                static::SHIPPING_ZONE_METHODS_TABLE_NAME,
+                [static::SHIPPING_ZONE_ID_COLUMN_NAME => $zoneId,
+                    static::SHIPPING_ZONE_METHODS_METHOD_ID_COLUMN_NAME => $shippingMethods,
+                    static::SHIPPING_ZONE_METHODS_ORDER_COLUMN_NAME => 1,
+                    static::SHIPPING_ZONE_METHODS_ENABLED_COLUMN_NAME => 1]
+            );
+            $this->haveInDatabase(
+                static::SHIPPING_ZONE_LOCATIONS_TABLE_NAME,
+                [static::SHIPPING_ZONE_ID_COLUMN_NAME => $zoneId,
+                    static::SHIPPING_ZONE_LOCATIONS_CODE_COLUMN_NAME => $zoneRegions,
+                    static::SHIPPING_ZONE_LOCATIONS_TYPE_COLUMN_NAME => $locationType]
+            );
+        } else {
+            $zoneId = $this->grabFromDatabase(
+                static::SHIPPING_ZONES_TABLE_NAME,
+                static::SHIPPING_ZONE_ID_COLUMN_NAME,
+                [static::SHIPPING_ZONES_COLUMN_NAME => $zoneName]
+            );
+            $this->updateInDatabase(
+                static::SHIPPING_ZONE_METHODS_TABLE_NAME,
+                [static::SHIPPING_ZONE_METHODS_METHOD_ID_COLUMN_NAME => $shippingMethods],
+                [static::SHIPPING_ZONE_ID_COLUMN_NAME => $zoneId]
+            );
+            $this->updateInDatabase(
+                static::SHIPPING_ZONE_LOCATIONS_TABLE_NAME,
+                [static::SHIPPING_ZONE_LOCATIONS_CODE_COLUMN_NAME => $zoneRegions,
+                    static::SHIPPING_ZONE_LOCATIONS_TYPE_COLUMN_NAME => $locationType],
+                [static::SHIPPING_ZONE_ID_COLUMN_NAME => $zoneId]
+            );
+        }
+    }
 }
