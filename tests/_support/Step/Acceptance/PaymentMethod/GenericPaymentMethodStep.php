@@ -6,6 +6,7 @@ use Codeception\Scenario;
 use Helper\Config\GenericConfig;
 use Helper\Config\PaymentMethod\AlipayCrossBorderConfig;
 use Helper\Config\PaymentMethod\CreditCardConfig;
+use Helper\Config\PaymentMethod\GuaranteedInvoiceConfig;
 use Helper\Config\PaymentMethod\PayPalConfig;
 use Step\Acceptance\GenericStep;
 use Helper\Config\FileSytem;
@@ -17,7 +18,7 @@ use Helper\Config\FileSytem;
 class GenericPaymentMethodStep extends GenericStep
 {
     /**
-     * @var CreditCardConfig|PayPalConfig;
+     * @var CreditCardConfig|PayPalConfig|GuaranteedInvoiceConfig;
      */
     private $paymentMethod;
 
@@ -28,6 +29,7 @@ class GenericPaymentMethodStep extends GenericStep
         self::CREDIT_CARD => CreditCardConfig::class,
         self::CREDIT_CARD_ONE_CLICK => CreditCardConfig::class,
         self::PAY_PAL => PayPalConfig::class,
+        self::GUARANTEED_INVOICE => GuaranteedInvoiceConfig::class,
         self::ALIPAY_CROSS_BORDER => AlipayCrossBorderConfig::class
     ];
 
@@ -58,7 +60,7 @@ class GenericPaymentMethodStep extends GenericStep
     }
 
     /**
-     * @return GenericConfig| CreditCardConfig| PayPalConfig
+     * @return GenericConfig| CreditCardConfig| PayPalConfig| GuaranteedInvoiceConfig
      */
     public function getPaymentMethod()
     {

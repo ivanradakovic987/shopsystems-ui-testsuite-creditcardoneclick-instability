@@ -12,6 +12,7 @@ Feature: CreditCardInitialTransactionHappyPath
     And I prepare checkout with purchase sum <amount> in shop system as "guest customer"
     And I see "Wirecard Credit Card"
     And I start "CreditCard" payment
+    And I place the order and continue "CreditCard" payment
     When I fill "CreditCard" fields in the shop
     Then I see successful payment
     And I see "CreditCard" transaction type <transaction_type> in transaction table
@@ -27,6 +28,7 @@ Feature: CreditCardInitialTransactionHappyPath
     And I prepare checkout with purchase sum <amount> in shop system as "guest customer"
     And I see "Wirecard Credit Card"
     And I start "CreditCard" payment
+    And I place the order and continue "CreditCard" payment
     When I fill "CreditCard" fields in the shop
     And I perform "CreditCard" actions outside of the shop
     Then I see successful payment

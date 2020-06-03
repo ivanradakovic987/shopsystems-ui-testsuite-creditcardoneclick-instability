@@ -12,6 +12,7 @@ Feature: CreditCardOneClickInitialTransactionHappyPath
     And I prepare checkout with purchase sum <amount> in shop system as "registered customer"
     And I see "Wirecard Credit Card"
     And I start "CreditCard" payment
+    And I place the order and continue "CreditCard" payment
     And I fill "CreditCardOneClick" fields in the shop
     And I save "CreditCardOneClick" for later use
     When I perform "CreditCard" actions outside of the shop
@@ -19,6 +20,7 @@ Feature: CreditCardOneClickInitialTransactionHappyPath
     And I prepare checkout with purchase sum <amount> in shop system as "registered customer"
     And I see "Wirecard Credit Card"
     And I start "CreditCardOneClick" payment
+    And I place the order and continue "CreditCardOneClick" payment
     And I choose "CreditCardOneClick" from saved cards list
     And I perform "CreditCard" actions outside of the shop
     Then I see successful payment
