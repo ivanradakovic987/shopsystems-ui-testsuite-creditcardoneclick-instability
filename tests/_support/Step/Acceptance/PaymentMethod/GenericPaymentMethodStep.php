@@ -4,6 +4,7 @@ namespace Step\Acceptance\PaymentMethod;
 
 use Codeception\Scenario;
 use Helper\Config\GenericConfig;
+use Helper\Config\PaymentMethod\AlipayCrossBorderConfig;
 use Helper\Config\PaymentMethod\CreditCardConfig;
 use Helper\Config\PaymentMethod\GuaranteedInvoiceConfig;
 use Helper\Config\PaymentMethod\PayPalConfig;
@@ -28,7 +29,8 @@ class GenericPaymentMethodStep extends GenericStep
         self::CREDIT_CARD => CreditCardConfig::class,
         self::CREDIT_CARD_ONE_CLICK => CreditCardConfig::class,
         self::PAY_PAL => PayPalConfig::class,
-        self::GUARANTEED_INVOICE => GuaranteedInvoiceConfig::class
+        self::GUARANTEED_INVOICE => GuaranteedInvoiceConfig::class,
+        self::ALIPAY_CROSS_BORDER => AlipayCrossBorderConfig::class
     ];
 
     /**

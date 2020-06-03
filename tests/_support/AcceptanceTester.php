@@ -41,6 +41,8 @@ class AcceptanceTester extends Actor
 
     const GUARANTEED_INVOICE = 'guaranteedInvoice';
 
+    const ALIPAY_CROSS_BORDER = 'alipayCrossBorder';
+
     const REGISTERED_CUSTOMER = 'registered customer';
 
     //this is used to generate new class instance, so const doesn't work here
@@ -54,7 +56,9 @@ class AcceptanceTester extends Actor
         'CreditCard' => Step\Acceptance\PaymentMethod\CreditCardStep::class,
         'CreditCardOneClick' => Step\Acceptance\PaymentMethod\CreditCardOneClickStep::class,
         'PayPal' => Step\Acceptance\PaymentMethod\PayPalStep::class,
-        'GuaranteedInvoice' => Step\Acceptance\PaymentMethod\GuaranteedInvoiceStep::class
+        'GuaranteedInvoice' => Step\Acceptance\PaymentMethod\GuaranteedInvoiceStep::class,
+        'PayPal' => Step\Acceptance\PaymentMethod\PayPalStep::class,
+        'AlipayCrossBorder' => Step\Acceptance\PaymentMethod\AlipayCrossBorderStep::class
     ];
 
     /**
