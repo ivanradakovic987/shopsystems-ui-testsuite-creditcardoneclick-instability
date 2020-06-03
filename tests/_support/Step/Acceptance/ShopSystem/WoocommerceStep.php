@@ -330,23 +330,23 @@ class WoocommerceStep extends GenericShopSystemStep implements
                     static::SHIPPING_ZONE_LOCATIONS_CODE_COLUMN_NAME => $zoneRegions,
                     static::SHIPPING_ZONE_LOCATIONS_TYPE_COLUMN_NAME => $locationType]
             );
-        } else {
-            $zoneId = $this->grabFromDatabase(
-                static::SHIPPING_ZONES_TABLE_NAME,
-                static::SHIPPING_ZONE_ID_COLUMN_NAME,
-                [static::SHIPPING_ZONES_COLUMN_NAME => $zoneName]
-            );
-            $this->updateInDatabase(
-                static::SHIPPING_ZONE_METHODS_TABLE_NAME,
-                [static::SHIPPING_ZONE_METHODS_METHOD_ID_COLUMN_NAME => $shippingMethods],
-                [static::SHIPPING_ZONE_ID_COLUMN_NAME => $zoneId]
-            );
-            $this->updateInDatabase(
-                static::SHIPPING_ZONE_LOCATIONS_TABLE_NAME,
-                [static::SHIPPING_ZONE_LOCATIONS_CODE_COLUMN_NAME => $zoneRegions,
-                    static::SHIPPING_ZONE_LOCATIONS_TYPE_COLUMN_NAME => $locationType],
-                [static::SHIPPING_ZONE_ID_COLUMN_NAME => $zoneId]
-            );
+            return;
         }
+        $zoneId = $this->grabFromDatabase(
+            static::SHIPPING_ZONES_TABLE_NAME,
+            static::SHIPPING_ZONE_ID_COLUMN_NAME,
+            [static::SHIPPING_ZONES_COLUMN_NAME => $zoneName]
+        );
+        $this->updateInDatabase(
+            static::SHIPPING_ZONE_METHODS_TABLE_NAME,
+            [static::SHIPPING_ZONE_METHODS_METHOD_ID_COLUMN_NAME => $shippingMethods],
+            [static::SHIPPING_ZONE_ID_COLUMN_NAME => $zoneId]
+        );
+        $this->updateInDatabase(
+            static::SHIPPING_ZONE_LOCATIONS_TABLE_NAME,
+            [static::SHIPPING_ZONE_LOCATIONS_CODE_COLUMN_NAME => $zoneRegions,
+                    static::SHIPPING_ZONE_LOCATIONS_TYPE_COLUMN_NAME => $locationType],
+            [static::SHIPPING_ZONE_ID_COLUMN_NAME => $zoneId]
+        );
     }
 }

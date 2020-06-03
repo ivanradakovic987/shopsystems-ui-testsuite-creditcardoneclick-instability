@@ -320,13 +320,8 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
             }
         }
     }
-    /**
-     * @param $zoneName
-     * @param $zoneRegions
-     * @param $shippingMethods
-     * @param $locationType
-     */
-    public function configureShippingZone($zoneName, $zoneRegions, $shippingMethods, $locationType)
+
+    public function configureShippingZone()
     {
     }
 }
