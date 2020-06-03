@@ -1,3 +1,4 @@
 {
-  "confirm_transaction": "//*[@name='button.edit']"
+  "confirm_transaction": "//*[@name='button.edit']",
+  "ideal_bank_select": "//*[@name='ideal_bank_bic']"
 }

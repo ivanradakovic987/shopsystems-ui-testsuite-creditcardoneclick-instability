@@ -294,4 +294,13 @@ class AcceptanceTester extends Actor
             $this->paymentMethod = $this->createPaymentMethod($paymentMethod);
         }
     }
+
+    /**
+     * @When I place the order and continue :paymentMethod payment
+     * @param $paymentMethod
+     */
+    public function iPlaceTheOrderAndContinuePayment($paymentMethod) :void
+    {
+        $this->shopInstance->placeTheOrder($paymentMethod);
+    }
 }

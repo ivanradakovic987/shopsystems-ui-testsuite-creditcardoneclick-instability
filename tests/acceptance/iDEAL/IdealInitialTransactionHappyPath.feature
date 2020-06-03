@@ -12,6 +12,8 @@ Feature: iDealInitialTransaction
     And I prepare checkout with purchase sum "100" in shop system as "guest customer"
     And I see "Wirecard iDEAL"
     And I start "iDEAL" payment
+    When I fill "iDEAL" fields in the shop
+    And I place the order and continue "iDEAL" payment
     When I perform "iDEAL" actions outside of the shop
     Then I see successful payment
     And I see "iDEAL" transaction type <transaction_type> in transaction table
