@@ -336,5 +336,6 @@ class AcceptanceTester extends Actor
         if ($userType === static::ADMIN_USER) {
             $this->shopInstance->logInToAdministrationPanel();
         }
+        $this->shopInstance->activatePaymentMethod($paymentMethod);
     }
 }

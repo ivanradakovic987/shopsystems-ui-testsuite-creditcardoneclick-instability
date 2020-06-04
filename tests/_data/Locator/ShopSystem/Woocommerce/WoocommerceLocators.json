@@ -5,7 +5,8 @@
     "order_received": "order-received",
     "sign_in": "my-account/",
     "admin_login": "/wp-login.php",
-    "wp_admin": "/wp-admin"
+    "wp_admin": "/wp-admin",
+    "payments_creditcard": "/wp-admin/admin.php?page=wc-settings&tab=checkout&section=wirecard_ee_creditcard"
   },
   "product": {
     "price": "20",
@@ -48,5 +49,8 @@
     "user": "//*[@id='user_login']",
     "pass": "//*[@id='user_pass']",
     "login": "//*[@id='wp-submit']"
+  },
+  "settings_payments":{
+    "enabled": "//*[@id='woocommerce_wirecard_ee_creditcard_enabled']"
   }
 }

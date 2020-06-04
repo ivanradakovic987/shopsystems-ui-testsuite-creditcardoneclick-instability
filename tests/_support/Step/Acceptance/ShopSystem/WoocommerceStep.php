@@ -382,4 +382,18 @@ class WoocommerceStep extends GenericShopSystemStep implements
 
         $this->deleteFromDatabase(self::SETTINGS_TABLE_NAME, [self::NAME_COLUMN_NAME => $optionName]);
     }
+
+    /**
+     * @param $paymentMethod
+     */
+    public function activatePaymentMethod($paymentMethod)
+    {
+        $paymentMethodPageLocator  = 'payments_' . strtolower($paymentMethod);
+
+        $this->amOnPage($this->getLocator()->page->$paymentMethodPageLocator);
+
+        //TO DO: Ask Tatjana if this can be checked on following page instead on settings → Payments tab
+        $this->dontSeeCheckboxIsChecked($this->getLocator()->settings_payments->enabled);
+        $this->checkOption($this->getLocator()->settings_payments->enabled);
+    }
 }
