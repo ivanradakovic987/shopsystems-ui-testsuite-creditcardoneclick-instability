@@ -47,6 +47,44 @@ class WoocommerceStep extends GenericShopSystemStep implements
 
     const CUSTOMER_DATE_COLUMN_NAME = 'user_registered';
 
+    const SHIPPING_ZONES_TABLE_NAME = 'wp_woocommerce_shipping_zones';
+
+    const SHIPPING_ZONES_COLUMN_NAME = 'zone_name';
+
+    const SHIPPING_ZONE_ID_COLUMN_NAME = 'zone_id';
+
+    const SHIPPING_ZONES_ORDER_COLUMN_NAME = 'zone_order';
+
+    const SHIPPING_ZONE_METHODS_TABLE_NAME = 'wp_woocommerce_shipping_zone_methods';
+
+    const SHIPPING_ZONE_METHODS_METHOD_ID_COLUMN_NAME = 'method_id';
+
+    const SHIPPING_ZONE_METHODS_ORDER_COLUMN_NAME = 'method_order';
+
+    const SHIPPING_ZONE_METHODS_ENABLED_COLUMN_NAME = 'is_enabled';
+
+    const SHIPPING_ZONE_LOCATIONS_TABLE_NAME = 'wp_woocommerce_shipping_zone_locations';
+
+    const SHIPPING_ZONE_LOCATIONS_CODE_COLUMN_NAME = 'location_code';
+
+    const SHIPPING_ZONE_LOCATIONS_TYPE_COLUMN_NAME = 'location_type';
+
+    const CUSTOMER_META_TABLE = 'wp_usermeta';
+
+    const CUSTOMER_META_USER_ID_COLUMN_NAME = 'user_id';
+
+    const CUSTOMER_META_KEY_COLUMN_NAME = 'meta_key';
+
+    const CUSTOMER_META_VALUE_COLUMN_NAME = 'meta_value';
+
+    const CUSTOMER_META_KEY_BILLING_ADDRESS_VALUE = 'billing_address_1';
+
+    const CUSTOMER_META_KEY_SHIPPING_ADDRESS_VALUE = 'shipping_address_1';
+
+    const CUSTOMER_META_KEY_BILLING_COUNTRY_VALUE = 'billing_country';
+
+    const CUSTOMER_META_KEY_SHIPPING_COUNTRY_VALUE = 'shipping_country';
+
     /**
      * @param String $paymentMethod
      * @param String  $paymentAction
@@ -89,11 +127,12 @@ class WoocommerceStep extends GenericShopSystemStep implements
     }
 
     /**
+     * Method registers new user into User table and adds Billing and Shipping country and address into UsersMeta table
      */
     public function registerCustomer()
     {
         if ($this->isCustomerRegistered() !== true) {
-            $this->haveInDatabase(
+            $userId = $this->haveInDatabase(
                 static::CUSTOMER_TABLE,
                 [static::CUSTOMER_EMAIL_COLUMN_NAME => $this->getCustomer(
                     static::REGISTERED_CUSTOMER
@@ -107,6 +146,42 @@ class WoocommerceStep extends GenericShopSystemStep implements
                     static::CUSTOMER_DATE_COLUMN_NAME => date('Y-m-d h:i:s')
                 ]
             );
+            $this->haveInDatabase(
+                static::CUSTOMER_META_TABLE,
+                [static::CUSTOMER_META_USER_ID_COLUMN_NAME => $userId,
+                    static::CUSTOMER_META_KEY_COLUMN_NAME => self::CUSTOMER_META_KEY_BILLING_ADDRESS_VALUE,
+                    static::CUSTOMER_META_VALUE_COLUMN_NAME => $this->getCustomer(
+                        static::REGISTERED_CUSTOMER
+                    )->getStreetAddress()
+                ]
+            );
+            $this->haveInDatabase(
+                static::CUSTOMER_META_TABLE,
+                [static::CUSTOMER_META_USER_ID_COLUMN_NAME => $userId,
+                    static::CUSTOMER_META_KEY_COLUMN_NAME => self::CUSTOMER_META_KEY_SHIPPING_ADDRESS_VALUE,
+                    static::CUSTOMER_META_VALUE_COLUMN_NAME => $this->getCustomer(
+                        static::REGISTERED_CUSTOMER
+                    )->getStreetAddress()
+                ]
+            );
+            $this->haveInDatabase(
+                static::CUSTOMER_META_TABLE,
+                [static::CUSTOMER_META_USER_ID_COLUMN_NAME => $userId,
+                    static::CUSTOMER_META_KEY_COLUMN_NAME => self::CUSTOMER_META_KEY_BILLING_COUNTRY_VALUE,
+                    static::CUSTOMER_META_VALUE_COLUMN_NAME => $this->getCustomer(
+                        static::REGISTERED_CUSTOMER
+                    )->getCountryId()
+                ]
+            );
+            $this->haveInDatabase(
+                static::CUSTOMER_META_TABLE,
+                [static::CUSTOMER_META_USER_ID_COLUMN_NAME => $userId,
+                    static::CUSTOMER_META_KEY_COLUMN_NAME => self::CUSTOMER_META_KEY_SHIPPING_COUNTRY_VALUE,
+                    static::CUSTOMER_META_VALUE_COLUMN_NAME => $this->getCustomer(
+                        static::REGISTERED_CUSTOMER
+                    )->getCountryId()
+                ]
+            );
         }
     }
 
@@ -116,7 +191,9 @@ class WoocommerceStep extends GenericShopSystemStep implements
      */
     public function startPayment($paymentMethod): void
     {
-        $paymentMethod = $this->getActingPaymentMethod($paymentMethod);
+        if (strcasecmp($paymentMethod, static::GUARANTEED_INVOICE) !== 0) {
+            $paymentMethod = $this->getActingPaymentMethod($paymentMethod);
+        }
         $this->wait(2);
         $paymentMethodRadioButtonLocator  = 'wirecard_' . strtolower($paymentMethod);
         $this->preparedClick($this->getLocator()->checkout->$paymentMethodRadioButtonLocator);
@@ -208,5 +285,68 @@ class WoocommerceStep extends GenericShopSystemStep implements
         if (strcasecmp($paymentMethod, static::CREDIT_CARD) === 0) {
             $this->startCreditCardPayment($paymentMethod);
         }
+    }
+
+    /**
+     * @param $zoneName
+     * @param $zoneRegions
+     * @param $shippingMethods
+     * @param $locationType
+     */
+    public function configureShippingZone($zoneName, $zoneRegions, $shippingMethods, $locationType)
+    {
+        $this->putShippingZoneInDatabase($zoneName, $zoneRegions, $shippingMethods, $locationType);
+    }
+
+    /**
+     * @param $zoneName
+     * @param $zoneRegions
+     * @param $shippingMethods
+     * @param $locationType
+     */
+    public function putShippingZoneInDatabase($zoneName, $zoneRegions, $shippingMethods, $locationType)
+    {
+        // check if zone already exists in database
+        if (!$this->grabFromDatabase(
+            static::SHIPPING_ZONES_TABLE_NAME,
+            static::SHIPPING_ZONES_COLUMN_NAME,
+            [static::SHIPPING_ZONES_COLUMN_NAME => $zoneName]
+        )) {
+            $zoneId = $this->haveInDatabase(
+                static::SHIPPING_ZONES_TABLE_NAME,
+                [static::SHIPPING_ZONES_COLUMN_NAME => $zoneName,
+                    static::SHIPPING_ZONES_ORDER_COLUMN_NAME => 0]
+            );
+            $this->haveInDatabase(
+                static::SHIPPING_ZONE_METHODS_TABLE_NAME,
+                [static::SHIPPING_ZONE_ID_COLUMN_NAME => $zoneId,
+                    static::SHIPPING_ZONE_METHODS_METHOD_ID_COLUMN_NAME => $shippingMethods,
+                    static::SHIPPING_ZONE_METHODS_ORDER_COLUMN_NAME => 1,
+                    static::SHIPPING_ZONE_METHODS_ENABLED_COLUMN_NAME => 1]
+            );
+            $this->haveInDatabase(
+                static::SHIPPING_ZONE_LOCATIONS_TABLE_NAME,
+                [static::SHIPPING_ZONE_ID_COLUMN_NAME => $zoneId,
+                    static::SHIPPING_ZONE_LOCATIONS_CODE_COLUMN_NAME => $zoneRegions,
+                    static::SHIPPING_ZONE_LOCATIONS_TYPE_COLUMN_NAME => $locationType]
+            );
+            return;
+        }
+        $zoneId = $this->grabFromDatabase(
+            static::SHIPPING_ZONES_TABLE_NAME,
+            static::SHIPPING_ZONE_ID_COLUMN_NAME,
+            [static::SHIPPING_ZONES_COLUMN_NAME => $zoneName]
+        );
+        $this->updateInDatabase(
+            static::SHIPPING_ZONE_METHODS_TABLE_NAME,
+            [static::SHIPPING_ZONE_METHODS_METHOD_ID_COLUMN_NAME => $shippingMethods],
+            [static::SHIPPING_ZONE_ID_COLUMN_NAME => $zoneId]
+        );
+        $this->updateInDatabase(
+            static::SHIPPING_ZONE_LOCATIONS_TABLE_NAME,
+            [static::SHIPPING_ZONE_LOCATIONS_CODE_COLUMN_NAME => $zoneRegions,
+                    static::SHIPPING_ZONE_LOCATIONS_TYPE_COLUMN_NAME => $locationType],
+            [static::SHIPPING_ZONE_ID_COLUMN_NAME => $zoneId]
+        );
     }
 }

@@ -41,6 +41,10 @@ class AcceptanceTester extends Actor
 
     const IDEAL = 'iDEAL';
 
+    const GUARANTEED_INVOICE = 'guaranteedInvoice';
+
+    const ALIPAY_CROSS_BORDER = 'alipayCrossBorder';
+
     const REGISTERED_CUSTOMER = 'registered customer';
 
     //this is used to generate new class instance, so const doesn't work here
@@ -54,7 +58,9 @@ class AcceptanceTester extends Actor
         'CreditCard' => Step\Acceptance\PaymentMethod\CreditCardStep::class,
         'CreditCardOneClick' => Step\Acceptance\PaymentMethod\CreditCardOneClickStep::class,
         'PayPal' => Step\Acceptance\PaymentMethod\PayPalStep::class,
-        'iDEAL' => Step\Acceptance\PaymentMethod\IdealStep::class
+        'iDEAL' => Step\Acceptance\PaymentMethod\IdealStep::class,
+        'GuaranteedInvoice' => Step\Acceptance\PaymentMethod\GuaranteedInvoiceStep::class,
+        'AlipayCrossBorder' => Step\Acceptance\PaymentMethod\AlipayCrossBorderStep::class
     ];
 
     /**
@@ -157,7 +163,8 @@ class AcceptanceTester extends Actor
     {
         $this->createPaymentMethodIfNeeded($paymentMethod);
         $this->paymentMethod->fillFieldsInTheShop();
-        if (strcasecmp($paymentMethod, static::CREDIT_CARD_ONE_CLICK) !== 0) {
+        if (strcasecmp($paymentMethod, static::CREDIT_CARD_ONE_CLICK) !== 0 &&
+            strcasecmp($paymentMethod, static::GUARANTEED_INVOICE) !== 0) {
             $this->shopInstance->proceedWithPayment($paymentMethod);
         }
     }
@@ -261,6 +268,12 @@ class AcceptanceTester extends Actor
             $this->configData->default_country
         );
         $shopInstance->registerCustomer();
+        $shopInstance->configureShippingZone(
+            $this->configData->shipping_zone_name,
+            $this->configData->shipping_zone_region,
+            $this->configData->shipping_zone_method,
+            $this->configData->shipping_zone_location_type
+        );
         return $shopInstance;
     }
 

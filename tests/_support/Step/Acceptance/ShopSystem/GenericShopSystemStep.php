@@ -29,7 +29,7 @@ class GenericShopSystemStep extends GenericStep
     /**
      * @var array
      */
-    private $redirectPaymentMethods = ['PayPal', 'iDEAL'];
+    private $redirectPaymentMethods = ['PayPal', 'iDEAL','AlipayCrossBorder'];
 
     /**
      * GenericStep constructor.
@@ -179,6 +179,9 @@ class GenericShopSystemStep extends GenericStep
      */
     public function validateTransactionInDatabase($paymentMethod, $paymentAction): void
     {
+        if (strcasecmp($paymentMethod, static::GUARANTEED_INVOICE) === 0) {
+            $paymentMethod = $this->getActingPaymentMethod($paymentMethod);
+        }
         $this->waitUntil(80, [$this, 'checkPaymentActionInTransactionTable'], [$paymentMethod, $paymentAction]);
         $this->assertEquals($this->checkPaymentActionInTransactionTable([$paymentMethod, $paymentAction]), true);
     }
@@ -263,22 +266,9 @@ class GenericShopSystemStep extends GenericStep
         if (strcasecmp($paymentMethod, static::CREDIT_CARD_ONE_CLICK) === 0) {
             return 'CreditCard';
         }
-        return $paymentMethod;
-    }
-
-    /**
-     * @param $paymentMethod
-     * @param $bank
-     * @throws Exception
-     */
-    public function selectBank($paymentMethod, $bank): void
-    {
-        if (strcasecmp($paymentMethod, static::IDEAL) === 0) {
-            //select bank from combobox
-            $this->preparedSelectOption(
-                $this->getLocator()->checkout->ideal_bank_select,
-                $bank
-            );
+        if (strcasecmp($paymentMethod, static::GUARANTEED_INVOICE) === 0) {
+            return 'Invoice';
         }
+        return $paymentMethod;
     }
 }

@@ -7,5 +7,11 @@
   "creditcard_data": "CreditCardData.json",
   "creditcardoneclick_data": "CreditCardOneClickData.json",
   "paypal_data": "PayPalData.json",
-  "ideal_data": "IdealData.json"
+  "ideal_data": "IdealData.json",
+  "alipaycrossborder_data": "AlipayCrossBorderData.json",
+  "guaranteedinvoice_data": "GuaranteedInvoiceData.json",
+  "shipping_zone_name": "AUT",
+  "shipping_zone_region": "AT",
+  "shipping_zone_method": "flat_rate",
+  "shipping_zone_location_type": "country"
 }

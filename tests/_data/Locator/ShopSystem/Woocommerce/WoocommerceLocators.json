@@ -30,7 +30,9 @@
     "wirecard_paypal":  "//*[@id='payment']/ul/li[contains(@class, 'paypal')]",
     "wirecard_ideal": "//*[@id='payment']/ul/li[contains(@class, 'ideal')]",
     "ideal_bank_select": "//*[@name='ideal_bank_bic']",
-    "ideal_bank_option": "ING"
+    "ideal_bank_option": "ING",
+    "wirecard_guaranteedinvoice": "//*[@class='wc_payment_method payment_method_wirecard_ee_invoice']",
+    "wirecard_alipaycrossborder": "//*[@class='wc_payment_method payment_method_wirecard_ee_alipay-xborder']"
   },
   "order_pay": {
     "pay": "//*[@id='seamless-submit']"

@@ -29,5 +29,23 @@
     "tx_table": {
       "debit": "debit"
     }
+  },
+  "Invoice": {
+    "config": {
+      "row": "payment_action",
+      "reserve": "reserve"
+    },
+    "tx_table": {
+      "authorization": "authorization"
+    }
+  },
+  "Alipay-Xborder": {
+    "config": {
+      "row": "payment_action",
+      "debit": "debit"
+    },
+    "tx_table": {
+      "debit": "debit"
+    }
   }
 }

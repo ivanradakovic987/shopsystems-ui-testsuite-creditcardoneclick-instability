@@ -1,0 +1,4 @@
+{
+  "date_of_birth": "//*[@id='invoice_date_of_birth']",
+  "terms_and_conditions": "//*[@id='invoice_data_protection']"
+}
