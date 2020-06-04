@@ -318,9 +318,18 @@ class AcceptanceTester extends Actor
     }
 
     /**
+     * @Given I deactivate :paymentMethod payment method in configuration
+     * @param $paymentMethod
+     */
+    public function iDeactivatePaymentMethodInConfiguration($paymentMethod): void
+    {
+        $this->shopInstance->deletePaymentMethodFromDb($paymentMethod);
+    }
+
+    /**
      * @Then I go into the configuration mask as :userType and activate :paymentMethod method
-     * param $userType
-     * param $paymentMethod
+     * @param $userType
+     * @param $paymentMethod
      */
     public function iGoIntoTheConfigurationMaskAsAndActivateMethod($userType, $paymentMethod): void
     {
