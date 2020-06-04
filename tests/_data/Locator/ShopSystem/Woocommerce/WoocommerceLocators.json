@@ -3,7 +3,9 @@
     "product": "/product/polo/",
     "checkout": "/checkout",
     "order_received": "order-received",
-    "sign_in": "my-account/"
+    "sign_in": "my-account/",
+    "admin_login": "/wp-login.php",
+    "wp_admin": "/wp-admin"
   },
   "product": {
     "price": "20",
@@ -41,5 +43,10 @@
     "email": "//*[@id='username']",
     "password": "//*[@name='password']",
     "sign_in": "//*[@name='login']"
+  },
+  "wordpress_sign_in": {
+    "user": "//*[@id='user_login']",
+    "pass": "//*[@id='user_pass']",
+    "login": "//*[@id='wp-submit']"
   }
 }

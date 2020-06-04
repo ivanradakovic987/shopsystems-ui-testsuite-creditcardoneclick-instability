@@ -45,6 +45,8 @@ class AcceptanceTester extends Actor
 
     const REGISTERED_CUSTOMER = 'registered customer';
 
+    const ADMIN_USER = 'admin user';
+
     //this is used to generate new class instance, so const doesn't work here
     private $shopInstanceMap = [
         'prestashop' => Step\Acceptance\ShopSystem\PrestashopStep::class,
@@ -57,7 +59,6 @@ class AcceptanceTester extends Actor
         'CreditCardOneClick' => Step\Acceptance\PaymentMethod\CreditCardOneClickStep::class,
         'PayPal' => Step\Acceptance\PaymentMethod\PayPalStep::class,
         'GuaranteedInvoice' => Step\Acceptance\PaymentMethod\GuaranteedInvoiceStep::class,
-        'PayPal' => Step\Acceptance\PaymentMethod\PayPalStep::class,
         'AlipayCrossBorder' => Step\Acceptance\PaymentMethod\AlipayCrossBorderStep::class
     ];
 
@@ -260,7 +261,8 @@ class AcceptanceTester extends Actor
         $shopInstance = new $this->shopInstanceMap[$shopSystemName]($this->getScenario(),
                                                                     $this->gateway,
                                                                     $this->configData->guest_customer_data,
-                                                                    $this->configData->registered_customer_data);
+                                                                    $this->configData->registered_customer_data,
+                                                                    $this->configData->admin_data);
         $shopInstance->configureShopSystemCurrencyAndCountry(
             $this->configData->currency,
             $this->configData->default_country
@@ -313,5 +315,17 @@ class AcceptanceTester extends Actor
     public function iPlaceTheOrderAndContinuePayment($paymentMethod) :void
     {
         $this->shopInstance->placeTheOrder($paymentMethod);
+    }
+
+    /**
+     * @Then I go into the configuration mask as :userType and activate :paymentMethod method
+     * param $userType
+     * param $paymentMethod
+     */
+    public function iGoIntoTheConfigurationMaskAsAndActivateMethod($userType, $paymentMethod): void
+    {
+        if ($userType === static::ADMIN_USER) {
+            $this->shopInstance->logInToAdministrationPanel();
+        }
     }
 }

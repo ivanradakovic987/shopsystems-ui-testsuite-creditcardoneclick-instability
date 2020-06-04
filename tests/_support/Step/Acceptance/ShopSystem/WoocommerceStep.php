@@ -349,4 +349,26 @@ class WoocommerceStep extends GenericShopSystemStep implements
             [static::SHIPPING_ZONE_ID_COLUMN_NAME => $zoneId]
         );
     }
+
+    /**
+     * @throws Exception
+     */
+    public function logInToAdministrationPanel()
+    {
+        $this->amOnPage($this->getLocator()->page->admin_login);
+        try {
+            $this->preparedFillField(
+                $this->getLocator()->wordpress_sign_in->user,
+                $this->getCustomer(static::ADMIN_USER)->getEmailAddress(),
+                10
+            );
+            $this->preparedFillField(
+                $this->getLocator()->wordpress_sign_in->pass,
+                $this->getCustomer(static::ADMIN_USER)->getPassword()
+            );
+            $this->preparedClick($this->getLocator()->wordpress_sign_in->login, 60);
+        } catch (NoSuchElementException $e) {
+            $this->amOnPage($this->getLocator()->page->admin_login);
+        }
+    }
 }
