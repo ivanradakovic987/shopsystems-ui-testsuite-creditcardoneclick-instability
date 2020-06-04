@@ -12,6 +12,7 @@ Feature: PayPalInitialTransaction
     And I prepare checkout with purchase sum "100" in shop system as "guest customer"
     And I see "Wirecard PayPal"
     And I start "PayPal" payment
+    And I place the order and continue "PayPal" payment
     When I perform "PayPal" actions outside of the shop
     Then I see successful payment
     And I see "PayPal" transaction type <transaction_type> in transaction table
