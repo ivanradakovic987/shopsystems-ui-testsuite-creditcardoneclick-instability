@@ -31,4 +31,29 @@ class DbHelper extends Module
         $sth->execute();
         return $sth->fetchAll(PDO::FETCH_COLUMN, 0);
     }
+
+    /**
+     * Delete entries from $table where $criteria conditions
+     * Use: $I->deleteFromDatabase('users', ['id' => '111111', 'banned' => 'yes']);
+     *
+     * @param string $table
+     * @param array $criteria
+     * @return boolean
+     * @throws ModuleException
+     */
+    public function deleteFromDatabase($table, $criteria)
+    {
+        $dbh = $this->getModule('Db')->dbh;
+        $query = "delete from %s where %s";
+        $params = [];
+        foreach ($criteria as $k => $v) {
+            $params[] = "$k = ?";
+        }
+        $params = implode(' AND ', $params);
+        $query = sprintf($query, $table, $params);
+        $this->debugSection('Query', $query, json_encode($criteria));
+        $sth = $dbh->prepare($query);
+
+        return $sth->execute(array_values($criteria));
+    }
 }

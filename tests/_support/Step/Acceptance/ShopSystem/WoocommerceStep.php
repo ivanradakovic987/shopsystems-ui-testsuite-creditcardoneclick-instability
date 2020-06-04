@@ -371,4 +371,15 @@ class WoocommerceStep extends GenericShopSystemStep implements
             $this->amOnPage($this->getLocator()->page->admin_login);
         }
     }
+
+    /**
+     * @param $paymentMethod
+     */
+    public function deletePaymentMethodFromDb($paymentMethod)
+    {
+        $actingPaymentMethod = $this->getActingPaymentMethod($paymentMethod);
+        $optionName = self::WIRECARD_OPTION_NAME . strtolower($actingPaymentMethod) . '_settings';
+
+        $this->deleteFromDatabase(self::SETTINGS_TABLE_NAME, [self::NAME_COLUMN_NAME => $optionName]);
+    }
 }
