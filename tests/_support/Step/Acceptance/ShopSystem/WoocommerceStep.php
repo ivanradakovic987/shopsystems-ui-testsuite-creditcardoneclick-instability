@@ -388,12 +388,50 @@ class WoocommerceStep extends GenericShopSystemStep implements
      */
     public function activatePaymentMethod($paymentMethod)
     {
-        $paymentMethodPageLocator  = 'payments_' . strtolower($paymentMethod);
+        // STEPS 1 and 2 are disabled because xpath locator is used for slider control
+//        $this->amOnPage($this->getLocator()->page->payments);
+        //STEP 1: Check in the settings → Payments tab that Wirecard Credit Card is not enabled
+//        $this->dontSeeCheckboxIsChecked($this->getLocator()->settings_payments->slider);
+        //STEP 2: activate the Wirecard Credit Card method
+//        $this->checkOption($this->getLocator()->settings_payments->slider);
 
+        $paymentMethodPageLocator  = 'payments_' . strtolower($paymentMethod);
         $this->amOnPage($this->getLocator()->page->$paymentMethodPageLocator);
 
-        //TO DO: Ask Tatjana if this can be checked on following page instead on settings → Payments tab
+        //STEP 1: WORKAROUND - perform check on creditcard payment page
         $this->dontSeeCheckboxIsChecked($this->getLocator()->settings_payments->enabled);
+        //STEP 2: WORKAROUND
         $this->checkOption($this->getLocator()->settings_payments->enabled);
+    }
+
+    public function fillPaymentMethodFields($paymentMethod)
+    {
+        switch (strtolower($paymentMethod)) {
+            case strtolower(self::CREDIT_CARD):
+                $this->fillCreditCardFields();
+                break;
+        }
+    }
+
+    public function fillCreditCardFields()
+    {
+        $this->preparedFillField($this->getLocator()->settings_creditcard_payment->title, "blabla");
+        $this->preparedFillField($this->getLocator()->settings_creditcard_payment->merchant_id, "blabla");
+        $this->preparedFillField($this->getLocator()->settings_creditcard_payment->secret_key, "blabla");
+        $this->preparedFillField($this->getLocator()->settings_creditcard_payment->three_d_secret, "blabla");
+        $this->preparedFillField($this->getLocator()->settings_creditcard_payment->non_three_d_max_limit, "blabla");
+        $this->preparedFillField($this->getLocator()->settings_creditcard_payment->three_d_min_limit, "blabla");
+        $this->preparedFillField($this->getLocator()->settings_creditcard_payment->server_url, "blabla");
+        $this->preparedFillField($this->getLocator()->settings_creditcard_payment->base_url, "blabla");
+        $this->preparedFillField($this->getLocator()->settings_creditcard_payment->username, "blabla");
+        $this->preparedFillField($this->getLocator()->settings_creditcard_payment->password, "blabla");
+        $this->preparedSelectOption($this->getLocator()->settings_creditcard_payment->payment_action, "Purchase");
+        $this->preparedSelectOption($this->getLocator()->settings_creditcard_payment->challenge_indicator, "No preference");
+        //TO DO: CREATE PREPAREDCHECKOPTION()
+        $this->checkOption($this->getLocator()->settings_creditcard_payment->descriptor);
+        $this->checkOption($this->getLocator()->settings_creditcard_payment->additional_info);
+        $this->checkOption($this->getLocator()->settings_creditcard_payment->enable_one_click);
+
+        $this->preparedClick($this->getLocator()->settings_creditcard_payment->save_changes);
     }
 }

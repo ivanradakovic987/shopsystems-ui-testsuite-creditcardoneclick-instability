@@ -6,7 +6,8 @@
     "sign_in": "my-account/",
     "admin_login": "/wp-login.php",
     "wp_admin": "/wp-admin",
-    "payments_creditcard": "/wp-admin/admin.php?page=wc-settings&tab=checkout&section=wirecard_ee_creditcard"
+    "payments_creditcard": "/wp-admin/admin.php?page=wc-settings&tab=checkout&section=wirecard_ee_creditcard",
+    "payments": "/wp-admin/admin.php?page=wc-settings&tab=checkout"
   },
   "product": {
     "price": "20",
@@ -51,6 +52,26 @@
     "login": "//*[@id='wp-submit']"
   },
   "settings_payments":{
-    "enabled": "//*[@id='woocommerce_wirecard_ee_creditcard_enabled']"
+    "enabled": "//*[@id='woocommerce_wirecard_ee_creditcard_enabled']",
+    "slider": "//*[contains(@data-gateway_id, 'wirecard_ee_creditcard')]/td/a/span[contains(@class, 'woocommerce-input-toggle woocommerce-input-toggle--disabled')]"
+  },
+  "settings_creditcard_payment":{
+    "title": "//input[@id='woocommerce_wirecard_ee_creditcard_title']",
+    "merchant_id": "//input[@id='woocommerce_wirecard_ee_creditcard_merchant_account_id']",
+    "secret_key": "//input[@id='woocommerce_wirecard_ee_creditcard_secret']",
+    "three_d_secret": "//input[@id='woocommerce_wirecard_ee_creditcard_three_d_secret']",
+    "non_three_d_max_limit": "//input[@id='woocommerce_wirecard_ee_creditcard_ssl_max_limit']",
+    "three_d_min_limit": "//input[@id='woocommerce_wirecard_ee_creditcard_three_d_min_limit']",
+    "server_url": "//input[@id='woocommerce_wirecard_ee_creditcard_base_url']",
+    "base_url": "//input[@id='woocommerce_wirecard_ee_creditcard_base_url']",
+    "username": "//input[@id='woocommerce_wirecard_ee_creditcard_http_user']",
+    "password": "//input[@id='woocommerce_wirecard_ee_creditcard_http_pass']",
+    "test_credentials": "//button[@id='woocommerce_wirecard_ee_creditcard_test_button']",
+    "payment_action": "//select[@id='woocommerce_wirecard_ee_creditcard_payment_action']",
+    "challenge_indicator": "//select[@id='woocommerce_wirecard_ee_creditcard_challenge_indicator']",
+    "descriptor": "//input[@id='woocommerce_wirecard_ee_creditcard_descriptor']",
+    "additional_info": "//input[@id='woocommerce_wirecard_ee_creditcard_send_additional']",
+    "enable_one_click": "//input[@id='woocommerce_wirecard_ee_creditcard_cc_vault_enabled']",
+    "save_changes": "//button[@class='button-primary woocommerce-save-button']"
   }
 }

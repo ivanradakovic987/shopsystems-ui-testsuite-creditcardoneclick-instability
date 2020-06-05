@@ -9,7 +9,8 @@ Feature: CreditCardConfigurationHappyPath
   Scenario Outline: initial transaction Non 3DS
     Given I deactivate "CreditCard" payment method in configuration
     # Check in the settings → Payments tab that Wirecard Credit Card is not enabled
-    Then I go into the configuration mask as "admin user" and activate "CreditCard" method
+    When I go into the configuration mask as "admin user" and activate "CreditCard" method
+    And I enter valid "CreditCard" data into all fields and enable all checkboxes
 #    And I see "Wirecard Credit Card"
 #    And I start "CreditCard" payment
 #    And I place the order and continue "CreditCard" payment
