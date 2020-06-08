@@ -340,11 +340,12 @@ class AcceptanceTester extends Actor
     }
 
     /**
-     * @When I enter valid :paymentMethod data into all fields and enable all checkboxes
+     * @When I enter valid :paymentMethod data for payment action :paymentAction into all fields and enable all checkboxes
      * @param $paymentMethod
+     * @param $paymentAction
      */
-    public function iEnterValidDataIntoAllFieldsAndEnableAllCheckboxes($paymentMethod): void
+    public function iEnterValidDataForPaymentActionIntoAllFieldsAndEnableAllCheckboxes($paymentMethod, $paymentAction): void
     {
-        $this->shopInstance->fillPaymentMethodFields($paymentMethod);
+        $this->shopInstance->fillPaymentMethodFields($paymentMethod, $paymentAction);
     }
 }
