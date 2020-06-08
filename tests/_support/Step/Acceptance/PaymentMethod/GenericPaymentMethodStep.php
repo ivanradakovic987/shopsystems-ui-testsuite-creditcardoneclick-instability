@@ -9,6 +9,7 @@ use Helper\Config\PaymentMethod\CreditCardConfig;
 use Helper\Config\PaymentMethod\IdealConfig;
 use Helper\Config\PaymentMethod\GuaranteedInvoiceConfig;
 use Helper\Config\PaymentMethod\PayPalConfig;
+use Helper\Config\PaymentMethod\SofortConfig;
 use Step\Acceptance\GenericStep;
 use Helper\Config\FileSytem;
 
@@ -32,7 +33,8 @@ class GenericPaymentMethodStep extends GenericStep
         self::PAY_PAL => PayPalConfig::class,
         self::IDEAL => IdealConfig::class,
         self::GUARANTEED_INVOICE => GuaranteedInvoiceConfig::class,
-        self::ALIPAY_CROSS_BORDER => AlipayCrossBorderConfig::class
+        self::ALIPAY_CROSS_BORDER => AlipayCrossBorderConfig::class,
+        self::SOFORT => SofortConfig::class
     ];
 
     /**
@@ -62,7 +64,7 @@ class GenericPaymentMethodStep extends GenericStep
     }
 
     /**
-     * @return GenericConfig| CreditCardConfig| PayPalConfig| IdealConfig| GuaranteedInvoiceConfig
+     * @return GenericConfig| CreditCardConfig| PayPalConfig| IdealConfig| GuaranteedInvoiceConfig| SofortConfig
      */
     public function getPaymentMethod()
     {
