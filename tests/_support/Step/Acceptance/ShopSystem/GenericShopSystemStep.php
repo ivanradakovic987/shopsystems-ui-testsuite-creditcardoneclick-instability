@@ -29,7 +29,7 @@ class GenericShopSystemStep extends GenericStep
     /**
      * @var array
      */
-    private $redirectPaymentMethods = ['PayPal','AlipayCrossBorder'];
+    private $redirectPaymentMethods = ['PayPal', 'iDEAL','AlipayCrossBorder'];
 
     /**
      * GenericStep constructor.
