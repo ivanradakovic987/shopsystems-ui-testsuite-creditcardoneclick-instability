@@ -162,4 +162,14 @@ class GenericStep extends AcceptanceTester
         $this->waitForElementClickable($element, $timeout);
         $this->checkOption($element);
     }
+
+    public function isCheckboxChecked($locator): bool
+    {
+        try {
+            $this->seeCheckboxIsChecked($locator);
+            return true;
+        } catch (AssertionFailedError $e) {
+            return  false;
+        }
+    }
 }

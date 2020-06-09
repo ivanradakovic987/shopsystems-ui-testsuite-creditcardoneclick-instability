@@ -437,7 +437,9 @@ class WoocommerceStep extends GenericShopSystemStep implements
             } elseif (array_key_exists($name.'_check', $this->getLocator()->$paymentMethodPageLocator)) {
                 $locator = $name . '_check';
                 // All fields should be checked according to test-case
-                $this->preparedCheckOption($this->getLocator()->$paymentMethodPageLocator->$locator);
+                if (!$this->isCheckboxChecked($this->getLocator()->$paymentMethodPageLocator->$locator)) {
+                    $this->preparedCheckOption($this->getLocator()->$paymentMethodPageLocator->$locator);
+                }
             }
         }
         $this->preparedClick($this->getLocator()->$paymentMethodPageLocator->save_changes_button);
