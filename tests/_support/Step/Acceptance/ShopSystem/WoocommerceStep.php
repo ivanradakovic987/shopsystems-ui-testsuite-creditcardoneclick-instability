@@ -382,4 +382,55 @@ class WoocommerceStep extends GenericShopSystemStep implements
 
         $this->deleteFromDatabase(self::SETTINGS_TABLE_NAME, [self::NAME_COLUMN_NAME => $optionName]);
     }
+
+    /**
+     * @param $paymentMethod
+     */
+    public function activatePaymentMethod($paymentMethod)
+    {
+        $this->amOnPage($this->getLocator()->page->payments);
+        $this->dontSeeCheckboxIsChecked($this->getLocator()->settings_payments->slider);
+        $this->checkOption($this->getLocator()->settings_payments->slider);
+
+        $this->preparedClick($this->getLocator()->settings_payments->set_up);
+        $paymentMethodPageLocator  = 'payments_' . strtolower($paymentMethod);
+        $this->waitUntil(60, [$this, 'waitUntilPageLoaded'], [$this->getLocator()->page->$paymentMethodPageLocator]);
+    }
+
+    public function fillPaymentMethodFields($paymentMethod, $paymentAction, $txType)
+    {
+        $actingPaymentMethod = $this->getActingPaymentMethod($paymentMethod);
+        // take data from payment method's configuration file
+        $paymentMethodConfig = $this->buildPaymentMethodConfig(
+            $actingPaymentMethod,
+            $paymentAction,
+            $this->getMappedPaymentActions(),
+            $this->getGateway()
+        );
+
+        $paymentMethodPageLocator  = 'settings_' . strtolower($paymentMethod) . '_payment';
+        foreach ($paymentMethodConfig as $name => $value) {
+            // check the type of element based on name of locator
+            if (array_key_exists($name . '_text', $this->getLocator()->$paymentMethodPageLocator)) {
+                $locator = $name . '_text';
+                $this->preparedFillField($this->getLocator()->$paymentMethodPageLocator->$locator, $value);
+            } elseif (array_key_exists($name.'_select', $this->getLocator()->$paymentMethodPageLocator)) {
+                $locator = $name . '_select';
+                //payment action should be taken from parameter
+                if ($name == 'payment_action') {
+                    $this->preparedSelectOption(
+                        $this->getLocator()->$paymentMethodPageLocator->$locator,
+                        ucfirst(strtolower($txType))
+                    );
+                } else {
+                    $this->preparedSelectOption($this->getLocator()->$paymentMethodPageLocator->$locator, $value);
+                }
+            } elseif (array_key_exists($name.'_check', $this->getLocator()->$paymentMethodPageLocator)) {
+                $locator = $name . '_check';
+                // All fields should be checked according to test-case
+                $this->preparedCheckOption($this->getLocator()->$paymentMethodPageLocator->$locator);
+            }
+        }
+        $this->preparedClick($this->getLocator()->$paymentMethodPageLocator->save_changes_button);
+    }
 }

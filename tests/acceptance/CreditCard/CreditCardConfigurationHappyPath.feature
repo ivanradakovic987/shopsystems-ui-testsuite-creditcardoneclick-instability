@@ -8,8 +8,8 @@ Feature: CreditCardConfigurationHappyPath
   @woocommerce @test
   Scenario Outline: initial transaction Non 3DS
     Given I deactivate "CreditCard" payment method in configuration
-    # Check in the settings → Payments tab that Wirecard Credit Card is not enabled
-    Then I go into the configuration mask as "admin user" and activate "CreditCard" method
+    When I go into the configuration mask as "admin user" and activate "CreditCard" method
+    And I fill fields with "CreditCard" data for payment action <payment_action> and transaction type <transaction_type>
 #    And I see "Wirecard Credit Card"
 #    And I start "CreditCard" payment
 #    And I place the order and continue "CreditCard" payment
@@ -20,4 +20,4 @@ Feature: CreditCardConfigurationHappyPath
     Examples:
       | payment_action  | amount | transaction_type |
       |    "reserve"    |  "20"  |  "authorization" |
-
+      |      "pay"      |  "20"  |    "purchase"    |

@@ -139,4 +139,15 @@ class GenericStep extends AcceptanceTester
     {
         return $this->locator;
     }
+
+    /**
+     * @param $element
+     * @param int $timeout
+     * @throws Exception
+     */
+    public function preparedCheckOption($element, $timeout = 30): void
+    {
+        $this->waitForElementClickable($element, $timeout);
+        $this->checkOption($element);
+    }
 }

@@ -336,5 +336,17 @@ class AcceptanceTester extends Actor
         if ($userType === static::ADMIN_USER) {
             $this->shopInstance->logInToAdministrationPanel();
         }
+        $this->shopInstance->activatePaymentMethod($paymentMethod);
+    }
+
+    /**
+     * @When I fill fields with :paymentMethod data for payment action :paymentAction and transaction type :txType
+     * @param $paymentMethod
+     * @param $paymentAction
+     * @param $txType
+     */
+    public function iFillFieldsWithDataForPaymentActionAndTransactionType($paymentMethod, $paymentAction, $txType)
+    {
+        $this->shopInstance->fillPaymentMethodFields($paymentMethod, $paymentAction, $txType);
     }
 }
