@@ -85,6 +85,9 @@ class WoocommerceStep extends GenericShopSystemStep implements
 
     const CUSTOMER_META_KEY_SHIPPING_COUNTRY_VALUE = 'shipping_country';
 
+    public $paymentMethodConfig = [];
+    public $txType = '';
+
     /**
      * @param String $paymentMethod
      * @param String  $paymentAction
@@ -389,10 +392,14 @@ class WoocommerceStep extends GenericShopSystemStep implements
     public function activatePaymentMethod($paymentMethod)
     {
         $this->amOnPage($this->getLocator()->page->payments);
-        $this->dontSeeCheckboxIsChecked($this->getLocator()->settings_payments->slider);
-        $this->checkOption($this->getLocator()->settings_payments->slider);
 
-        $this->preparedClick($this->getLocator()->settings_payments->set_up);
+        $paymentMethodTab  = 'payments_tab_' . strtolower($paymentMethod);
+
+        $this->dontSeeCheckboxIsChecked($this->getLocator()->$paymentMethodTab->slider_disabled);
+        $this->checkOption($this->getLocator()->$paymentMethodTab->slider_disabled);
+
+        $this->preparedClick($this->getLocator()->$paymentMethodTab->set_up);
+
         $paymentMethodPageLocator  = 'payments_' . strtolower($paymentMethod);
         $this->waitUntil(60, [$this, 'waitUntilPageLoaded'], [$this->getLocator()->page->$paymentMethodPageLocator]);
     }
@@ -407,8 +414,10 @@ class WoocommerceStep extends GenericShopSystemStep implements
             $this->getMappedPaymentActions(),
             $this->getGateway()
         );
+        $this->paymentMethodConfig = $paymentMethodConfig;
+        $this->txType = $txType;
 
-        $paymentMethodPageLocator  = 'settings_' . strtolower($paymentMethod) . '_payment';
+        $paymentMethodPageLocator  = strtolower($paymentMethod) . '_payment';
         foreach ($paymentMethodConfig as $name => $value) {
             // check the type of element based on name of locator
             if (array_key_exists($name . '_text', $this->getLocator()->$paymentMethodPageLocator)) {
@@ -432,5 +441,52 @@ class WoocommerceStep extends GenericShopSystemStep implements
             }
         }
         $this->preparedClick($this->getLocator()->$paymentMethodPageLocator->save_changes_button);
+    }
+
+    public function goToPaymentTabAndCheckIfPaymentMethodIsEnabled($paymentMethod)
+    {
+        $paymentMethodTab  = 'payments_tab_' . strtolower($paymentMethod);
+        $this->amOnPage($this->getLocator()->page->payments);
+        $this->canSeeElement($this->getLocator()->$paymentMethodTab->slider_enabled);
+    }
+
+    public function goToConfigurationMaskAndCheckIfEnteredDataIsShown($paymentMethod)
+    {
+        $paymentMethodPageLocator  = 'payments_' . strtolower($paymentMethod);
+        $this->amOnPage($this->getLocator()->page->$paymentMethodPageLocator);
+
+        $paymentMethodPageLocator = strtolower($paymentMethod) . '_payment';
+        foreach ($this->paymentMethodConfig as $name => $value) {
+            // check the type of element based on name of locator
+            if (array_key_exists($name . '_text', $this->getLocator()->$paymentMethodPageLocator)) {
+                $locator = $name . '_text';
+                $this->seeInField($this->getLocator()->$paymentMethodPageLocator->$locator, $value);
+            } elseif (array_key_exists($name.'_select', $this->getLocator()->$paymentMethodPageLocator)) {
+                $locator = $name . '_select';
+                if ($name == 'payment_action') {
+                    $this->seeInField(
+                        $this->getLocator()->$paymentMethodPageLocator->$locator,
+                        ucfirst(strtolower($this->txType))
+                    );
+                } else {
+                    $this->seeInField($this->getLocator()->$paymentMethodPageLocator->$locator, $value);
+                }
+            } elseif (array_key_exists($name.'_check', $this->getLocator()->$paymentMethodPageLocator)) {
+                $locator = $name . '_check';
+                // All fields should be checked according to test-case
+                $this->seeCheckboxIsChecked($this->getLocator()->$paymentMethodPageLocator->$locator);
+            }
+        }
+    }
+
+    public function clickOnTestCredentialsAndCheckIfResultIsSuccessful($paymentMethod)
+    {
+        $paymentMethodPageLocator = strtolower($paymentMethod) . '_payment';
+        $this->preparedClick($this->getLocator()->$paymentMethodPageLocator->test_credentials_button);
+        $this->waitUntil(
+            60,
+            [$this, 'waitUntilSeeInPopupWindow'],
+            [$this->getLocator()->merchant_configuration->successfully_tested]
+        );
     }
 }

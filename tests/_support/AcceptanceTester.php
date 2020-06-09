@@ -345,8 +345,35 @@ class AcceptanceTester extends Actor
      * @param $paymentAction
      * @param $txType
      */
-    public function iFillFieldsWithDataForPaymentActionAndTransactionType($paymentMethod, $paymentAction, $txType)
+    public function iFillFieldsWithDataForPaymentActionAndTransactionType($paymentMethod, $paymentAction, $txType): void
     {
         $this->shopInstance->fillPaymentMethodFields($paymentMethod, $paymentAction, $txType);
+    }
+
+    /**
+     * @Then I see that :paymentMethod payment method is enabled on Payment page
+     * @param $paymentMethod
+     */
+    public function iSeeThatPaymentMethodIsEnabledOnPaymentPage($paymentMethod): void
+    {
+        $this->shopInstance->goToPaymentTabAndCheckIfPaymentMethodIsEnabled($paymentMethod);
+    }
+
+    /**
+     * @Then I see all data that was entered is shown in :paymentMethod configuration mask
+     * @param $paymentMethod
+     */
+    public function iSeeAllDataThatWasEnteredIsShownInConfigurationMask($paymentMethod): void
+    {
+        $this->shopInstance->goToConfigurationMaskAndCheckIfEnteredDataIsShown($paymentMethod);
+    }
+
+    /**
+     * @Then I see that test credentials check provides a successful result for :paymentMethod payment method
+     * @param $paymentMethod
+     */
+    public function iSeeThatTestCredentialsCheckProvidesASuccessfulResultForPaymentMethod($paymentMethod): void
+    {
+        $this->shopInstance->clickOnTestCredentialsAndCheckIfResultIsSuccessful($paymentMethod);
     }
 }

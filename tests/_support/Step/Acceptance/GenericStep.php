@@ -3,8 +3,10 @@
 namespace Step\Acceptance;
 
 use AcceptanceTester;
+use Codeception\Exception\ModuleException;
 use Codeception\Scenario;
 use Exception;
+use Facebook\WebDriver\Exception\NoAlertOpenException;
 use PHPUnit\Framework\AssertionFailedError;
 
 /**
@@ -111,6 +113,16 @@ class GenericStep extends AcceptanceTester
             return true;
         } catch (AssertionFailedError $e) {
             $this->selectOption($selectorDetails[0], $selectorDetails[1]);
+            return false;
+        }
+    }
+
+    public function waitUntilSeeInPopupWindow($message): bool
+    {
+        try {
+            $this->seeInPopup($message[0]);
+            return true;
+        } catch (NoAlertOpenException $e) {
             return false;
         }
     }
