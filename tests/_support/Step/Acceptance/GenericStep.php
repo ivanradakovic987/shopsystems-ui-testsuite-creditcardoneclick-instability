@@ -3,8 +3,10 @@
 namespace Step\Acceptance;
 
 use AcceptanceTester;
+use Codeception\Exception\ModuleException;
 use Codeception\Scenario;
 use Exception;
+use Facebook\WebDriver\Exception\NoAlertOpenException;
 use PHPUnit\Framework\AssertionFailedError;
 
 /**
@@ -115,6 +117,16 @@ class GenericStep extends AcceptanceTester
         }
     }
 
+    public function waitUntilSeeInPopupWindow($message): bool
+    {
+        try {
+            $this->seeInPopup($message[0]);
+            return true;
+        } catch (NoAlertOpenException $e) {
+            return false;
+        }
+    }
+
     /**
      * @param mixed $locator
      */
@@ -149,5 +161,15 @@ class GenericStep extends AcceptanceTester
     {
         $this->waitForElementClickable($element, $timeout);
         $this->checkOption($element);
+    }
+
+    public function isCheckboxChecked($locator): bool
+    {
+        try {
+            $this->seeCheckboxIsChecked($locator);
+            return true;
+        } catch (AssertionFailedError $e) {
+            return  false;
+        }
     }
 }
