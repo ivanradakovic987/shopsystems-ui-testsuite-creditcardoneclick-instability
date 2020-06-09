@@ -418,7 +418,10 @@ class WoocommerceStep extends GenericShopSystemStep implements
                 $locator = $name . '_select';
                 //payment action should be taken from parameter
                 if ($name == 'payment_action') {
-                    $this->preparedSelectOption($this->getLocator()->$paymentMethodPageLocator->$locator, ucfirst(strtolower($txType)));
+                    $this->preparedSelectOption(
+                        $this->getLocator()->$paymentMethodPageLocator->$locator,
+                        ucfirst(strtolower($txType))
+                    );
                 } else {
                     $this->preparedSelectOption($this->getLocator()->$paymentMethodPageLocator->$locator, $value);
                 }
