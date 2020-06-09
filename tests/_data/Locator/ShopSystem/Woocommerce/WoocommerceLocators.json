@@ -51,11 +51,12 @@
     "pass": "//*[@id='user_pass']",
     "login": "//*[@id='wp-submit']"
   },
-  "settings_payments":{
-    "slider": "//*[contains(@data-gateway_id, 'wirecard_ee_creditcard')]/td/a/span[contains(@class, 'woocommerce-input-toggle woocommerce-input-toggle--disabled')]",
+  "payments_tab_creditcard":{
+    "slider_disabled": "//*[contains(@data-gateway_id, 'wirecard_ee_creditcard')]/td/a/span[contains(@class, 'woocommerce-input-toggle woocommerce-input-toggle--disabled')]",
+    "slider_enabled": "//*[contains(@data-gateway_id, 'wirecard_ee_creditcard')]/td/a/span[contains(@class, 'woocommerce-input-toggle woocommerce-input-toggle--enabled')]",
     "set_up": "//*[contains(@data-gateway_id, 'wirecard_ee_creditcard')]/td/a[contains(@class, 'button alignright')]"
   },
-  "settings_creditcard_payment":{
+  "creditcard_payment":{
     "enabled_check": "//input[@id='woocommerce_wirecard_ee_creditcard_enabled']",
     "title_text": "//input[@id='woocommerce_wirecard_ee_creditcard_title']",
     "merchant_account_id_text": "//input[@id='woocommerce_wirecard_ee_creditcard_merchant_account_id']",
@@ -67,7 +68,7 @@
     "base_url_text": "//input[@id='woocommerce_wirecard_ee_creditcard_base_url']",
     "http_user_text": "//input[@id='woocommerce_wirecard_ee_creditcard_http_user']",
     "http_pass_text": "//input[@id='woocommerce_wirecard_ee_creditcard_http_pass']",
-    "test_credentials_button": "//button[@id='woocommerce_wirecard_ee_creditcard_test_button']",
+    "test_credentials_button": "//*[@id='woocommerce_wirecard_ee_creditcard_test_button']",
     "payment_action_select": "//select[@id='woocommerce_wirecard_ee_creditcard_payment_action']",
     "challenge_indicator_select": "//select[@id='woocommerce_wirecard_ee_creditcard_challenge_indicator']",
     "descriptor_check": "//input[@id='woocommerce_wirecard_ee_creditcard_descriptor']",

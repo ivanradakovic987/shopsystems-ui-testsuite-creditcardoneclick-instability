@@ -10,14 +10,12 @@ Feature: CreditCardConfigurationHappyPath
     Given I deactivate "CreditCard" payment method in configuration
     When I go into the configuration mask as "admin user" and activate "CreditCard" method
     And I fill fields with "CreditCard" data for payment action <payment_action> and transaction type <transaction_type>
-#    And I see "Wirecard Credit Card"
-#    And I start "CreditCard" payment
-#    And I place the order and continue "CreditCard" payment
-#    When I fill "CreditCard" fields in the shop
-#    Then I see successful payment
-#    And I see "CreditCard" transaction type <transaction_type> in transaction table
+    #And I go to Payment page and check that "CreditCard" payment method is enabled
+    Then I see that "CreditCard" payment method is enabled on Payment page
+    And I see all data that was entered is shown in "CreditCard" configuration mask
+    And I see that test credentials check provides a successful result for "CreditCard" payment method
 
     Examples:
-      | payment_action  | amount | transaction_type |
-      |    "reserve"    |  "20"  |  "authorization" |
-      |      "pay"      |  "20"  |    "purchase"    |
+      | payment_action  | transaction_type |
+      |    "reserve"    | "authorization"  |
+      #|      "pay"      | "purchase"       |
