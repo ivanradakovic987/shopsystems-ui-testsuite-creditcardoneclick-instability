@@ -8,7 +8,8 @@
     },
     "require-dev": {
         "codeception/codeception": "4.1.6",
-        "squizlabs/php_codesniffer": "3.*"
+        "squizlabs/php_codesniffer": "3.*",
+        "codeception/module-webdriver": "^1.1"
     },
     "scripts": {
         "run-ui-tests": "vendor/bin/codecept run acceptance  --debug --html",
