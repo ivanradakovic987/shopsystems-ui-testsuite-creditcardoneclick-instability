@@ -46,7 +46,7 @@ class SofortStep extends GenericPaymentMethodStep implements iPerformPayment, iP
             $this->getLocator()->select_account_button_weiter,
             60
         );
-        $this->waitForElementVisible($this->getLocator()->tan_field);
+        $this->waitForElementVisible($this->getLocator()->tan_field, 60);
         $this->preparedFillField(
             $this->getLocator()->tan_field,
             $this->getPaymentMethod()->getTan(),

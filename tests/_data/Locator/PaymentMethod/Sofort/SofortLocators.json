@@ -5,6 +5,6 @@
   "pin_field": "//input[@id='BackendFormUSERPIN']",
   "login_button_weiter": "//button[@class='button-right primary has-indicator']",
   "select_account_button_weiter": "//button[@class='button-right primary has-indicator']",
-  "tan_field": "//input[@id='BackendFormTan']",
+  "tan_field": "#BackendFormTan",
   "provide_tan_button_weiter": "//button[@class='button-right primary has-indicator']"
 }
