@@ -2,6 +2,7 @@
 
 namespace Step\Acceptance\PaymentMethod;
 
+use Facebook\WebDriver\Exception\NoSuchElementException;
 use Step\Acceptance\iPerformFillPaymentFields;
 use Step\Acceptance\iPerformPayment;
 use Exception;
@@ -46,12 +47,21 @@ class SofortStep extends GenericPaymentMethodStep implements iPerformPayment, iP
             $this->getLocator()->select_account_button_weiter,
             60
         );
-        $this->waitForElementVisible($this->getLocator()->tan_field, 60);
-        $this->preparedFillField(
-            $this->getLocator()->tan_field,
-            $this->getPaymentMethod()->getTan(),
-            60
-        );
+        try {
+            $this->waitForElementVisible($this->getLocator()->tan_field_cap, 60);
+            $this->preparedFillField(
+                $this->getLocator()->tan_field_cap,
+                $this->getPaymentMethod()->getTan(),
+                60
+            );
+        } catch (NoSuchElementException $e) {
+            $this->waitForElementVisible($this->getLocator()->tan_field, 60);
+            $this->preparedFillField(
+                $this->getLocator()->tan_field,
+                $this->getPaymentMethod()->getTan(),
+                60
+            );
+        }
         $this->preparedClick(
             $this->getLocator()->provide_tan_button_weiter,
             60
