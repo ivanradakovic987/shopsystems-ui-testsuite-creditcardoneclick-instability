@@ -5,7 +5,7 @@ Feature: CreditCardConfigurationHappyPath
   Background:
     Given I initialize shop system
 
-  @woocommerce @test
+  @woocommerce
   Scenario Outline: Configuration page check
     Given I deactivate "CreditCard" payment method in configuration
     When I go into the configuration page as "admin user" and activate "CreditCard" method

@@ -87,7 +87,18 @@ class WoocommerceStep extends GenericShopSystemStep implements
 
     const PAYMENT_ACTION_FIELD_NAME = 'payment_action';
 
+    /**
+     * Keeps data from paymentMethod config json file
+     * It is being set in goToConfigurationPageAndCheckIfEnteredDataIsShown
+     * @var array
+     */
     public $paymentMethodConfig = [];
+
+    /**
+     * Keeps transaction type value provided in feature file
+     * It is being set in goToConfigurationPageAndCheckIfEnteredDataIsShown
+     * @var string
+     */
     public $txType = '';
 
     /**
@@ -389,6 +400,7 @@ class WoocommerceStep extends GenericShopSystemStep implements
     }
 
     /**
+     * Method checks that payment method is not enabled in payments page, enables it and goes to it's config page
      * @param $paymentMethod
      */
     public function activatePaymentMethod($paymentMethod)
@@ -407,6 +419,16 @@ class WoocommerceStep extends GenericShopSystemStep implements
         $this->waitUntil(60, [$this, 'waitUntilPageLoaded'], [$this->getLocator()->page->$paymentMethodPage]);
     }
 
+    /**
+     * Method fills fields from payment method's configuration page using data from config json file
+     * and checks all checkboxes if they are not already checked
+     * Payment action field is the exception. It is getting filled with data from parameter.
+     * Field's locator must have the same neme as in configuration file, with sufix that defines type of field
+     * @param $paymentMethod
+     * @param $paymentAction
+     * @param $txType
+     * @throws Exception
+     */
     public function fillPaymentMethodFields($paymentMethod, $paymentAction, $txType)
     {
         $actingPaymentMethod = $this->getActingPaymentMethod($paymentMethod);
@@ -438,6 +460,14 @@ class WoocommerceStep extends GenericShopSystemStep implements
         $this->preparedClick($this->getLocator()->$pageLocator->save_changes_button);
     }
 
+    /**
+     * @param $elName
+     * @param $elValue
+     * @param $elLocator
+     * @param $pageLocator
+     * @param $paymentAction
+     * @throws Exception
+     */
     public function selectOptionBasedOnElementName($elName, $elValue, $elLocator, $pageLocator, $paymentAction)
     {
         //payment action should be taken from parameter
@@ -451,6 +481,12 @@ class WoocommerceStep extends GenericShopSystemStep implements
         $this->preparedSelectOption($this->getLocator()->$pageLocator->$elLocator, $elValue);
     }
 
+    /**
+     * Method doesn't fail the test if checkbox is not checked
+     * @param $elementLocator
+     * @param $pageLocator
+     * @throws Exception
+     */
     public function checkOptionIfNotAlreadyChecked($elementLocator, $pageLocator)
     {
         if (!$this->isCheckboxChecked($this->getLocator()->$pageLocator->$elementLocator)) {
@@ -458,6 +494,10 @@ class WoocommerceStep extends GenericShopSystemStep implements
         }
     }
 
+    /**
+     * @param $paymentMethod
+     * @throws Exception
+     */
     public function goToPaymentPageAndCheckIfPaymentMethodIsEnabled($paymentMethod)
     {
         $paymentMethodTab  = 'payments_tab_' . strtolower($paymentMethod);
@@ -465,6 +505,12 @@ class WoocommerceStep extends GenericShopSystemStep implements
         $this->preparedSeeElement($this->getLocator()->$paymentMethodTab->slider_enabled);
     }
 
+    /**
+     * Method compares values from fields in payment method's configuration page with data from config file
+     * and checks if all checkboxes are checked
+     * Payment action field is the exception. It's value is compared with data from parameter.
+     * @param $paymentMethod
+     */
     public function goToConfigurationPageAndCheckIfEnteredDataIsShown($paymentMethod)
     {
         $pageLocator  = 'payments_' . strtolower($paymentMethod);
@@ -487,6 +533,13 @@ class WoocommerceStep extends GenericShopSystemStep implements
         }
     }
 
+    /**
+     * @param $elName
+     * @param $elValue
+     * @param $elLocator
+     * @param $pageLocator
+     * @param $paymentAction
+     */
     public function seeInFieldBasedOnElementName($elName, $elValue, $elLocator, $pageLocator, $paymentAction)
     {
         //payment action should be taken from parameter
@@ -500,6 +553,11 @@ class WoocommerceStep extends GenericShopSystemStep implements
         $this->seeInField($this->getLocator()->$pageLocator->$elLocator, $elValue);
     }
 
+    /**
+     * Waits until popup window with successful test connection message is shown
+     * @param $paymentMethod
+     * @throws Exception
+     */
     public function clickOnTestCredentialsAndCheckIfResultIsSuccessful($paymentMethod)
     {
         $pageLocator = strtolower($paymentMethod) . '_payment';
