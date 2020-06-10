@@ -502,8 +502,8 @@ class WoocommerceStep extends GenericShopSystemStep implements
 
     public function clickOnTestCredentialsAndCheckIfResultIsSuccessful($paymentMethod)
     {
-        $paymentMethodPageLocator = strtolower($paymentMethod) . '_payment';
-        $this->preparedClick($this->getLocator()->$paymentMethodPageLocator->test_credentials_button);
+        $pageLocator = strtolower($paymentMethod) . '_payment';
+        $this->preparedClick($this->getLocator()->$pageLocator->test_credentials_button);
         $this->waitUntil(
             60,
             [$this, 'waitUntilSeeInPopupWindow'],
