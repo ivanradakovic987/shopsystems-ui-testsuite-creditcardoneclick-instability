@@ -49,6 +49,8 @@ class AcceptanceTester extends Actor
 
     const SOFORT = 'sofort';
 
+    const SOFORTBANKING = 'sofort.';
+
     //this is used to generate new class instance, so const doesn't work here
     private $shopInstanceMap = [
         'prestashop' => Step\Acceptance\ShopSystem\PrestashopStep::class,

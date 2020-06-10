@@ -48,7 +48,7 @@
       "debit": "debit"
     }
   },
-  "Sofort.": {
+  "Sofortbanking": {
     "config": {
       "row": "payment_action",
       "debit": "debit"
