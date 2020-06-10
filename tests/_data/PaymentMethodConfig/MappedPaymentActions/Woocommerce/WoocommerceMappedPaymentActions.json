@@ -21,6 +21,15 @@
       "purchase": "debit"
     }
   },
+  "iDEAL": {
+    "config": {
+      "row": "payment_action",
+      "debit": "debit"
+    },
+    "tx_table": {
+      "debit": "debit"
+    }
+  },
   "Invoice": {
     "config": {
       "row": "payment_action",
@@ -31,6 +40,15 @@
     }
   },
   "Alipay-Xborder": {
+    "config": {
+      "row": "payment_action",
+      "debit": "debit"
+    },
+    "tx_table": {
+      "debit": "debit"
+    }
+  },
+  "Sofortbanking": {
     "config": {
       "row": "payment_action",
       "debit": "debit"

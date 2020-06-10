@@ -32,8 +32,12 @@
     "paypal_form" : "//*[@id='payment_method_wirecard_ee_paypal']",
     "wirecard_creditcard":  "//*[@id='payment']/ul/li[contains(@class, 'creditcard')]",
     "wirecard_paypal":  "//*[@id='payment']/ul/li[contains(@class, 'paypal')]",
+    "wirecard_ideal": "//*[@id='payment']/ul/li[contains(@class, 'ideal')]",
+    "ideal_bank_select": "//*[@name='ideal_bank_bic']",
+    "ideal_bank_option": "ING",
     "wirecard_guaranteedinvoice": "//*[@class='wc_payment_method payment_method_wirecard_ee_invoice']",
-    "wirecard_alipaycrossborder": "//*[@class='wc_payment_method payment_method_wirecard_ee_alipay-xborder']"
+    "wirecard_alipaycrossborder": "//*[@class='wc_payment_method payment_method_wirecard_ee_alipay-xborder']",
+    "wirecard_sofort": "//*[@id='payment']/ul/li[contains(@class, 'sofort')]"
   },
   "order_pay": {
     "pay": "//*[@id='seamless-submit']"

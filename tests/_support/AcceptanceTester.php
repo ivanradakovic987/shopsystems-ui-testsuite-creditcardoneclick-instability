@@ -39,6 +39,8 @@ class AcceptanceTester extends Actor
 
     const PAY_PAL = 'payPal';
 
+    const IDEAL = 'iDEAL';
+
     const GUARANTEED_INVOICE = 'guaranteedInvoice';
 
     const ALIPAY_CROSS_BORDER = 'alipayCrossBorder';
@@ -46,6 +48,10 @@ class AcceptanceTester extends Actor
     const REGISTERED_CUSTOMER = 'registered customer';
 
     const ADMIN_USER = 'admin user';
+
+    const SOFORT = 'sofort';
+
+    const SOFORTBANKING = 'sofort.';
 
     //this is used to generate new class instance, so const doesn't work here
     private $shopInstanceMap = [
@@ -58,8 +64,10 @@ class AcceptanceTester extends Actor
         'CreditCard' => Step\Acceptance\PaymentMethod\CreditCardStep::class,
         'CreditCardOneClick' => Step\Acceptance\PaymentMethod\CreditCardOneClickStep::class,
         'PayPal' => Step\Acceptance\PaymentMethod\PayPalStep::class,
+        'iDEAL' => Step\Acceptance\PaymentMethod\IdealStep::class,
         'GuaranteedInvoice' => Step\Acceptance\PaymentMethod\GuaranteedInvoiceStep::class,
-        'AlipayCrossBorder' => Step\Acceptance\PaymentMethod\AlipayCrossBorderStep::class
+        'AlipayCrossBorder' => Step\Acceptance\PaymentMethod\AlipayCrossBorderStep::class,
+        'Sofort' => Step\Acceptance\PaymentMethod\SofortStep::class
     ];
 
     /**
@@ -311,6 +319,7 @@ class AcceptanceTester extends Actor
     /**
      * @When I place the order and continue :paymentMethod payment
      * @param $paymentMethod
+     * @throws Exception
      */
     public function iPlaceTheOrderAndContinuePayment($paymentMethod) :void
     {
