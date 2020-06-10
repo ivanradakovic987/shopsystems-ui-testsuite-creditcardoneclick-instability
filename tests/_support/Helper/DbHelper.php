@@ -46,8 +46,11 @@ class DbHelper extends Module
         $dbh = $this->getModule('Db')->dbh;
         $query = "delete from %s where %s";
         $params = [];
+        $values = [];
+
         foreach ($criteria as $k => $v) {
             $params[] = "$k = ?";
+            array_push($values, $v);
         }
         $params = implode(' AND ', $params);
         $query = sprintf($query, $table, $params);
