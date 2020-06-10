@@ -47,6 +47,10 @@ class AcceptanceTester extends Actor
 
     const REGISTERED_CUSTOMER = 'registered customer';
 
+    const SOFORT = 'sofort';
+
+    const SOFORTBANKING = 'sofort.';
+
     //this is used to generate new class instance, so const doesn't work here
     private $shopInstanceMap = [
         'prestashop' => Step\Acceptance\ShopSystem\PrestashopStep::class,
@@ -60,7 +64,8 @@ class AcceptanceTester extends Actor
         'PayPal' => Step\Acceptance\PaymentMethod\PayPalStep::class,
         'iDEAL' => Step\Acceptance\PaymentMethod\IdealStep::class,
         'GuaranteedInvoice' => Step\Acceptance\PaymentMethod\GuaranteedInvoiceStep::class,
-        'AlipayCrossBorder' => Step\Acceptance\PaymentMethod\AlipayCrossBorderStep::class
+        'AlipayCrossBorder' => Step\Acceptance\PaymentMethod\AlipayCrossBorderStep::class,
+        'Sofort' => Step\Acceptance\PaymentMethod\SofortStep::class
     ];
 
     /**
@@ -311,6 +316,7 @@ class AcceptanceTester extends Actor
     /**
      * @When I place the order and continue :paymentMethod payment
      * @param $paymentMethod
+     * @throws Exception
      */
     public function iPlaceTheOrderAndContinuePayment($paymentMethod) :void
     {
