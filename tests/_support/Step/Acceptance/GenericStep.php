@@ -65,6 +65,12 @@ class GenericStep extends AcceptanceTester
         $this->selectOption($element, $option);
     }
 
+    public function preparedSeeElement($element, $timeout = 30): void
+    {
+        $this->waitForElementVisible($element, $timeout);
+        $this->seeElement($element);
+    }
+
     /**
      * @param int $maxTimeout
      * @param array|null $function
@@ -169,7 +175,7 @@ class GenericStep extends AcceptanceTester
             $this->seeCheckboxIsChecked($locator);
             return true;
         } catch (AssertionFailedError $e) {
-            return  false;
+            return false;
         }
     }
 }

@@ -85,6 +85,8 @@ class WoocommerceStep extends GenericShopSystemStep implements
 
     const CUSTOMER_META_KEY_SHIPPING_COUNTRY_VALUE = 'shipping_country';
 
+    const PAYMENT_ACTION_FIELD_NAME = 'payment_action';
+
     public $paymentMethodConfig = [];
     public $txType = '';
 
@@ -395,13 +397,14 @@ class WoocommerceStep extends GenericShopSystemStep implements
 
         $paymentMethodTab  = 'payments_tab_' . strtolower($paymentMethod);
 
-        $this->dontSeeCheckboxIsChecked($this->getLocator()->$paymentMethodTab->slider_disabled);
-        $this->checkOption($this->getLocator()->$paymentMethodTab->slider_disabled);
+        $this->preparedSeeElement($this->getLocator()->$paymentMethodTab->slider_disabled);
+        $this->preparedClick($this->getLocator()->$paymentMethodTab->slider_disabled);
+        $this->preparedSeeElement($this->getLocator()->$paymentMethodTab->slider_enabled);
 
         $this->preparedClick($this->getLocator()->$paymentMethodTab->set_up);
 
-        $paymentMethodPageLocator  = 'payments_' . strtolower($paymentMethod);
-        $this->waitUntil(60, [$this, 'waitUntilPageLoaded'], [$this->getLocator()->page->$paymentMethodPageLocator]);
+        $paymentMethodPage  = 'payments_' . strtolower($paymentMethod);
+        $this->waitUntil(60, [$this, 'waitUntilPageLoaded'], [$this->getLocator()->page->$paymentMethodPage]);
     }
 
     public function fillPaymentMethodFields($paymentMethod, $paymentAction, $txType)
@@ -417,68 +420,84 @@ class WoocommerceStep extends GenericShopSystemStep implements
         $this->paymentMethodConfig = $paymentMethodConfig;
         $this->txType = $txType;
 
-        $paymentMethodPageLocator  = strtolower($paymentMethod) . '_payment';
+        $pageLocator = strtolower($paymentMethod) . '_payment';
         foreach ($paymentMethodConfig as $name => $value) {
             // check the type of element based on name of locator
-            if (array_key_exists($name . '_text', $this->getLocator()->$paymentMethodPageLocator)) {
+            if (array_key_exists($name . '_text', $this->getLocator()->$pageLocator)) {
                 $locator = $name . '_text';
-                $this->preparedFillField($this->getLocator()->$paymentMethodPageLocator->$locator, $value);
-            } elseif (array_key_exists($name.'_select', $this->getLocator()->$paymentMethodPageLocator)) {
+                $this->preparedFillField($this->getLocator()->$pageLocator->$locator, $value);
+            } elseif (array_key_exists($name.'_select', $this->getLocator()->$pageLocator)) {
                 $locator = $name . '_select';
-                //payment action should be taken from parameter
-                if ($name == 'payment_action') {
-                    $this->preparedSelectOption(
-                        $this->getLocator()->$paymentMethodPageLocator->$locator,
-                        ucfirst(strtolower($txType))
-                    );
-                } else {
-                    $this->preparedSelectOption($this->getLocator()->$paymentMethodPageLocator->$locator, $value);
-                }
-            } elseif (array_key_exists($name.'_check', $this->getLocator()->$paymentMethodPageLocator)) {
+                $this->selectOptionBasedOnElementName($name, $value, $locator, $pageLocator, $txType);
+            } elseif (array_key_exists($name.'_check', $this->getLocator()->$pageLocator)) {
                 $locator = $name . '_check';
                 // All fields should be checked according to test-case
-                if (!$this->isCheckboxChecked($this->getLocator()->$paymentMethodPageLocator->$locator)) {
-                    $this->preparedCheckOption($this->getLocator()->$paymentMethodPageLocator->$locator);
-                }
+                $this->checkOptionIfNotAlreadyChecked($locator, $pageLocator);
             }
         }
-        $this->preparedClick($this->getLocator()->$paymentMethodPageLocator->save_changes_button);
+        $this->preparedClick($this->getLocator()->$pageLocator->save_changes_button);
     }
 
-    public function goToPaymentTabAndCheckIfPaymentMethodIsEnabled($paymentMethod)
+    public function selectOptionBasedOnElementName($elName, $elValue, $elLocator, $pageLocator, $paymentAction)
+    {
+        //payment action should be taken from parameter
+        if ($elName === static::PAYMENT_ACTION_FIELD_NAME) {
+            $this->preparedSelectOption(
+                $this->getLocator()->$pageLocator->$elLocator,
+                ucfirst(strtolower($paymentAction))
+            );
+            return;
+        }
+        $this->preparedSelectOption($this->getLocator()->$pageLocator->$elLocator, $elValue);
+    }
+
+    public function checkOptionIfNotAlreadyChecked($elementLocator, $pageLocator)
+    {
+        if (!$this->isCheckboxChecked($this->getLocator()->$pageLocator->$elementLocator)) {
+            $this->preparedCheckOption($this->getLocator()->$pageLocator->$elementLocator);
+        }
+    }
+
+    public function goToPaymentPageAndCheckIfPaymentMethodIsEnabled($paymentMethod)
     {
         $paymentMethodTab  = 'payments_tab_' . strtolower($paymentMethod);
         $this->amOnPage($this->getLocator()->page->payments);
-        $this->canSeeElement($this->getLocator()->$paymentMethodTab->slider_enabled);
+        $this->preparedSeeElement($this->getLocator()->$paymentMethodTab->slider_enabled);
     }
 
-    public function goToConfigurationMaskAndCheckIfEnteredDataIsShown($paymentMethod)
+    public function goToConfigurationPageAndCheckIfEnteredDataIsShown($paymentMethod)
     {
-        $paymentMethodPageLocator  = 'payments_' . strtolower($paymentMethod);
-        $this->amOnPage($this->getLocator()->page->$paymentMethodPageLocator);
+        $pageLocator  = 'payments_' . strtolower($paymentMethod);
+        $this->amOnPage($this->getLocator()->page->$pageLocator);
 
-        $paymentMethodPageLocator = strtolower($paymentMethod) . '_payment';
+        $pageLocator = strtolower($paymentMethod) . '_payment';
         foreach ($this->paymentMethodConfig as $name => $value) {
             // check the type of element based on name of locator
-            if (array_key_exists($name . '_text', $this->getLocator()->$paymentMethodPageLocator)) {
+            if (array_key_exists($name . '_text', $this->getLocator()->$pageLocator)) {
                 $locator = $name . '_text';
-                $this->seeInField($this->getLocator()->$paymentMethodPageLocator->$locator, $value);
-            } elseif (array_key_exists($name.'_select', $this->getLocator()->$paymentMethodPageLocator)) {
+                $this->seeInField($this->getLocator()->$pageLocator->$locator, $value);
+            } elseif (array_key_exists($name.'_select', $this->getLocator()->$pageLocator)) {
                 $locator = $name . '_select';
-                if ($name == 'payment_action') {
-                    $this->seeInField(
-                        $this->getLocator()->$paymentMethodPageLocator->$locator,
-                        ucfirst(strtolower($this->txType))
-                    );
-                } else {
-                    $this->seeInField($this->getLocator()->$paymentMethodPageLocator->$locator, $value);
-                }
-            } elseif (array_key_exists($name.'_check', $this->getLocator()->$paymentMethodPageLocator)) {
+                $this->seeInFieldBasedOnElementName($name, $value, $locator, $pageLocator, $this->txType);
+            } elseif (array_key_exists($name.'_check', $this->getLocator()->$pageLocator)) {
                 $locator = $name . '_check';
                 // All fields should be checked according to test-case
-                $this->seeCheckboxIsChecked($this->getLocator()->$paymentMethodPageLocator->$locator);
+                $this->seeCheckboxIsChecked($this->getLocator()->$pageLocator->$locator);
             }
         }
+    }
+
+    public function seeInFieldBasedOnElementName($elName, $elValue, $elLocator, $pageLocator, $paymentAction)
+    {
+        //payment action should be taken from parameter
+        if ($elName === static::PAYMENT_ACTION_FIELD_NAME) {
+            $this->seeInField(
+                $this->getLocator()->$pageLocator->$elLocator,
+                ucfirst(strtolower($paymentAction))
+            );
+            return;
+        }
+        $this->seeInField($this->getLocator()->$pageLocator->$elLocator, $elValue);
     }
 
     public function clickOnTestCredentialsAndCheckIfResultIsSuccessful($paymentMethod)

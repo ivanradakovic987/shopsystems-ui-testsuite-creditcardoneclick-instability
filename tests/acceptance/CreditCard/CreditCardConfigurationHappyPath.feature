@@ -6,13 +6,12 @@ Feature: CreditCardConfigurationHappyPath
     Given I initialize shop system
 
   @woocommerce @test
-  Scenario Outline: initial transaction Non 3DS
+  Scenario Outline: Configuration page check
     Given I deactivate "CreditCard" payment method in configuration
-    When I go into the configuration mask as "admin user" and activate "CreditCard" method
+    When I go into the configuration page as "admin user" and activate "CreditCard" method
     And I fill fields with "CreditCard" data for payment action <payment_action> and transaction type <transaction_type>
-    #And I go to Payment page and check that "CreditCard" payment method is enabled
     Then I see that "CreditCard" payment method is enabled on Payment page
-    And I see all data that was entered is shown in "CreditCard" configuration mask
+    And I see all data that was entered is shown in "CreditCard" configuration page
     And I see that test credentials check provides a successful result for "CreditCard" payment method
 
     Examples:

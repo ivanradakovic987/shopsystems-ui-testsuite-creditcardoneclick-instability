@@ -327,11 +327,11 @@ class AcceptanceTester extends Actor
     }
 
     /**
-     * @Then I go into the configuration mask as :userType and activate :paymentMethod method
+     * @Then I go into the configuration page as :userType and activate :paymentMethod method
      * @param $userType
      * @param $paymentMethod
      */
-    public function iGoIntoTheConfigurationMaskAsAndActivateMethod($userType, $paymentMethod): void
+    public function iGoIntoTheConfigurationPageAsAndActivateMethod($userType, $paymentMethod): void
     {
         if ($userType === static::ADMIN_USER) {
             $this->shopInstance->logInToAdministrationPanel();
@@ -356,16 +356,16 @@ class AcceptanceTester extends Actor
      */
     public function iSeeThatPaymentMethodIsEnabledOnPaymentPage($paymentMethod): void
     {
-        $this->shopInstance->goToPaymentTabAndCheckIfPaymentMethodIsEnabled($paymentMethod);
+        $this->shopInstance->goToPaymentPageAndCheckIfPaymentMethodIsEnabled($paymentMethod);
     }
 
     /**
-     * @Then I see all data that was entered is shown in :paymentMethod configuration mask
+     * @Then I see all data that was entered is shown in :paymentMethod configuration page
      * @param $paymentMethod
      */
-    public function iSeeAllDataThatWasEnteredIsShownInConfigurationMask($paymentMethod): void
+    public function iSeeAllDataThatWasEnteredIsShownInConfigurationPage($paymentMethod): void
     {
-        $this->shopInstance->goToConfigurationMaskAndCheckIfEnteredDataIsShown($paymentMethod);
+        $this->shopInstance->goToConfigurationPageAndCheckIfEnteredDataIsShown($paymentMethod);
     }
 
     /**
