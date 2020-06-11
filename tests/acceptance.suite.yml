@@ -15,7 +15,7 @@ modules:
     - \Helper\DbHelper
     - Asserts
     - Db:
-        dsn: 'mysql:host=%DB_HOST%:%DB_PORT%;dbname=%DB_NAME%'
+        dsn: 'mysql:host=%DB_HOST%:%DB_PORT%;dbname=%DB_NAME%;charset=utf8'
         user: '%DB_USER%'
         password: '%DB_PASSWORD%'
         waitlock: 10
@@ -34,7 +34,7 @@ env:
             'browserstack.user': '%BROWSERSTACK_USER%'
             'browserstack.key': '%BROWSERSTACK_ACCESS_KEY%'
         Db:
-          dsn: 'mysql:host=%DB_HOST%;dbname=%DB_NAME%'
+          dsn: 'mysql:host=%DB_HOST%;dbname=%DB_NAME%;charset=utf8'
   ci_magento2:
     modules:
       config:
@@ -49,4 +49,4 @@ env:
             'browserstack.user': '%BROWSERSTACK_USER%'
             'browserstack.key': '%BROWSERSTACK_ACCESS_KEY%'
         Db:
-          dsn: 'mysql:host=%DB_HOST%:%DB_PORT%;dbname=%DB_NAME%'
+          dsn: 'mysql:host=%DB_HOST%:%DB_PORT%;dbname=%DB_NAME%;charset=utf8'

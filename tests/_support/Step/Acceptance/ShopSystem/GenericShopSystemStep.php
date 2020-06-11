@@ -273,6 +273,9 @@ class GenericShopSystemStep extends GenericStep
         if (strcasecmp($paymentMethod, static::SOFORTBANKING) === 0) {
             return 'Sofortbanking';
         }
+        if (strcasecmp($paymentMethod, static::EPS_ÜBERWEISUNG) === 0) {
+            return 'Eps';
+        }
         return $paymentMethod;
     }
 }
