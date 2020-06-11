@@ -33,7 +33,8 @@
     "ideal_bank_option": "ING",
     "wirecard_guaranteedinvoice": "//*[@class='wc_payment_method payment_method_wirecard_ee_invoice']",
     "wirecard_alipaycrossborder": "//*[@class='wc_payment_method payment_method_wirecard_ee_alipay-xborder']",
-    "wirecard_sofort": "//*[@id='payment']/ul/li[contains(@class, 'sofort')]"
+    "wirecard_sofort": "//*[@id='payment']/ul/li[contains(@class, 'sofort')]",
+    "wirecard_eps": "//*[@class='wc_payment_method payment_method_wirecard_ee_eps']"
   },
   "order_pay": {
     "pay": "//*[@id='seamless-submit']"
