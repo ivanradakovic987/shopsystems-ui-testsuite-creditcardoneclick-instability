@@ -66,7 +66,8 @@ class GenericPaymentMethodStep extends GenericStep
     }
 
     /**
-     * @return GenericConfig| CreditCardConfig| PayPalConfig| IdealConfig| GuaranteedInvoiceConfig| SofortConfig| GiropayConfig
+     *@return GenericConfig| CreditCardConfig| PayPalConfig| IdealConfig| GuaranteedInvoiceConfig| SofortConfig
+     *@return GiropayConfig
      */
     public function getPaymentMethod()
     {
