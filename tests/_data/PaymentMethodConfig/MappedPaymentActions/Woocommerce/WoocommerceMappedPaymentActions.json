@@ -56,5 +56,15 @@
     "tx_table": {
       "debit": "debit"
     }
+  },
+  "PoiPia": {
+    "config": {
+      "row": "payment_type",
+      "Payment On Invoice": "poi",
+      "Payment In Advance": "Payment in Advance"
+    },
+    "tx_table": {
+      "authorization": "authorization"
+    }
   }
 }

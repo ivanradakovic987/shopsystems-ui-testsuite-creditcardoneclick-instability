@@ -180,7 +180,8 @@ class GenericShopSystemStep extends GenericStep
     public function validateTransactionInDatabase($paymentMethod, $paymentAction): void
     {
         if (strcasecmp($paymentMethod, static::GUARANTEED_INVOICE) === 0 ||
-            strcasecmp($paymentMethod, static::SOFORTBANKING) === 0) {
+            strcasecmp($paymentMethod, static::SOFORTBANKING) === 0 ||
+            strcasecmp($paymentMethod, static::PAYMENT_ON_INVOICE) === 0) {
             $paymentMethod = $this->getActingPaymentMethod($paymentMethod);
         }
         $this->waitUntil(80, [$this, 'checkPaymentActionInTransactionTable'], [$paymentMethod, $paymentAction]);
@@ -272,6 +273,9 @@ class GenericShopSystemStep extends GenericStep
         }
         if (strcasecmp($paymentMethod, static::SOFORTBANKING) === 0) {
             return 'Sofortbanking';
+        }
+        if (strcasecmp($paymentMethod, static::PAYMENT_ON_INVOICE) === 0) {
+            return 'PoiPia';
         }
         return $paymentMethod;
     }

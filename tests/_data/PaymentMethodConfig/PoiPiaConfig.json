@@ -1,0 +1,14 @@
+{
+  "API-TEST": {
+    "base_url": "https://api-test.wirecard.com",
+    "http_user": "70000-APITEST-AP",
+    "http_pass": "qD2wzQ_hrc!8",
+    "merchant_account_id": "105ab3e8-d16b-4fa0-9f1f-18dd9b390c94",
+    "secret": "dbc5a498-9a66-43b9-bf1d-a618dd399684",
+    "enabled": "yes",
+    "title": "Wirecard Payment On Invoice / Payment In Advance",
+    "payment_type": "Payment in Advance",
+    "descriptor": "no",
+    "send_additional": "yes"
+  }
+}
