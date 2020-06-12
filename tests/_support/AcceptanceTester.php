@@ -51,6 +51,8 @@ class AcceptanceTester extends Actor
 
     const SOFORTBANKING = 'sofort.';
 
+    const GIROPAY = 'giropay';
+
     //this is used to generate new class instance, so const doesn't work here
     private $shopInstanceMap = [
         'prestashop' => Step\Acceptance\ShopSystem\PrestashopStep::class,
@@ -65,7 +67,8 @@ class AcceptanceTester extends Actor
         'iDEAL' => Step\Acceptance\PaymentMethod\IdealStep::class,
         'GuaranteedInvoice' => Step\Acceptance\PaymentMethod\GuaranteedInvoiceStep::class,
         'AlipayCrossBorder' => Step\Acceptance\PaymentMethod\AlipayCrossBorderStep::class,
-        'Sofort' => Step\Acceptance\PaymentMethod\SofortStep::class
+        'Sofort' => Step\Acceptance\PaymentMethod\SofortStep::class,
+        'giropay' => Step\Acceptance\PaymentMethod\GiropayStep::class
     ];
 
     /**

@@ -56,5 +56,14 @@
     "tx_table": {
       "debit": "debit"
     }
+  },
+  "giropay": {
+    "config": {
+      "row": "payment_action",
+      "debit": "debit"
+    },
+    "tx_table": {
+      "debit": "debit"
+    }
   }
 }

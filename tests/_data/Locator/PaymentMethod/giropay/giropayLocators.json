@@ -1,0 +1,8 @@
+{
+  "bic_field": "//input[@id='giropay_bic']",
+  "sc_field": "//input[@name='sc']",
+  "extension_sc_field": "//input[@name='extensionSc']",
+  "customer_name_field": "//input[@name='customerName1']",
+  "customer_iban_field": "//input[@name='customerIBAN']",
+  "absenden_button": "//input[@value='Absenden']"
+}
