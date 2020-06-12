@@ -6,7 +6,7 @@ Feature: eps-ÜberweisungInitialTransactionHappyPath
   Background:
     Given I initialize shop system
 
-  @woocommerce @test
+  @woocommerce
   Scenario Outline: initial transaction
     Given I activate "eps-Überweisung" payment action <payment_action> in configuration
     And I prepare checkout with purchase sum <amount> in shop system as "guest customer"
@@ -20,53 +20,4 @@ Feature: eps-ÜberweisungInitialTransactionHappyPath
 
     Examples:
       | payment_action  | amount | transaction_type |
-      | "debit"         | 20     | "debit"          |
-      | "debit"         | 20     | "debit"          |
-      | "debit"         | 20     | "debit"          |
-      | "debit"         | 20     | "debit"          |
-      | "debit"         | 20     | "debit"          |
-      | "debit"         | 20     | "debit"          |
-      | "debit"         | 20     | "debit"          |
-      | "debit"         | 20     | "debit"          |
-      | "debit"         | 20     | "debit"          |
-      | "debit"         | 20     | "debit"          |
-      | "debit"         | 20     | "debit"          |
-      | "debit"         | 20     | "debit"          |
-      | "debit"         | 20     | "debit"          |
-      | "debit"         | 20     | "debit"          |
-      | "debit"         | 20     | "debit"          |
-      | "debit"         | 20     | "debit"          |
-      | "debit"         | 20     | "debit"          |
-      | "debit"         | 20     | "debit"          |
-      | "debit"         | 20     | "debit"          |
-      | "debit"         | 20     | "debit"          |
-      | "debit"         | 20     | "debit"          |
-      | "debit"         | 20     | "debit"          |
-      | "debit"         | 20     | "debit"          |
-      | "debit"         | 20     | "debit"          |
-      | "debit"         | 20     | "debit"          |
-      | "debit"         | 20     | "debit"          |
-      | "debit"         | 20     | "debit"          |
-      | "debit"         | 20     | "debit"          |
-      | "debit"         | 20     | "debit"          |
-      | "debit"         | 20     | "debit"          |
-      | "debit"         | 20     | "debit"          |
-      | "debit"         | 20     | "debit"          |
-      | "debit"         | 20     | "debit"          |
-      | "debit"         | 20     | "debit"          |
-      | "debit"         | 20     | "debit"          |
-      | "debit"         | 20     | "debit"          |
-      | "debit"         | 20     | "debit"          |
-      | "debit"         | 20     | "debit"          |
-      | "debit"         | 20     | "debit"          |
-      | "debit"         | 20     | "debit"          |
-      | "debit"         | 20     | "debit"          |
-      | "debit"         | 20     | "debit"          |
-      | "debit"         | 20     | "debit"          |
-      | "debit"         | 20     | "debit"          |
-      | "debit"         | 20     | "debit"          |
-      | "debit"         | 20     | "debit"          |
-      | "debit"         | 20     | "debit"          |
-      | "debit"         | 20     | "debit"          |
-      | "debit"         | 20     | "debit"          |
       | "debit"         | 20     | "debit"          |
