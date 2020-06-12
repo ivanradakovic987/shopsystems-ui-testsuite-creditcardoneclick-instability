@@ -10,7 +10,7 @@ class GiropayConfig
 
     private $bic;
 
-    private $sc;
+    private $sc_;
 
     private $extension_sc;
 
@@ -25,7 +25,7 @@ class GiropayConfig
     public function __construct($giropayData)
     {
         $this->bic = $giropayData->bic;
-        $this->sc = $giropayData->sc;
+        $this->sc_ = $giropayData->sc_;
         $this->extension_sc = $giropayData->extension_sc;
         $this->customer_name = $giropayData->customer_name;
         $this->customer_iban = $giropayData->customer_iban;
@@ -44,7 +44,7 @@ class GiropayConfig
      */
     public function getSc()
     {
-        return $this->sc;
+        return $this->sc_;
     }
 
     /**
