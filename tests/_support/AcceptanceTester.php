@@ -51,6 +51,8 @@ class AcceptanceTester extends Actor
 
     const SOFORTBANKING = 'sofort.';
 
+    const PAYMENT_ON_INVOICE = 'PaymentOnInvoice/PaymentInAdvance';
+
     //this is used to generate new class instance, so const doesn't work here
     private $shopInstanceMap = [
         'prestashop' => Step\Acceptance\ShopSystem\PrestashopStep::class,
