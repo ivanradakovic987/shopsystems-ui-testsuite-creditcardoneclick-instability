@@ -1,0 +1,8 @@
+{
+  "bic": "//input[@id='eps_bic']",
+  "login": "//input[@id='sbtnLogin']",
+  "auftrag_zeichnen": "//input[@id='sbtnSign']",
+  "als_einzelbuchung_zeichnen": "//input[@id='sbtnSignCollect']",
+  "ok": "//input[@id='sbtnOk']",
+  "zurück": "//input[@name='back2Shop']"
+}

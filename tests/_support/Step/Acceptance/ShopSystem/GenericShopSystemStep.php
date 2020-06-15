@@ -34,7 +34,7 @@ class GenericShopSystemStep extends GenericStep
     /**
      * @var array
      */
-    private $redirectPaymentMethods = ['PayPal', 'iDEAL','AlipayCrossBorder', 'Sofort'];
+    private $redirectPaymentMethods = ['PayPal', 'iDEAL','AlipayCrossBorder', 'Sofort', 'giropay'];
 
     /**
      * GenericStep constructor.
@@ -190,8 +190,9 @@ class GenericShopSystemStep extends GenericStep
     public function validateTransactionInDatabase($paymentMethod, $paymentAction): void
     {
         if (strcasecmp($paymentMethod, static::GUARANTEED_INVOICE) === 0 ||
+            strcasecmp($paymentMethod, static::PAYMENT_ON_INVOICE) === 0 ||
             strcasecmp($paymentMethod, static::SOFORTBANKING) === 0 ||
-            strcasecmp($paymentMethod, static::PAYMENT_ON_INVOICE) === 0) {
+            strcasecmp($paymentMethod, static::EPS_ÜBERWEISUNG) === 0) {
             $paymentMethod = $this->getActingPaymentMethod($paymentMethod);
         }
         $this->waitUntil(80, [$this, 'checkPaymentActionInTransactionTable'], [$paymentMethod, $paymentAction]);
@@ -286,6 +287,9 @@ class GenericShopSystemStep extends GenericStep
         }
         if (strcasecmp($paymentMethod, static::PAYMENT_ON_INVOICE) === 0) {
             return 'PoiPia';
+        }
+        if (strcasecmp($paymentMethod, static::EPS_ÜBERWEISUNG) === 0) {
+            return 'Eps';
         }
         return $paymentMethod;
     }

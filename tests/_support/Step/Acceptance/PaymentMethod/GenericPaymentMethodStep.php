@@ -6,6 +6,8 @@ use Codeception\Scenario;
 use Helper\Config\GenericConfig;
 use Helper\Config\PaymentMethod\AlipayCrossBorderConfig;
 use Helper\Config\PaymentMethod\CreditCardConfig;
+use Helper\Config\PaymentMethod\GiropayConfig;
+use Helper\Config\PaymentMethod\EpsConfig;
 use Helper\Config\PaymentMethod\IdealConfig;
 use Helper\Config\PaymentMethod\GuaranteedInvoiceConfig;
 use Helper\Config\PaymentMethod\PayPalConfig;
@@ -34,7 +36,9 @@ class GenericPaymentMethodStep extends GenericStep
         self::IDEAL => IdealConfig::class,
         self::GUARANTEED_INVOICE => GuaranteedInvoiceConfig::class,
         self::ALIPAY_CROSS_BORDER => AlipayCrossBorderConfig::class,
-        self::SOFORT => SofortConfig::class
+        self::SOFORT => SofortConfig::class,
+        self::GIROPAY => GiropayConfig::class,
+        self::EPS_ÜBERWEISUNG => EpsConfig::class
     ];
 
     /**
@@ -64,7 +68,8 @@ class GenericPaymentMethodStep extends GenericStep
     }
 
     /**
-     * @return GenericConfig| CreditCardConfig| PayPalConfig| IdealConfig| GuaranteedInvoiceConfig| SofortConfig
+     *@return GenericConfig| CreditCardConfig| PayPalConfig| IdealConfig| GuaranteedInvoiceConfig| SofortConfig
+     *@return GiropayConfig
      */
     public function getPaymentMethod()
     {

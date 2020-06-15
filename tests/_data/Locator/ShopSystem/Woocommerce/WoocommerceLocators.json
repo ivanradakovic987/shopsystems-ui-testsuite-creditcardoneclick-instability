@@ -38,7 +38,9 @@
     "wirecard_guaranteedinvoice": "//*[@class='wc_payment_method payment_method_wirecard_ee_invoice']",
     "wirecard_alipaycrossborder": "//*[@class='wc_payment_method payment_method_wirecard_ee_alipay-xborder']",
     "wirecard_sofort": "//*[@id='payment']/ul/li[contains(@class, 'sofort')]",
-    "wirecard_poipia": "//*[@class='wc_payment_method payment_method_wirecard_ee_poipia']"
+    "wirecard_poipia": "//*[@class='wc_payment_method payment_method_wirecard_ee_poipia']",
+    "wirecard_giropay": "//*[@id='payment']/ul/li[contains(@class, 'giropay')]",
+    "wirecard_eps": "//*[@class='wc_payment_method payment_method_wirecard_ee_eps']"
   },
   "order_pay": {
     "pay": "//*[@id='seamless-submit']"
