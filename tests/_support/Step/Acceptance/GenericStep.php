@@ -5,6 +5,7 @@ namespace Step\Acceptance;
 use AcceptanceTester;
 use Codeception\Scenario;
 use Exception;
+use Facebook\WebDriver\Exception\NoAlertOpenException;
 use PHPUnit\Framework\AssertionFailedError;
 
 /**
@@ -64,6 +65,17 @@ class GenericStep extends AcceptanceTester
     }
 
     /**
+     * @param $element
+     * @param int $timeout
+     * @throws Exception
+     */
+    public function preparedSeeElement($element, $timeout = 30): void
+    {
+        $this->waitForElementVisible($element, $timeout);
+        $this->seeElement($element);
+    }
+
+    /**
      * @param int $maxTimeout
      * @param array|null $function
      * @param array|null $functionArgs
@@ -116,6 +128,21 @@ class GenericStep extends AcceptanceTester
     }
 
     /**
+     * @param $message
+     * @return bool
+     * @throws \Codeception\Exception\ModuleException
+     */
+    public function waitUntilSeeInPopupWindow($message): bool
+    {
+        try {
+            $this->seeInPopup($message[0]);
+            return true;
+        } catch (NoAlertOpenException $e) {
+            return false;
+        }
+    }
+
+    /**
      * @param mixed $locator
      */
     public function setLocator($locator): void
@@ -138,5 +165,31 @@ class GenericStep extends AcceptanceTester
     public function getLocator()
     {
         return $this->locator;
+    }
+
+    /**
+     * @param $element
+     * @param int $timeout
+     * @throws Exception
+     */
+    public function preparedCheckOption($element, $timeout = 30): void
+    {
+        $this->waitForElementClickable($element, $timeout);
+        $this->checkOption($element);
+    }
+
+    /**
+     * Returns true if checkBox is check and doesn't fail the test if it is not checked
+     * @param $locator
+     * @return bool
+     */
+    public function isCheckboxChecked($locator): bool
+    {
+        try {
+            $this->seeCheckboxIsChecked($locator);
+            return true;
+        } catch (AssertionFailedError $e) {
+            return false;
+        }
     }
 }

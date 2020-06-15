@@ -2,6 +2,7 @@
   "gateway" : "API-TEST",
   "guest_customer_data": "GuestCustomerData.json",
   "registered_customer_data": "RegisteredCustomerData.json",
+  "admin_data": "AdminData.json",
   "currency": "EUR",
   "default_country": "AT",
   "creditcard_data": "CreditCardData.json",

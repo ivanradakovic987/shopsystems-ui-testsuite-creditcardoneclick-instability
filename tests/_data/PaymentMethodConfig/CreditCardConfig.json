@@ -49,6 +49,7 @@
     "enabled": "yes",
     "title": "Wirecard Credit Card",
     "payment_action": "pay",
+    "challenge_indicator": "01",
     "descriptor": "no",
     "send_additional": "yes",
     "cc_vault_enabled": "no"
