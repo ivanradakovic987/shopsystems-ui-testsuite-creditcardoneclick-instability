@@ -12,6 +12,7 @@
   "alipaycrossborder_data": "AlipayCrossBorderData.json",
   "guaranteedinvoice_data": "GuaranteedInvoiceData.json",
   "sofort_data": "SofortData.json",
+  "eps-Überweisung_data": "EpsData.json",
   "shipping_zone_name": "AUT",
   "shipping_zone_region": "AT",
   "shipping_zone_method": "flat_rate",
