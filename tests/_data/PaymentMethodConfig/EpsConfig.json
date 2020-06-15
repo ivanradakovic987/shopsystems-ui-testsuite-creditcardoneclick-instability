@@ -1,0 +1,14 @@
+{
+"API-TEST": {
+    "enabled": "yes",
+    "title": "Wirecard eps-Überweisung",
+    "merchant_account_id": "1f629760-1a66-4f83-a6b4-6a35620b4a6d",
+    "secret": "20c6a95c-e39b-4e6a-971f-52cfb347d359",
+    "base_url": "https://api-test.wirecard.com",
+    "http_user": "16390-testing",
+    "http_pass": "3!3013=D3fD8X7",
+    "test_button": "Test Credentials",
+    "descriptor": "no",
+    "send_additional": "yes"
+  }
+}
