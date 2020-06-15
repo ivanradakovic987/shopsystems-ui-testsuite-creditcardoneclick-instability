@@ -47,6 +47,8 @@ class AcceptanceTester extends Actor
 
     const REGISTERED_CUSTOMER = 'registered customer';
 
+    const ADMIN_USER = 'admin user';
+
     const SOFORT = 'sofort';
 
     const SOFORTBANKING = 'sofort.';
@@ -270,7 +272,8 @@ class AcceptanceTester extends Actor
         $shopInstance = new $this->shopInstanceMap[$shopSystemName]($this->getScenario(),
                                                                     $this->gateway,
                                                                     $this->configData->guest_customer_data,
-                                                                    $this->configData->registered_customer_data);
+                                                                    $this->configData->registered_customer_data,
+                                                                    $this->configData->admin_data);
         $shopInstance->configureShopSystemCurrencyAndCountry(
             $this->configData->currency,
             $this->configData->default_country
@@ -324,5 +327,65 @@ class AcceptanceTester extends Actor
     public function iPlaceTheOrderAndContinuePayment($paymentMethod) :void
     {
         $this->shopInstance->placeTheOrder($paymentMethod);
+    }
+
+    /**
+     * @Given I deactivate :paymentMethod payment method in configuration
+     * @param $paymentMethod
+     */
+    public function iDeactivatePaymentMethodInConfiguration($paymentMethod): void
+    {
+        $this->shopInstance->deletePaymentMethodFromDb($paymentMethod);
+    }
+
+    /**
+     * @Then I go into the configuration page as :userType and activate :paymentMethod method
+     * @param $userType
+     * @param $paymentMethod
+     */
+    public function iGoIntoTheConfigurationPageAsAndActivateMethod($userType, $paymentMethod): void
+    {
+        if ($userType === static::ADMIN_USER) {
+            $this->shopInstance->logInToAdministrationPanel();
+        }
+        $this->shopInstance->activatePaymentMethod($paymentMethod);
+    }
+
+    /**
+     * @When I fill fields with :paymentMethod data for payment action :paymentAction and transaction type :txType
+     * @param $paymentMethod
+     * @param $paymentAction
+     * @param $txType
+     */
+    public function iFillFieldsWithDataForPaymentActionAndTransactionType($paymentMethod, $paymentAction, $txType): void
+    {
+        $this->shopInstance->fillPaymentMethodFields($paymentMethod, $paymentAction, $txType);
+    }
+
+    /**
+     * @Then I see that :paymentMethod payment method is enabled on Payment page
+     * @param $paymentMethod
+     */
+    public function iSeeThatPaymentMethodIsEnabledOnPaymentPage($paymentMethod): void
+    {
+        $this->shopInstance->goToPaymentPageAndCheckIfPaymentMethodIsEnabled($paymentMethod);
+    }
+
+    /**
+     * @Then I see all data that was entered is shown in :paymentMethod configuration page
+     * @param $paymentMethod
+     */
+    public function iSeeAllDataThatWasEnteredIsShownInConfigurationPage($paymentMethod): void
+    {
+        $this->shopInstance->goToConfigurationPageAndCheckIfEnteredDataIsShown($paymentMethod);
+    }
+
+    /**
+     * @Then I see that test credentials check provides a successful result for :paymentMethod payment method
+     * @param $paymentMethod
+     */
+    public function iSeeThatTestCredentialsCheckProvidesASuccessfulResultForPaymentMethod($paymentMethod): void
+    {
+        $this->shopInstance->clickOnTestCredentialsAndCheckIfResultIsSuccessful($paymentMethod);
     }
 }
