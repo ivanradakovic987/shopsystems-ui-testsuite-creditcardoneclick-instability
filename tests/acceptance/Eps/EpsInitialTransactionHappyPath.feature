@@ -1,4 +1,4 @@
-Feature: eps-ÜberweisungInitialTransactionHappyPath
+Feature: EpsInitialTransactionHappyPath
   As a guest user
   I want to make an initial transaction with eps-Überweisung
   And to see that initial transaction was successful
@@ -6,7 +6,7 @@ Feature: eps-ÜberweisungInitialTransactionHappyPath
   Background:
     Given I initialize shop system
 
-  @woocommerce
+  @woocommerce @test
   Scenario Outline: initial transaction
     Given I activate "eps-Überweisung" payment action <payment_action> in configuration
     And I prepare checkout with purchase sum <amount> in shop system as "guest customer"
