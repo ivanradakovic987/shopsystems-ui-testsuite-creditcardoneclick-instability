@@ -53,6 +53,8 @@ class AcceptanceTester extends Actor
 
     const SOFORTBANKING = 'sofort.';
 
+    const GIROPAY = 'giropay';
+
     const EPS_ÜBERWEISUNG = 'eps-Überweisung';
 
     //this is used to generate new class instance, so const doesn't work here
@@ -70,6 +72,7 @@ class AcceptanceTester extends Actor
         'GuaranteedInvoice' => Step\Acceptance\PaymentMethod\GuaranteedInvoiceStep::class,
         'AlipayCrossBorder' => Step\Acceptance\PaymentMethod\AlipayCrossBorderStep::class,
         'Sofort' => Step\Acceptance\PaymentMethod\SofortStep::class,
+        'giropay' => Step\Acceptance\PaymentMethod\GiropayStep::class,
         'eps-Überweisung' => Step\Acceptance\PaymentMethod\EpsStep::class
     ];
 
