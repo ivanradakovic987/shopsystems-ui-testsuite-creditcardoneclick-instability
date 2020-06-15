@@ -1,0 +1,14 @@
+{
+  "last_name": "",
+  "first_name": "",
+  "country": "",
+  "country_id": "",
+  "state": "",
+  "street_address": "",
+  "town": "",
+  "post_code": "",
+  "phone": "",
+  "email_address": "test@test.com",
+  "password": "password",
+  "login_username": "admin"
+}
