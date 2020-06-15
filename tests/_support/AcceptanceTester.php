@@ -53,6 +53,8 @@ class AcceptanceTester extends Actor
 
     const SOFORTBANKING = 'sofort.';
 
+    const PAYMENT_ON_INVOICE = 'PaymentOnInvoice/PaymentInAdvance';
+
     const GIROPAY = 'giropay';
 
     const EPS_ÜBERWEISUNG = 'eps-Überweisung';
