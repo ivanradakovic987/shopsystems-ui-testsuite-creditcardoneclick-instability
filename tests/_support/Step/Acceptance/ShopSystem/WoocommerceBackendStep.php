@@ -37,11 +37,13 @@ class WoocommerceBackendStep
 
     const SHIPPING_ZONE_LOCATIONS_TYPE_COLUMN_NAME = 'location_type';
 
-    public $wooInstance;
+    const PAYMENT_ACTION_FIELD_NAME = 'payment_action';
+
+    private $wooInstance;
 
     public function __construct($shopInstance)
     {
-        $this->wooInstance=$shopInstance;
+        $this->wooInstance = $shopInstance;
     }
     /**
      * @param String $paymentMethod
@@ -138,12 +140,12 @@ class WoocommerceBackendStep
         //payment action should be taken from parameter
         if ($elName === static::PAYMENT_ACTION_FIELD_NAME) {
             $this->wooInstance->preparedSelectOption(
-                $this->getLocator()->$pageLocator->$elLocator,
+                $this->wooInstance->getLocator()->$pageLocator->$elLocator,
                 ucfirst(strtolower($paymentAction))
             );
             return;
         }
-        $this->wooInstance->preparedSelectOption($this->getLocator()->$pageLocator->$elLocator, $elValue);
+        $this->wooInstance->preparedSelectOption($this->wooInstance->getLocator()->$pageLocator->$elLocator, $elValue);
     }
 
     /**
@@ -154,8 +156,8 @@ class WoocommerceBackendStep
      */
     public function checkOptionIfNotAlreadyChecked($elementLocator, $pageLocator)
     {
-        if (!$this->isCheckboxChecked($this->getLocator()->$pageLocator->$elementLocator)) {
-            $this->preparedCheckOption($this->getLocator()->$pageLocator->$elementLocator);
+        if (!$this->wooInstance->isCheckboxChecked($this->wooInstance->getLocator()->$pageLocator->$elementLocator)) {
+            $this->wooInstance->preparedCheckOption($this->wooInstance->getLocator()->$pageLocator->$elementLocator);
         }
     }
 
@@ -170,12 +172,12 @@ class WoocommerceBackendStep
     {
         //payment action should be taken from parameter
         if ($elName === static::PAYMENT_ACTION_FIELD_NAME) {
-            $this->seeInField(
-                $this->getLocator()->$pageLocator->$elLocator,
+            $this->wooInstance->seeInField(
+                $this->wooInstance->getLocator()->$pageLocator->$elLocator,
                 ucfirst(strtolower($paymentAction))
             );
             return;
         }
-        $this->seeInField($this->getLocator()->$pageLocator->$elLocator, $elValue);
+        $this->wooInstance->seeInField($this->wooInstance->getLocator()->$pageLocator->$elLocator, $elValue);
     }
 }

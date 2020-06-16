@@ -2,6 +2,7 @@
 
 namespace Step\Acceptance\ShopSystem;
 
+use Codeception\Scenario;
 use Facebook\WebDriver\Exception\NoSuchElementException;
 use Step\Acceptance\iConfigurePaymentMethod;
 use Step\Acceptance\iPrepareCheckout;
@@ -61,8 +62,6 @@ class WoocommerceStep extends GenericShopSystemStep implements
 
     const CUSTOMER_META_KEY_SHIPPING_COUNTRY_VALUE = 'shipping_country';
 
-    const PAYMENT_ACTION_FIELD_NAME = 'payment_action';
-
     /**
      * Keeps data from paymentMethod config json file
      * It is being set in goToConfigurationPageAndCheckIfEnteredDataIsShown
@@ -76,6 +75,19 @@ class WoocommerceStep extends GenericShopSystemStep implements
      * @var string
      */
     public $txType = '';
+
+    /**
+     * @var WoocommerceBackendStep
+     * WoocommerceBackendStep object instantiated in constructor of WoocommerceStep class
+     */
+    private $backendInstance;
+
+    public function __construct(Scenario $scenario, $gateway, $guestFileName, $registeredFileName, $adminFileName)
+    {
+        parent::__construct($scenario, $gateway, $guestFileName, $registeredFileName, $adminFileName);
+
+        $this->backendInstance = new WoocommerceBackendStep($this);
+    }
 
     /**
      * @param String $paymentMethod
@@ -334,11 +346,11 @@ class WoocommerceStep extends GenericShopSystemStep implements
                 $this->preparedFillField($this->getLocator()->$pageLocator->$locator, $value);
             } elseif (array_key_exists($name.'_select', $this->getLocator()->$pageLocator)) {
                 $locator = $name . '_select';
-                $this->selectOptionBasedOnElementName($name, $value, $locator, $pageLocator, $txType);
+                $this->backendInstance->selectOptionBasedOnElementName($name, $value, $locator, $pageLocator, $txType);
             } elseif (array_key_exists($name.'_check', $this->getLocator()->$pageLocator)) {
                 $locator = $name . '_check';
                 // All fields should be checked according to test-case
-                $this->checkOptionIfNotAlreadyChecked($locator, $pageLocator);
+                $this->backendInstance->checkOptionIfNotAlreadyChecked($locator, $pageLocator);
             }
         }
         $this->preparedClick($this->getLocator()->$pageLocator->save_changes_button);
@@ -374,7 +386,7 @@ class WoocommerceStep extends GenericShopSystemStep implements
                 $this->seeInField($this->getLocator()->$pageLocator->$locator, $value);
             } elseif (array_key_exists($name.'_select', $this->getLocator()->$pageLocator)) {
                 $locator = $name . '_select';
-                $this->seeInFieldBasedOnElementName($name, $value, $locator, $pageLocator, $this->txType);
+                $this->backendInstance->seeInFieldBasedOnElementName($name, $value, $locator, $pageLocator, $this->txType);
             } elseif (array_key_exists($name.'_check', $this->getLocator()->$pageLocator)) {
                 $locator = $name . '_check';
                 // All fields should be checked according to test-case
@@ -407,7 +419,6 @@ class WoocommerceStep extends GenericShopSystemStep implements
      */
     public function configureShippingZone($zoneName, $zoneRegions, $shippingMethods, $locationType)
     {
-        $backend = new WoocommerceBackendStep($this);
-        $backend->putShippingZoneInDatabase($zoneName, $zoneRegions, $shippingMethods, $locationType);
+        $this->backendInstance->putShippingZoneInDatabase($zoneName, $zoneRegions, $shippingMethods, $locationType);
     }
 }
