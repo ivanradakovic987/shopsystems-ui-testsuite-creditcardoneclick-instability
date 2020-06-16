@@ -9,9 +9,51 @@ use Exception;
  * Contains backend functions that are not called directly from feature file
  * @package Step\Acceptance|ShopSystem
  */
-class WoocommerceBackendStep
+class WoocommerceBackendStep extends GenericShopSystemStep
 {
-    const CREDIT_CARD_ONE_CLICK = 'creditCardOneClick';
+    const STEP_NAME = 'Woocommerce';
+
+    const SETTINGS_TABLE_NAME = 'wp_options';
+
+    const NAME_COLUMN_NAME = 'option_name';
+
+    const VALUE_COLUMN_NAME = 'option_value';
+
+    const TRANSACTION_TABLE_NAME = 'wp_wirecard_payment_gateway_tx';
+
+    const TRANSACTION_TYPE_COLUMN_NAME = 'transaction_type';
+
+    const WIRECARD_OPTION_NAME = 'woocommerce_wirecard_ee_';
+
+    const CURRENCY_OPTION_NAME = 'woocommerce_currency';
+
+    const DEFAULT_COUNTRY_OPTION_NAME = 'woocommerce_default_country';
+
+    const CUSTOMER_TABLE = 'wp_users';
+
+    const CUSTOMER_EMAIL_COLUMN_NAME = 'user_email';
+
+    const CUSTOMER_PASSWORD_COLUMN_NAME = 'user_pass';
+
+    const CUSTOMER_LOGIN_COLUMN_NAME = 'user_login';
+
+    const CUSTOMER_DATE_COLUMN_NAME = 'user_registered';
+
+    const CUSTOMER_META_TABLE = 'wp_usermeta';
+
+    const CUSTOMER_META_USER_ID_COLUMN_NAME = 'user_id';
+
+    const CUSTOMER_META_KEY_COLUMN_NAME = 'meta_key';
+
+    const CUSTOMER_META_VALUE_COLUMN_NAME = 'meta_value';
+
+    const CUSTOMER_META_KEY_BILLING_ADDRESS_VALUE = 'billing_address_1';
+
+    const CUSTOMER_META_KEY_SHIPPING_ADDRESS_VALUE = 'shipping_address_1';
+
+    const CUSTOMER_META_KEY_BILLING_COUNTRY_VALUE = 'billing_country';
+
+    const CUSTOMER_META_KEY_SHIPPING_COUNTRY_VALUE = 'shipping_country';
 
     const CREDIT_CARD_ONE_CLICK_CONFIGURATION_VALUE = 'cc_vault_enabled';
 
@@ -39,12 +81,6 @@ class WoocommerceBackendStep
 
     const PAYMENT_ACTION_FIELD_NAME = 'payment_action';
 
-    private $wooInstance;
-
-    public function __construct($shopInstance)
-    {
-        $this->wooInstance = $shopInstance;
-    }
     /**
      * @param String $paymentMethod
      * @param String $optionName
@@ -60,7 +96,7 @@ class WoocommerceBackendStep
                 }
             }
             $optionValue = serialize($serializedValues);
-            $this->wooInstance->putValueInDatabase($optionName, $optionValue);
+            $this->putValueInDatabase($optionName, $optionValue);
         }
     }
 
@@ -71,8 +107,8 @@ class WoocommerceBackendStep
     public function startCreditCardPayment($paymentMethod)
     {
         $paymentMethodForm = strtolower($paymentMethod) . '_form';
-        $this->wooInstance->waitForElementVisible($this->wooInstance->getLocator()->checkout->$paymentMethodForm);
-        $this->wooInstance->scrollTo($this->wooInstance->getLocator()->checkout->$paymentMethodForm);
+        $this->waitForElementVisible($this->getLocator()->checkout->$paymentMethodForm);
+        $this->scrollTo($this->getLocator()->checkout->$paymentMethodForm);
     }
 
     /**
@@ -84,24 +120,24 @@ class WoocommerceBackendStep
     public function putShippingZoneInDatabase($zoneName, $zoneRegions, $shippingMethods, $locationType)
     {
         // check if zone already exists in database
-        if (!$this->wooInstance->grabFromDatabase(
+        if (!$this->grabFromDatabase(
             static::SHIPPING_ZONES_TABLE_NAME,
             static::SHIPPING_ZONES_COLUMN_NAME,
             [static::SHIPPING_ZONES_COLUMN_NAME => $zoneName]
         )) {
-            $zoneId = $this->wooInstance->haveInDatabase(
+            $zoneId = $this->haveInDatabase(
                 static::SHIPPING_ZONES_TABLE_NAME,
                 [static::SHIPPING_ZONES_COLUMN_NAME => $zoneName,
                     static::SHIPPING_ZONES_ORDER_COLUMN_NAME => 0]
             );
-            $this->wooInstance->haveInDatabase(
+            $this->haveInDatabase(
                 static::SHIPPING_ZONE_METHODS_TABLE_NAME,
                 [static::SHIPPING_ZONE_ID_COLUMN_NAME => $zoneId,
                     static::SHIPPING_ZONE_METHODS_METHOD_ID_COLUMN_NAME => $shippingMethods,
                     static::SHIPPING_ZONE_METHODS_ORDER_COLUMN_NAME => 1,
                     static::SHIPPING_ZONE_METHODS_ENABLED_COLUMN_NAME => 1]
             );
-            $this->wooInstance->haveInDatabase(
+            $this->haveInDatabase(
                 static::SHIPPING_ZONE_LOCATIONS_TABLE_NAME,
                 [static::SHIPPING_ZONE_ID_COLUMN_NAME => $zoneId,
                     static::SHIPPING_ZONE_LOCATIONS_CODE_COLUMN_NAME => $zoneRegions,
@@ -109,17 +145,17 @@ class WoocommerceBackendStep
             );
             return;
         }
-        $zoneId = $this->wooInstance->grabFromDatabase(
+        $zoneId = $this->grabFromDatabase(
             static::SHIPPING_ZONES_TABLE_NAME,
             static::SHIPPING_ZONE_ID_COLUMN_NAME,
             [static::SHIPPING_ZONES_COLUMN_NAME => $zoneName]
         );
-        $this->wooInstance->updateInDatabase(
+        $this->updateInDatabase(
             static::SHIPPING_ZONE_METHODS_TABLE_NAME,
             [static::SHIPPING_ZONE_METHODS_METHOD_ID_COLUMN_NAME => $shippingMethods],
             [static::SHIPPING_ZONE_ID_COLUMN_NAME => $zoneId]
         );
-        $this->wooInstance->updateInDatabase(
+        $this->updateInDatabase(
             static::SHIPPING_ZONE_LOCATIONS_TABLE_NAME,
             [static::SHIPPING_ZONE_LOCATIONS_CODE_COLUMN_NAME => $zoneRegions,
                 static::SHIPPING_ZONE_LOCATIONS_TYPE_COLUMN_NAME => $locationType],
@@ -139,13 +175,13 @@ class WoocommerceBackendStep
     {
         //payment action should be taken from parameter
         if ($elName === static::PAYMENT_ACTION_FIELD_NAME) {
-            $this->wooInstance->preparedSelectOption(
-                $this->wooInstance->getLocator()->$pageLocator->$elLocator,
+            $this->preparedSelectOption(
+                $this->getLocator()->$pageLocator->$elLocator,
                 ucfirst(strtolower($paymentAction))
             );
             return;
         }
-        $this->wooInstance->preparedSelectOption($this->wooInstance->getLocator()->$pageLocator->$elLocator, $elValue);
+        $this->preparedSelectOption($this->getLocator()->$pageLocator->$elLocator, $elValue);
     }
 
     /**
@@ -156,8 +192,8 @@ class WoocommerceBackendStep
      */
     public function checkOptionIfNotAlreadyChecked($elementLocator, $pageLocator)
     {
-        if (!$this->wooInstance->isCheckboxChecked($this->wooInstance->getLocator()->$pageLocator->$elementLocator)) {
-            $this->wooInstance->preparedCheckOption($this->wooInstance->getLocator()->$pageLocator->$elementLocator);
+        if (!$this->isCheckboxChecked($this->getLocator()->$pageLocator->$elementLocator)) {
+            $this->preparedCheckOption($this->getLocator()->$pageLocator->$elementLocator);
         }
     }
 
@@ -172,12 +208,12 @@ class WoocommerceBackendStep
     {
         //payment action should be taken from parameter
         if ($elName === static::PAYMENT_ACTION_FIELD_NAME) {
-            $this->wooInstance->seeInField(
-                $this->wooInstance->getLocator()->$pageLocator->$elLocator,
+            $this->seeInField(
+                $this->getLocator()->$pageLocator->$elLocator,
                 ucfirst(strtolower($paymentAction))
             );
             return;
         }
-        $this->wooInstance->seeInField($this->wooInstance->getLocator()->$pageLocator->$elLocator, $elValue);
+        $this->seeInField($this->getLocator()->$pageLocator->$elLocator, $elValue);
     }
 }
