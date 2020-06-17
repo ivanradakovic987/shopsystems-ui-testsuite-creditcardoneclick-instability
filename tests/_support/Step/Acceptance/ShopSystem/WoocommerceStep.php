@@ -351,15 +351,4 @@ class WoocommerceStep extends WoocommerceBackendStep implements
             [$this->getLocator()->merchant_configuration->successfully_tested]
         );
     }
-
-    /**
-     * @param $zoneName
-     * @param $zoneRegions
-     * @param $shippingMethods
-     * @param $locationType
-     */
-    public function configureShippingZone($zoneName, $zoneRegions, $shippingMethods, $locationType)
-    {
-        $this->putShippingZoneInDatabase($zoneName, $zoneRegions, $shippingMethods, $locationType);
-    }
 }
