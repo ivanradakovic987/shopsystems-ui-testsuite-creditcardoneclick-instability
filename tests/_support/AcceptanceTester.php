@@ -59,6 +59,8 @@ class AcceptanceTester extends Actor
 
     const EPS_ÜBERWEISUNG = 'eps-Überweisung';
 
+    const SEPADIRECTDEBIT = 'sEPADirectDebit';
+
     //this is used to generate new class instance, so const doesn't work here
     private $shopInstanceMap = [
         'prestashop' => Step\Acceptance\ShopSystem\PrestashopStep::class,
@@ -75,7 +77,8 @@ class AcceptanceTester extends Actor
         'AlipayCrossBorder' => Step\Acceptance\PaymentMethod\AlipayCrossBorderStep::class,
         'Sofort' => Step\Acceptance\PaymentMethod\SofortStep::class,
         'giropay' => Step\Acceptance\PaymentMethod\GiropayStep::class,
-        'eps-Überweisung' => Step\Acceptance\PaymentMethod\EpsStep::class
+        'eps-Überweisung' => Step\Acceptance\PaymentMethod\EpsStep::class,
+        'SEPADirectDebit' => Step\Acceptance\PaymentMethod\SEPADirectDebitStep::class
     ];
 
     /**
@@ -180,7 +183,8 @@ class AcceptanceTester extends Actor
         $this->paymentMethod->fillFieldsInTheShop();
         if (strcasecmp($paymentMethod, static::CREDIT_CARD_ONE_CLICK) !== 0 &&
             strcasecmp($paymentMethod, static::GUARANTEED_INVOICE) !== 0 &&
-            strcasecmp($paymentMethod, static::EPS_ÜBERWEISUNG) !== 0) {
+            strcasecmp($paymentMethod, static::EPS_ÜBERWEISUNG) !== 0 &&
+            strcasecmp($paymentMethod, static::SEPADIRECTDEBIT)) {
             $this->shopInstance->proceedWithPayment($paymentMethod);
         }
     }

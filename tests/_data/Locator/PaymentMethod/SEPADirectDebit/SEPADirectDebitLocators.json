@@ -1,0 +1,5 @@
+{
+  "first_name": "//input[@id='sepa_firstname']",
+  "last_name": "//input[@id='sepa_lastname']",
+  "iban": "//input[@id='sepa_iban']"
+}
