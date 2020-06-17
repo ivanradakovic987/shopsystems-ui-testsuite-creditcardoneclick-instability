@@ -52,7 +52,8 @@ class PrestashopStep extends GenericShopSystemStep implements
      */
     private $configNameDiffs =
         [
-            'cc_vault_enabled' => 'ccvault_enabled'
+            'cc_vault_enabled' => 'ccvault_enabled',
+            'challenge_indicator' => 'requestor_challenge'
         ];
 
     /**
