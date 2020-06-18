@@ -2,16 +2,17 @@
 
 namespace Step\Acceptance\PaymentMethod;
 
-use Facebook\WebDriver\Exception\TimeOutException;
 use Step\Acceptance\iPerformFillPaymentFields;
-use Step\Acceptance\iPerformPayment;
 use Exception;
+use Step\Acceptance\iPerformPaymentInsideTheShop;
 
 /**
  * Class SEPADirectDebitStep
  * @package Step\Acceptance\PaymentMethod
  */
-class SEPADirectDebitStep extends GenericPaymentMethodStep implements iPerformFillPaymentFields
+class SEPADirectDebitStep extends GenericPaymentMethodStep implements
+    iPerformFillPaymentFields,
+    iPerformPaymentInsideTheShop
 {
     const STEP_NAME = 'SEPADirectDebit';
 
