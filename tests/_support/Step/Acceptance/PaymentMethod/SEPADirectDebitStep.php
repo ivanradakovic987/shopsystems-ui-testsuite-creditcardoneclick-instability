@@ -11,7 +11,7 @@ use Exception;
  * Class SEPADirectDebitStep
  * @package Step\Acceptance\PaymentMethod
  */
-class SEPADirectDebitStep extends GenericPaymentMethodStep implements iPerformPayment, iPerformFillPaymentFields
+class SEPADirectDebitStep extends GenericPaymentMethodStep implements iPerformFillPaymentFields
 {
     const STEP_NAME = 'SEPADirectDebit';
 
@@ -25,11 +25,10 @@ class SEPADirectDebitStep extends GenericPaymentMethodStep implements iPerformPa
         $this->preparedFillField($this->getLocator()->iban, $this->getPaymentMethod()->getIban());
     }
 
-    /**
-     * @throws Exception
-     */
-    public function performPaymentMethodActionsOutsideShop() : void
+    public function performAdditionalPaymentStepsInsideTheShop()
     {
-
+        $this->waitForElementVisible($this->getLocator()->terms_and_conditions);
+        $this->preparedCheckOption($this->getLocator()->terms_and_conditions);
+        $this->preparedClick($this->getLocator()->confirm_button);
     }
 }

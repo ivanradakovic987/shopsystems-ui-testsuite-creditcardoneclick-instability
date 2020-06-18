@@ -398,4 +398,14 @@ class AcceptanceTester extends Actor
     {
         $this->shopInstance->clickOnTestCredentialsAndCheckIfResultIsSuccessful($paymentMethod);
     }
+
+    /**
+     * @When I perform additional :paymentMethod payment steps inside the shop
+     * @param $paymentMethod
+     */
+    public function iPerformAdditionalPaymentStepsInsideTheShop($paymentMethod): void
+    {
+        $this->createPaymentMethodIfNeeded($paymentMethod);
+        $this->paymentMethod->performAdditionalPaymentStepsInsideTheShop();
+    }
 }

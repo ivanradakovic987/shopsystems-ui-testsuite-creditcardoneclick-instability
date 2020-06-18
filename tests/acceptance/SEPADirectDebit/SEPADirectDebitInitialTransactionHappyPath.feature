@@ -13,12 +13,12 @@ Feature: SEPADirectDebitInitialTransactionHappyPath
     And I see "Wirecard SEPA Direct Debit"
     And I start "SEPADirectDebit" payment
     And I fill "SEPADirectDebit" fields in the shop
-    When I place the order and continue "SEPADirectDebit" payment
-    #When I fill "CreditCard" fields in the shop
+    And I place the order and continue "SEPADirectDebit" payment
+    When I perform additional "SEPADirectDebit" payment steps inside the shop
     Then I see successful payment
     And I see "SEPADirectDebit" transaction type <transaction_type> in transaction table
 
     Examples:
       | payment_action  | amount | transaction_type |
       |    "reserve"    |  "20"  |  "authorization" |
-      |      "pay"      |  "20"  |    "purchase"    |
+      |      "pay"      |  "20"  |  "debit"         |

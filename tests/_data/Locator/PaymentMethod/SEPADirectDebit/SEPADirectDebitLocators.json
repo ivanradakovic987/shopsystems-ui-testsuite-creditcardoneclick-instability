@@ -1,5 +1,7 @@
 {
   "first_name": "//input[@id='sepa_firstname']",
   "last_name": "//input[@id='sepa_lastname']",
-  "iban": "//input[@id='sepa_iban']"
+  "iban": "//input[@id='sepa_iban']",
+  "terms_and_conditions": "//input[@id='sepa-check']",
+  "confirm_button": "//button[@id='sepa-button']"
 }
