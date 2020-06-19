@@ -5,6 +5,7 @@ use Helper\Config\FileSytem;
 use Helper\Config\Environment;
 use Step\Acceptance\PaymentMethod\CreditCardStep;
 use Step\Acceptance\PaymentMethod\GenericPaymentMethodStep;
+use Step\Acceptance\PaymentMethod\SEPADirectDebitStep;
 use Step\Acceptance\ShopSystem\GenericShopSystemStep;
 use Step\Acceptance\ShopSystem\PrestashopStep;
 use Step\Acceptance\ShopSystem\WoocommerceStep;
@@ -59,6 +60,8 @@ class AcceptanceTester extends Actor
 
     const EPS_ÜBERWEISUNG = 'eps-Überweisung';
 
+    const SEPADIRECTDEBIT = 'sEPADirectDebit';
+
     //this is used to generate new class instance, so const doesn't work here
     private $shopInstanceMap = [
         'prestashop' => Step\Acceptance\ShopSystem\PrestashopStep::class,
@@ -75,7 +78,8 @@ class AcceptanceTester extends Actor
         'AlipayCrossBorder' => Step\Acceptance\PaymentMethod\AlipayCrossBorderStep::class,
         'Sofort' => Step\Acceptance\PaymentMethod\SofortStep::class,
         'giropay' => Step\Acceptance\PaymentMethod\GiropayStep::class,
-        'eps-Überweisung' => Step\Acceptance\PaymentMethod\EpsStep::class
+        'eps-Überweisung' => Step\Acceptance\PaymentMethod\EpsStep::class,
+        'SEPADirectDebit' => Step\Acceptance\PaymentMethod\SEPADirectDebitStep::class
     ];
 
     /**
@@ -99,7 +103,7 @@ class AcceptanceTester extends Actor
     private $gateway;
 
     /**
-     * @var Actor|CreditCardStep|
+     * @var Actor|CreditCardStep|SEPADirectDebitStep
      */
     private $paymentMethod;
 
@@ -180,7 +184,8 @@ class AcceptanceTester extends Actor
         $this->paymentMethod->fillFieldsInTheShop();
         if (strcasecmp($paymentMethod, static::CREDIT_CARD_ONE_CLICK) !== 0 &&
             strcasecmp($paymentMethod, static::GUARANTEED_INVOICE) !== 0 &&
-            strcasecmp($paymentMethod, static::EPS_ÜBERWEISUNG) !== 0) {
+            strcasecmp($paymentMethod, static::EPS_ÜBERWEISUNG) !== 0 &&
+            strcasecmp($paymentMethod, static::SEPADIRECTDEBIT)) {
             $this->shopInstance->proceedWithPayment($paymentMethod);
         }
     }
@@ -393,5 +398,15 @@ class AcceptanceTester extends Actor
     public function iSeeThatTestCredentialsCheckProvidesASuccessfulResultForPaymentMethod($paymentMethod): void
     {
         $this->shopInstance->clickOnTestCredentialsAndCheckIfResultIsSuccessful($paymentMethod);
+    }
+
+    /**
+     * @When I perform additional :paymentMethod payment steps inside the shop
+     * @param $paymentMethod
+     */
+    public function iPerformAdditionalPaymentStepsInsideTheShop($paymentMethod): void
+    {
+        $this->createPaymentMethodIfNeeded($paymentMethod);
+        $this->paymentMethod->performAdditionalPaymentStepsInsideTheShop();
     }
 }

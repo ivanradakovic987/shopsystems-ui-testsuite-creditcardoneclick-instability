@@ -14,6 +14,7 @@
   "sofort_data": "SofortData.json",
   "giropay_data": "giropayData.json",
   "eps-Überweisung_data": "EpsData.json",
+  "sepadirectdebit_data": "SEPADirectDebitData.json",
   "shipping_zone_name": "AUT",
   "shipping_zone_region": "AT",
   "shipping_zone_method": "flat_rate",

@@ -92,8 +92,8 @@
       "pay": "pay"
     },
     "tx_table": {
-      "authorization": "authorization",
-      "purchase": "purchase"
+      "debit": "debit",
+      "authorization": "authorization"
     }
   }
 }
