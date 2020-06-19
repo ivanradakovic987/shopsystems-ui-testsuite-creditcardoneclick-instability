@@ -11,6 +11,7 @@ use Helper\Config\PaymentMethod\EpsConfig;
 use Helper\Config\PaymentMethod\IdealConfig;
 use Helper\Config\PaymentMethod\GuaranteedInvoiceConfig;
 use Helper\Config\PaymentMethod\PayPalConfig;
+use Helper\Config\PaymentMethod\SEPADirectDebitConfig;
 use Helper\Config\PaymentMethod\SofortConfig;
 use Step\Acceptance\GenericStep;
 use Helper\Config\FileSytem;
@@ -38,7 +39,8 @@ class GenericPaymentMethodStep extends GenericStep
         self::ALIPAY_CROSS_BORDER => AlipayCrossBorderConfig::class,
         self::SOFORT => SofortConfig::class,
         self::GIROPAY => GiropayConfig::class,
-        self::EPS_ÜBERWEISUNG => EpsConfig::class
+        self::EPS_ÜBERWEISUNG => EpsConfig::class,
+        self::SEPADIRECTDEBIT => SEPADirectDebitConfig::class
     ];
 
     /**
@@ -69,7 +71,7 @@ class GenericPaymentMethodStep extends GenericStep
 
     /**
      *@return GenericConfig| CreditCardConfig| PayPalConfig| IdealConfig| GuaranteedInvoiceConfig| SofortConfig
-     *@return GiropayConfig
+     *@return GiropayConfig| SEPADirectDebitConfig
      */
     public function getPaymentMethod()
     {

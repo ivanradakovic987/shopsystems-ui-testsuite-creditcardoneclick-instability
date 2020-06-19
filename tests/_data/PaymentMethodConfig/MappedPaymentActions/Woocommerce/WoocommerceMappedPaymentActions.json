@@ -84,5 +84,16 @@
     "tx_table": {
       "debit": "debit"
     }
+  },
+  "SEPADirectDebit": {
+    "config": {
+      "row": "payment_action",
+      "reserve": "reserve",
+      "pay": "pay"
+    },
+    "tx_table": {
+      "debit": "debit",
+      "authorization": "authorization"
+    }
   }
 }
