@@ -5,6 +5,7 @@ use Helper\Config\FileSytem;
 use Helper\Config\Environment;
 use Step\Acceptance\PaymentMethod\CreditCardStep;
 use Step\Acceptance\PaymentMethod\GenericPaymentMethodStep;
+use Step\Acceptance\PaymentMethod\SEPADirectDebitStep;
 use Step\Acceptance\ShopSystem\GenericShopSystemStep;
 use Step\Acceptance\ShopSystem\PrestashopStep;
 use Step\Acceptance\ShopSystem\WoocommerceStep;
@@ -102,7 +103,7 @@ class AcceptanceTester extends Actor
     private $gateway;
 
     /**
-     * @var Actor|CreditCardStep|
+     * @var Actor|CreditCardStep|SEPADirectDebitStep
      */
     private $paymentMethod;
 

@@ -28,7 +28,11 @@ class SEPADirectDebitStep extends GenericPaymentMethodStep implements
 
     public function performAdditionalPaymentStepsInsideTheShop()
     {
-        $this->waitForElementVisible($this->getLocator()->terms_and_conditions);
+        // wait for all elements to be clickable before proceeding
+        $this->waitForElementVisible($this->getLocator()->dialog, 60);
+        $this->waitForElementClickable($this->getLocator()->terms_and_conditions, 60);
+        $this->waitForElementClickable($this->getLocator()->confirm_button, 60);
+
         $this->preparedCheckOption($this->getLocator()->terms_and_conditions);
         $this->preparedClick($this->getLocator()->confirm_button);
     }
