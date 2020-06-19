@@ -56,7 +56,8 @@ class Magento2Step extends GenericShopSystemStep implements iConfigurePaymentMet
     private $configNameDiffs =
         [
             'cc_vault_enabled' => 'cc_vault/active',
-            'enabled' => 'active'
+            'enabled' => 'active',
+            'challenge_indicator' => 'challenge_ind'
         ];
 
     /**

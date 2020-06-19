@@ -26,6 +26,10 @@ class SEPADirectDebitStep extends GenericPaymentMethodStep implements
         $this->preparedFillField($this->getLocator()->iban, $this->getPaymentMethod()->getIban());
     }
 
+    /**
+     * @return mixed|void
+     * @throws Exception
+     */
     public function performAdditionalPaymentStepsInsideTheShop()
     {
         // wait for all elements to be clickable before proceeding
