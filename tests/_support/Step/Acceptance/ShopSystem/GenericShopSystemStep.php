@@ -24,12 +24,17 @@ class GenericShopSystemStep extends GenericStep
      */
     private $registeredCustomer;
 
+    /**
+     * @var CustomerConfig
+     */
+    private $adminUser;
+
     private $mappedPaymentActions;
 
     /**
      * @var array
      */
-    private $redirectPaymentMethods = ['PayPal', 'iDEAL','AlipayCrossBorder'];
+    private $redirectPaymentMethods = ['PayPal', 'iDEAL','AlipayCrossBorder', 'Sofort', 'giropay'];
 
     /**
      * GenericStep constructor.
@@ -37,8 +42,9 @@ class GenericShopSystemStep extends GenericStep
      * @param $gateway
      * @param $guestFileName
      * @param $registeredFileName
+     * @param $adminFileName
      */
-    public function __construct(Scenario $scenario, $gateway, $guestFileName, $registeredFileName)
+    public function __construct(Scenario $scenario, $gateway, $guestFileName, $registeredFileName, $adminFileName)
     {
         parent::__construct($scenario, $gateway);
         $this->setLocator($this->getDataFromDataFile($this->getFullPath(
@@ -51,20 +57,22 @@ class GenericShopSystemStep extends GenericStep
             $this->getFullPath(FileSytem::MAPPED_PAYMENT_ACTIONS_FOLDER_PATH
                 . static::STEP_NAME . DIRECTORY_SEPARATOR . static::STEP_NAME . 'MappedPaymentActions.json')
         );
-        $this->createCustomerObjects($guestFileName, $registeredFileName);
+        $this->createCustomerObjects($guestFileName, $registeredFileName, $adminFileName);
     }
 
     /**
      * @param $guestFileName
      * @param $registeredFileName
+     * @param $adminFileName
      */
-    public function createCustomerObjects($guestFileName, $registeredFileName): void
+    public function createCustomerObjects($guestFileName, $registeredFileName, $adminFileName): void
     {
         $dataFolderPath = $this->getFullPath(FileSytem::CUSTOMER_DATA_FOLDER_PATH);
         $this->guestCustomer = new CustomerConfig($this->getDataFromDataFile($dataFolderPath . $guestFileName));
         $this->registeredCustomer = new CustomerConfig($this->getDataFromDataFile(
             $dataFolderPath . $registeredFileName
         ));
+        $this->adminUser = new CustomerConfig($this->getDataFromDataFile($dataFolderPath . $adminFileName));
     }
 
     /**
@@ -152,6 +160,8 @@ class GenericShopSystemStep extends GenericStep
     {
         if ($customerType === static::REGISTERED_CUSTOMER) {
             return $this->registeredCustomer;
+        } elseif ($customerType === static::ADMIN_USER) {
+            return $this->adminUser;
         }
         return $this->guestCustomer;
     }
@@ -179,7 +189,10 @@ class GenericShopSystemStep extends GenericStep
      */
     public function validateTransactionInDatabase($paymentMethod, $paymentAction): void
     {
-        if (strcasecmp($paymentMethod, static::GUARANTEED_INVOICE) === 0) {
+        if (strcasecmp($paymentMethod, static::GUARANTEED_INVOICE) === 0 ||
+            strcasecmp($paymentMethod, static::PAYMENT_ON_INVOICE) === 0 ||
+            strcasecmp($paymentMethod, static::SOFORTBANKING) === 0 ||
+            strcasecmp($paymentMethod, static::EPS_ÜBERWEISUNG) === 0) {
             $paymentMethod = $this->getActingPaymentMethod($paymentMethod);
         }
         $this->waitUntil(80, [$this, 'checkPaymentActionInTransactionTable'], [$paymentMethod, $paymentAction]);
@@ -268,6 +281,15 @@ class GenericShopSystemStep extends GenericStep
         }
         if (strcasecmp($paymentMethod, static::GUARANTEED_INVOICE) === 0) {
             return 'Invoice';
+        }
+        if (strcasecmp($paymentMethod, static::SOFORTBANKING) === 0) {
+            return 'Sofortbanking';
+        }
+        if (strcasecmp($paymentMethod, static::PAYMENT_ON_INVOICE) === 0) {
+            return 'PoiPia';
+        }
+        if (strcasecmp($paymentMethod, static::EPS_ÜBERWEISUNG) === 0) {
+            return 'Eps';
         }
         return $paymentMethod;
     }

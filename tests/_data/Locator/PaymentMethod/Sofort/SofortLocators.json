@@ -1,0 +1,11 @@
+{
+  "bank_name_field": "//input[@id='BankCodeSearch']",
+  "bank_button_weiter": "//li[@class='initial']//a",
+  "kontonummer_field": "//input[@id='BackendFormLOGINNAMEUSERID']",
+  "pin_field": "//input[@id='BackendFormUSERPIN']",
+  "login_button_weiter": "//button[@class='button-right primary has-indicator']",
+  "select_account_button_weiter": "//button[@class='button-right primary has-indicator']",
+  "tan_field": "//input[@id='BackendFormTan']",
+  "tan_field_cap": "//input[@id='BackendFormTAN']",
+  "provide_tan_button_weiter": "//button[@class='button-right primary has-indicator']"
+}

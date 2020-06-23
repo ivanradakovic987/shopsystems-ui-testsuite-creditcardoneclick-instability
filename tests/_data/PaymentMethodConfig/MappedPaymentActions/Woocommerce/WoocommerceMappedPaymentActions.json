@@ -47,5 +47,53 @@
     "tx_table": {
       "debit": "debit"
     }
+  },
+  "Sofortbanking": {
+    "config": {
+      "row": "payment_action",
+      "debit": "debit"
+    },
+    "tx_table": {
+      "debit": "debit"
+    }
+  },
+  "PoiPia": {
+    "config": {
+      "row": "payment_type",
+      "Payment On Invoice": "poi",
+      "Payment In Advance": "Payment in Advance"
+    },
+    "tx_table": {
+      "authorization": "authorization"
+    }
+  },
+  "giropay": {
+    "config": {
+      "row": "payment_action",
+      "debit": "debit"
+    },
+    "tx_table": {
+      "debit": "debit"
+    }
+  },
+  "Eps": {
+    "config": {
+      "row": "payment_action",
+      "debit": "debit"
+    },
+    "tx_table": {
+      "debit": "debit"
+    }
+  },
+  "SEPADirectDebit": {
+    "config": {
+      "row": "payment_action",
+      "reserve": "reserve",
+      "pay": "pay"
+    },
+    "tx_table": {
+      "debit": "debit",
+      "authorization": "authorization"
+    }
   }
 }

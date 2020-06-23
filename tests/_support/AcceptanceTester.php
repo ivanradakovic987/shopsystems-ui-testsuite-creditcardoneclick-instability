@@ -5,6 +5,7 @@ use Helper\Config\FileSytem;
 use Helper\Config\Environment;
 use Step\Acceptance\PaymentMethod\CreditCardStep;
 use Step\Acceptance\PaymentMethod\GenericPaymentMethodStep;
+use Step\Acceptance\PaymentMethod\SEPADirectDebitStep;
 use Step\Acceptance\ShopSystem\GenericShopSystemStep;
 use Step\Acceptance\ShopSystem\PrestashopStep;
 use Step\Acceptance\ShopSystem\WoocommerceStep;
@@ -47,6 +48,20 @@ class AcceptanceTester extends Actor
 
     const REGISTERED_CUSTOMER = 'registered customer';
 
+    const ADMIN_USER = 'admin user';
+
+    const SOFORT = 'sofort';
+
+    const SOFORTBANKING = 'sofort.';
+
+    const PAYMENT_ON_INVOICE = 'PaymentOnInvoice/PaymentInAdvance';
+
+    const GIROPAY = 'giropay';
+
+    const EPS_ÜBERWEISUNG = 'eps-Überweisung';
+
+    const SEPADIRECTDEBIT = 'sEPADirectDebit';
+
     //this is used to generate new class instance, so const doesn't work here
     private $shopInstanceMap = [
         'prestashop' => Step\Acceptance\ShopSystem\PrestashopStep::class,
@@ -60,7 +75,11 @@ class AcceptanceTester extends Actor
         'PayPal' => Step\Acceptance\PaymentMethod\PayPalStep::class,
         'iDEAL' => Step\Acceptance\PaymentMethod\IdealStep::class,
         'GuaranteedInvoice' => Step\Acceptance\PaymentMethod\GuaranteedInvoiceStep::class,
-        'AlipayCrossBorder' => Step\Acceptance\PaymentMethod\AlipayCrossBorderStep::class
+        'AlipayCrossBorder' => Step\Acceptance\PaymentMethod\AlipayCrossBorderStep::class,
+        'Sofort' => Step\Acceptance\PaymentMethod\SofortStep::class,
+        'giropay' => Step\Acceptance\PaymentMethod\GiropayStep::class,
+        'eps-Überweisung' => Step\Acceptance\PaymentMethod\EpsStep::class,
+        'SEPADirectDebit' => Step\Acceptance\PaymentMethod\SEPADirectDebitStep::class
     ];
 
     /**
@@ -84,7 +103,7 @@ class AcceptanceTester extends Actor
     private $gateway;
 
     /**
-     * @var Actor|CreditCardStep|
+     * @var Actor|CreditCardStep|SEPADirectDebitStep
      */
     private $paymentMethod;
 
@@ -164,7 +183,9 @@ class AcceptanceTester extends Actor
         $this->createPaymentMethodIfNeeded($paymentMethod);
         $this->paymentMethod->fillFieldsInTheShop();
         if (strcasecmp($paymentMethod, static::CREDIT_CARD_ONE_CLICK) !== 0 &&
-            strcasecmp($paymentMethod, static::GUARANTEED_INVOICE) !== 0) {
+            strcasecmp($paymentMethod, static::GUARANTEED_INVOICE) !== 0 &&
+            strcasecmp($paymentMethod, static::EPS_ÜBERWEISUNG) !== 0 &&
+            strcasecmp($paymentMethod, static::SEPADIRECTDEBIT)) {
             $this->shopInstance->proceedWithPayment($paymentMethod);
         }
     }
@@ -262,7 +283,8 @@ class AcceptanceTester extends Actor
         $shopInstance = new $this->shopInstanceMap[$shopSystemName]($this->getScenario(),
                                                                     $this->gateway,
                                                                     $this->configData->guest_customer_data,
-                                                                    $this->configData->registered_customer_data);
+                                                                    $this->configData->registered_customer_data,
+                                                                    $this->configData->admin_data);
         $shopInstance->configureShopSystemCurrencyAndCountry(
             $this->configData->currency,
             $this->configData->default_country
@@ -311,9 +333,80 @@ class AcceptanceTester extends Actor
     /**
      * @When I place the order and continue :paymentMethod payment
      * @param $paymentMethod
+     * @throws Exception
      */
     public function iPlaceTheOrderAndContinuePayment($paymentMethod) :void
     {
         $this->shopInstance->placeTheOrder($paymentMethod);
+    }
+
+    /**
+     * @Given I deactivate :paymentMethod payment method in configuration
+     * @param $paymentMethod
+     */
+    public function iDeactivatePaymentMethodInConfiguration($paymentMethod): void
+    {
+        $this->shopInstance->deletePaymentMethodFromDb($paymentMethod);
+    }
+
+    /**
+     * @Then I go into the configuration page as :userType and activate :paymentMethod method
+     * @param $userType
+     * @param $paymentMethod
+     */
+    public function iGoIntoTheConfigurationPageAsAndActivateMethod($userType, $paymentMethod): void
+    {
+        if ($userType === static::ADMIN_USER) {
+            $this->shopInstance->logInToAdministrationPanel();
+        }
+        $this->shopInstance->activatePaymentMethod($paymentMethod);
+    }
+
+    /**
+     * @When I fill fields with :paymentMethod data for payment action :paymentAction and transaction type :txType
+     * @param $paymentMethod
+     * @param $paymentAction
+     * @param $txType
+     */
+    public function iFillFieldsWithDataForPaymentActionAndTransactionType($paymentMethod, $paymentAction, $txType): void
+    {
+        $this->shopInstance->fillPaymentMethodFields($paymentMethod, $paymentAction, $txType);
+    }
+
+    /**
+     * @Then I see that :paymentMethod payment method is enabled on Payment page
+     * @param $paymentMethod
+     */
+    public function iSeeThatPaymentMethodIsEnabledOnPaymentPage($paymentMethod): void
+    {
+        $this->shopInstance->goToPaymentPageAndCheckIfPaymentMethodIsEnabled($paymentMethod);
+    }
+
+    /**
+     * @Then I see all data that was entered is shown in :paymentMethod configuration page
+     * @param $paymentMethod
+     */
+    public function iSeeAllDataThatWasEnteredIsShownInConfigurationPage($paymentMethod): void
+    {
+        $this->shopInstance->goToConfigurationPageAndCheckIfEnteredDataIsShown($paymentMethod);
+    }
+
+    /**
+     * @Then I see that test credentials check provides a successful result for :paymentMethod payment method
+     * @param $paymentMethod
+     */
+    public function iSeeThatTestCredentialsCheckProvidesASuccessfulResultForPaymentMethod($paymentMethod): void
+    {
+        $this->shopInstance->clickOnTestCredentialsAndCheckIfResultIsSuccessful($paymentMethod);
+    }
+
+    /**
+     * @When I perform additional :paymentMethod payment steps inside the shop
+     * @param $paymentMethod
+     */
+    public function iPerformAdditionalPaymentStepsInsideTheShop($paymentMethod): void
+    {
+        $this->createPaymentMethodIfNeeded($paymentMethod);
+        $this->paymentMethod->performAdditionalPaymentStepsInsideTheShop();
     }
 }
