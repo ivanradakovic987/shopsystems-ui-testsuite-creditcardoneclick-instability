@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - 'tests/acceptance/**'
+    types: [edited, synchronize]
 
 jobs:
   run:
