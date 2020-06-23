@@ -1,0 +1,96 @@
+name: Check Acceptance Test Robustness
+
+on:
+  pull_request:
+    paths:
+      - 'tests/acceptance/**'
+
+jobs:
+  run:
+    runs-on: ${{ matrix.operating-system }}
+    strategy:
+      matrix:
+        config:
+          - { shop-system: woocommerce-ee, php-version: 7.2 }
+        operating-system: [ubuntu-latest]
+    steps:
+      - name: Checkout ${{ matrix.config.shop-system }}
+        uses: wirecard/checkout@v2.0.0
+        with:
+          repository: 'wirecard/${{ matrix.config.shop-system }}'
+          ref: 'master'
+      - name: Checkout shopsystems-ui-test-runner
+        uses: wirecard/checkout@v2.0.0
+        with:
+          repository: 'wirecard/shopsystems-ui-test-runner'
+          ref: 'master'
+          path: shopsystems-ui-test-runner
+      - name: PHP version setup
+        uses: wirecard/setup-php@2.1.3
+        with:
+          php-version: ${{ matrix.config.php-version }}
+          extension: mbstring, intl, simplexml, dom
+          ini-values: post_max_size=256M, short_open_tag=On
+      - name: Extract shop name
+        run: echo "::set-env name=SHOP_SYSTEM_NAME::${{ matrix.config.shop-system }}"
+      - name: Extract ${{ matrix.config.shop-system }} version
+        run: echo "::set-env name=SHOP_SYSTEM_VERSION::$(awk "NR==1 {print; exit}" ${SHOP_RELEASES_FILE})"
+        env:
+          SHOP_RELEASES_FILE: '.bin/compatible-shop-releases.txt'
+      - name: Extract branch name
+        shell: bash
+        run: echo "::set-env name=GIT_BRANCH::${{ github.head_ref }}"
+      - name: Set global git conf
+        run: git config --global user.email "" && git config --global user.name "github-actions"
+      - name: Find changed feature files
+        # will be forked after review passed
+        uses: jitterbit/get-changed-files@v1
+        id: file
+        with:
+          format: space-delimited
+          token: ${{ secrets.WORKFLOW_TOKEN }}
+      - name: Export feature file
+        shell: bash
+        run: echo "::set-env name=FEATURE_FILES::${{ steps.file.outputs.all }}"
+      - name: Run acceptance tests
+        run: shopsystems-ui-test-runner/.bin/setup-and-run-ui-tests.sh
+        shell: bash
+        env:
+          PHP_VERSION: ${{ matrix.config.php-version }}
+          NGROK_TOKEN: ${{ secrets.NGROK_TOKEN }}
+          BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
+          BROWSERSTACK_USER: ${{ secrets.BROWSERSTACK_USER }}
+          PATCH_RELEASE: 'patch'
+          MINOR_RELEASE: 'minor'
+          MAJOR_RELEASE: 'major'
+      - name: Remove failure label
+        if: ${{ success() }}
+        # will be forked after review passed
+        uses: buildsville/add-remove-label@v1
+        with:
+          token: ${{secrets.WORKFLOW_TOKEN}}
+          label: unstable acceptance test detected
+          type: remove
+      - name: Acceptance tests passed
+        if: ${{ success() }}
+        run: shopsystems-ui-test-runner/.bin/upload-logs-and-notify.sh
+        shell: bash
+        env:
+          GITHUB_RUN_ID: ${{ github.run_id }}
+          GITHUB_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
+      - name: Add failure label
+        if: ${{ failure() }}
+        # will be forked after review passed
+        uses: buildsville/add-remove-label@v1
+        with:
+          token: ${{secrets.WORKFLOW_TOKEN}}
+          label: unstable acceptance test detected
+          type: add
+      - name: Acceptance tests failed
+        if: ${{ failure() }}
+        run: shopsystems-ui-test-runner/.bin/upload-logs-and-notify.sh fail
+        shell: bash
+        env:
+          SLACK_ROOMS: ${{ secrets.SLACK_ROOMS }}
+          GITHUB_RUN_ID: ${{ github.run_id }}
+          GITHUB_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
