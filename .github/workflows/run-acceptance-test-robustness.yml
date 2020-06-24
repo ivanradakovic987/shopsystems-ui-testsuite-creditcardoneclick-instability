@@ -40,7 +40,7 @@ jobs:
           SHOP_RELEASES_FILE: '.bin/compatible-shop-releases.txt'
       - name: Extract branch name
         shell: bash
-        run: echo "::set-env name=GIT_BRANCH::${{ github.head_ref }}"
+        run: echo "::set-env name=TEST_SUITE_BRANCH::${{ github.head_ref }}"
       - name: Set global git conf
         run: git config --global user.email "" && git config --global user.name "github-actions"
       - name: Find changed feature files
@@ -57,6 +57,7 @@ jobs:
         run: shopsystems-ui-test-runner/.bin/setup-and-run-ui-tests.sh
         shell: bash
         env:
+          TEST_SUITE_BRANCH: ${{ github.head_ref }}
           PHP_VERSION: ${{ matrix.config.php-version }}
           NGROK_TOKEN: ${{ secrets.NGROK_TOKEN }}
           BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
