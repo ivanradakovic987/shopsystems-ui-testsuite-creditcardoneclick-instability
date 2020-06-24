@@ -2,9 +2,9 @@ name: Check Acceptance Test Robustness
 
 on:
   pull_request:
+    types: [edited, synchronize]
     paths:
       - 'tests/acceptance/**'
-    types: [edited, synchronize]
 
 jobs:
   run:
