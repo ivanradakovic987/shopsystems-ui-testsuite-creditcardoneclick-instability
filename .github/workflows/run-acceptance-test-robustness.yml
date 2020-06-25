@@ -44,8 +44,7 @@ jobs:
       - name: Set global git conf
         run: git config --global user.email "" && git config --global user.name "github-actions"
       - name: Find changed feature files
-        # will be forked after review passed
-        uses: jitterbit/get-changed-files@v1
+        uses: wirecard/get-changed-files@v1
         id: file
         with:
           format: space-delimited
@@ -67,8 +66,7 @@ jobs:
           MAJOR_RELEASE: 'major'
       - name: Remove failure label
         if: ${{ success() }}
-        # will be forked after review passed
-        uses: buildsville/add-remove-label@v1
+        uses: wirecard/add-remove-label@v1
         with:
           token: ${{secrets.WORKFLOW_TOKEN}}
           label: unstable acceptance test detected
@@ -82,8 +80,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
       - name: Add failure label
         if: ${{ failure() }}
-        # will be forked after review passed
-        uses: buildsville/add-remove-label@v1
+        uses: wirecard/add-remove-label@v1
         with:
           token: ${{secrets.WORKFLOW_TOKEN}}
           label: unstable acceptance test detected
