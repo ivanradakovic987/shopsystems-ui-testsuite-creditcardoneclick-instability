@@ -10,6 +10,7 @@ modules:
     - WebDriver:
         url: '%SHOP_URL%'
         browser: chrome # 'chrome' or 'firefox'
+        window_size: 1600x1024
         restart: true #run each test in new browser window
     - \Helper\Acceptance
     - \Helper\DbHelper
@@ -28,6 +29,7 @@ env:
           port: 80
           url: '%SHOP_URL%'
           browser: chrome # 'chrome' or 'firefox'
+          window_size: 1600x1024
           capabilities:
             'build': '%SHOP_VERSION%'
             'project': '%SHOP_SYSTEM%-%SHOP_VERSION%-%EXTENSION_VERSION%'
@@ -43,6 +45,7 @@ env:
           port: 80
           url: '%SHOP_URL%'
           browser: chrome # 'chrome' or 'firefox'
+          window_size: 1600x1024
           capabilities:
             'build': '%SHOP_VERSION%'
             'project': '%SHOP_SYSTEM%-%SHOP_VERSION%-%EXTENSION_VERSION%'
