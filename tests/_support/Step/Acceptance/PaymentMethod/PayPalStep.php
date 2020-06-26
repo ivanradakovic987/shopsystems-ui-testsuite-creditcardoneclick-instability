@@ -23,7 +23,6 @@ class PayPalStep extends GenericPaymentMethodStep implements iPerformPayment
     {
         $this->performPaypalLogin();
         try {
-            $this->preparedClick($this->getLocator()->accept_cookies, 80);
             $this->preparedClick($this->getLocator()->pay_now_start, 60);
         } catch (NoSuchElementException $e) {
             $this->tryLongPayPalCheckoutProcess();
