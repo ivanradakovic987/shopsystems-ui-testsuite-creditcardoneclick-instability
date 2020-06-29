@@ -50,19 +50,17 @@ class CreditCardStep extends GenericPaymentMethodStep implements iPerformPayment
      */
     public function switchToCreditCardUIFrame()
     {
-        //wait for Javascript to load iframe and it's contents
-        $this->wait(5);
-        try {
-            //get wirecard seemless frame name
-            $wirecardFrameName = $this->executeJS(
-                'return document.querySelector("#' . $this->getLocator()->frame . '").getAttribute("name")'
-            );
-        } catch (Exception $e) {
-            $this->wait(10);
-            $wirecardFrameName = $this->executeJS(
-                'return document.querySelector("#' . $this->getLocator()->frame . '").getAttribute("name")'
-            );
-        }
+        //wait for frame to load
+        $this->waitUntil(
+            60,
+            [$this, 'waitUntilIframeLoaded'],
+            [$this->getLocator()->frame]
+        );
+
+        //get wirecard seemless frame name
+        $wirecardFrameName = $this->executeJS(
+            'return document.querySelector("#' . $this->getLocator()->frame . '").getAttribute("name")'
+        );
 
          $this->switchToIFrame($wirecardFrameName);
     }

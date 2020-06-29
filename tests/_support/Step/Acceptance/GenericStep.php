@@ -192,4 +192,16 @@ class GenericStep extends AcceptanceTester
             return false;
         }
     }
+
+    public function waitUntilIframeLoaded($locator): bool
+    {
+        $wirecardFrame = $this->executeJS(
+            'return document.querySelector("#' . $locator[0] . '")'
+        );
+
+        if ($wirecardFrame == null) {
+            return false;
+        }
+        return true;
+    }
 }
