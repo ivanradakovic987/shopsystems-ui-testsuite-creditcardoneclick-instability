@@ -66,8 +66,8 @@ class CreditCardStep extends GenericPaymentMethodStep implements iPerformPayment
         //get wirecard seemless frame name
         $wirecardFrameName = $this->executeJS(
             'return document.querySelector("#' . $this->getLocator()->frame . '").getAttribute("name")'
-        );
 
+        );
          $this->switchToIFrame($wirecardFrameName);
     }
 }
